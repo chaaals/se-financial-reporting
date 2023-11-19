@@ -12,7 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('trial_balances', function (Blueprint $table) {
-            $table->uuid('tb_id')->default(DB::raw('(UUID())'));
+            $table->uuid('tb_id')
+                ->default(DB::raw('(UUID())'))
+                ->primary();
             $table->string('tb_name');
             $table->date('period');
             $table->longText('tb_data'); // json
