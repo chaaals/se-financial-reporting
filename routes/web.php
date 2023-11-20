@@ -16,6 +16,6 @@ use Illuminate\Support\Facades\Route;
 Route::view('/', 'welcome');
 
 Route::group(['prefix'=> '/trial-balances'], function () {
-    Route::view('/','welcome');
+    Route::view('/','trial-balance');
     Route::view('add','add-trial-balance');
 });
