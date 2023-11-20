@@ -2,7 +2,7 @@
     @if($trial_balances)
     <section>
         @foreach($trial_balances as $tb)
-            <div>{{ $tb->tb_name }}</div>
+            <a href="/trial-balances/{{ $tb->tb_id }}">{{ $tb->tb_name }}</a>
             <div>{{ $tb->period }}</div>
             <div>{{ $tb->tb_data }}</div>
         @endforeach

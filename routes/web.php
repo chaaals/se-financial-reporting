@@ -18,4 +18,5 @@ Route::view('/', 'welcome');
 Route::group(['prefix'=> '/trial-balances'], function () {
     Route::view('/','trial-balance');
     Route::view('add','add-trial-balance');
+    Route::view('/{tb_id}', 'preview-trial-balance');
 });
