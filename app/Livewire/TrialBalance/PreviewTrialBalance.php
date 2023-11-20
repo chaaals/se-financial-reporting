@@ -10,6 +10,8 @@ use Livewire\Component;
 class PreviewTrialBalance extends Component
 {
     public $trial_balance;
+    public $confirming = null;
+    public $isDeleted = false;
 
     public function mount(){
         $tb_id = Route::current()->parameter("tb_id");
@@ -19,6 +21,21 @@ class PreviewTrialBalance extends Component
             $this->trial_balance= $tb;
         }
     }
+
+    public function confirmDelete($tbId)
+    {
+        $this->confirming = $tbId;
+    }
+
+    public function deleteTrialBalance($tbId)
+    {
+        // delete by ID ($tbId) and refresh
+        TrialBalance::find($tbId)->delete();
+        // TODO: Change to DB query
+        $this->confirming = null;
+        $this->isDeleted = true;
+    }
+
     public function render()
     {
         return view('livewire.trial-balance.preview-trial-balance');
