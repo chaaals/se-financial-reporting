@@ -9,7 +9,7 @@ use Livewire\Component;
 use Livewire\WithFileUploads;
 use Maatwebsite\Excel\Facades\Excel;
 
-class Addform extends Component
+class AddTrialBalance extends Component
 {
     use WithFileUploads;
 
@@ -56,6 +56,6 @@ class Addform extends Component
             $this->previewSpreadsheet();
         }
 
-        return view('livewire.trial-balance.addform');
+        return view('livewire.trial-balance.add-trial-balance');
     }
 }
