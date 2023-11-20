@@ -29,9 +29,8 @@ class PreviewTrialBalance extends Component
 
     public function deleteTrialBalance($tbId)
     {
-        // delete by ID ($tbId) and refresh
+        // delete by ID
         TrialBalance::find($tbId)->delete();
-        // TODO: Change to DB query
         $this->confirming = null;
         $this->isDeleted = true;
     }

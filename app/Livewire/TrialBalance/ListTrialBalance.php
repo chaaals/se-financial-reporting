@@ -22,8 +22,9 @@ class ListTrialBalance extends Component
 
     public function deleteTrialBalance($tbId)
     {
-        // delete by ID ($tbId) and refresh
+        // delete by ID
         TrialBalance::find($tbId)->delete();
+        // refresh
         // TODO: Change to DB query
         $this->trial_balances = TrialBalance::all();
         $this->confirming = null;
