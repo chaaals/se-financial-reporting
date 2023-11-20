@@ -9,6 +9,7 @@ class TrialBalance extends Model
 {
     use HasFactory;
 
+    const UPDATED_AT = null;
     protected $fillable = [
         'tb_name',
         'period',
