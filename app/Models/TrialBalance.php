@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class TrialBalance extends Model
 {
+    protected $primaryKey = 'tb_id';
     use HasFactory;
 
     const UPDATED_AT = null;
@@ -14,5 +15,9 @@ class TrialBalance extends Model
         'tb_name',
         'period',
         'tb_data',
+    ];
+
+    protected $casts = [
+        'tb_id' => 'string',
     ];
 }
