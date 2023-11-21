@@ -11,7 +11,6 @@ class PreviewTrialBalance extends Component
 {
     public $trial_balance;
     public $confirming = null;
-    public $isDeleted = false;
 
     public function mount(){
         $tb_id = Route::current()->parameter("tb_id");
@@ -31,8 +30,8 @@ class PreviewTrialBalance extends Component
     {
         // delete by ID
         TrialBalance::find($tbId)->delete();
-        $this->confirming = null;
-        $this->isDeleted = true;
+        $this->reset('confirming');
+        $this->redirect("/trial-balances");
     }
 
     public function render()

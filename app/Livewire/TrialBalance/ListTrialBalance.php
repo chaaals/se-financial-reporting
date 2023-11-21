@@ -27,7 +27,7 @@ class ListTrialBalance extends Component
         // refresh
         // TODO: Change to DB query
         $this->trial_balances = TrialBalance::all();
-        $this->confirming = null;
+        $this->reset('confirming');
     }
     
     public function render()

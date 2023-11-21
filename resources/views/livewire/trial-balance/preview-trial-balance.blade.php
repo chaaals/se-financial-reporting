@@ -1,10 +1,5 @@
 <div>
-    @if ($isDeleted)
-        <div>
-            <p>Deleted Successfully!</p>
-            <a href="/trial-balances">Go back to Trial Balances</a>
-        </div>
-    @elseif($trial_balance)
+    @if ($trial_balance)
         <section>
             <div>{{ $trial_balance->tb_name }}</div>
             <div>{{ $trial_balance->period }}</div>
