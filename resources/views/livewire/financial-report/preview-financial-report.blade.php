@@ -8,6 +8,18 @@
                         <input id="report_name" type="text" wire:model="editedReportName">
                     </div>
                     <div>
+                        <label for="tb_ids">Trial Balance:</label>
+                        @if ($trial_balances)
+                            <select id="tb_ids" wire:model="editedTBID">
+                                @foreach ($trial_balances as $tb)
+                                    <option value="{{ $tb->tb_id }}">{{ $tb->tb_name }}</option>
+                                @endforeach
+                            </select>
+                        @else
+                            <input id="tb_ids" type="text" value="No Trial Balance Available" disabled>
+                        @endif
+                    </div>
+                    <div>
                         <label for="approved">Approved:</label>
                         <input id="approved" type="checkbox" wire:model="editedApproved" @if ($editedReportStatus === 'Draft') disabled @endif>
                     </div>
@@ -34,6 +46,7 @@
                     <div>Report Type: {{ $financial_report->report_type }}</div>
                     <div>Report Status: {{ $financial_report->report_status }}</div>
                     <div>Approved: {{ $financial_report->approved }}</div>
+                    <div>Trial Balance ID: {{ $financial_report->tb_id }}</div>
 
                     <div>
                         <!-- edit button -->
