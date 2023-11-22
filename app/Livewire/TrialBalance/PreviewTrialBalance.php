@@ -2,14 +2,15 @@
 
 namespace App\Livewire\TrialBalance;
 
+use App\Exports\ReportExport;
 use App\Models\TrialBalance;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Livewire\Component;
+use Maatwebsite\Excel\Facades\Excel;
 
 class PreviewTrialBalance extends Component
 {
-    public $trial_balance;
+    public TrialBalance $trial_balance;
     public $confirming = null;
 
     public function mount(){
@@ -19,6 +20,12 @@ class PreviewTrialBalance extends Component
         foreach($query as $tb){
             $this->trial_balance= $tb;
         }
+    }
+
+    public function export() {
+        $export = new ReportExport(json_decode($this->trial_balance->tb_data));
+
+        return Excel::download($export, 'TB_REPORT.xlsx');
     }
 
     public function confirmDelete($tbId)

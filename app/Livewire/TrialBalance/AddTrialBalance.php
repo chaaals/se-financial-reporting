@@ -16,6 +16,7 @@ class AddTrialBalance extends Component
     #[Rule("nullable|sometimes|file|mimes:xlsx,xls")]
     public $imported_spreadsheet;
     public $spreadsheet = [];
+    public $preview = [];
 
     public function add(){
         if($this->spreadsheet){
@@ -33,10 +34,10 @@ class AddTrialBalance extends Component
         $this->validate();
         $path = $this->imported_spreadsheet->getRealPath();
         
-        $spreadsheet = Excel::toArray(new TrialBalanceImport,$path)[0];
+        $this->spreadsheet = Excel::toArray(new TrialBalanceImport,$path)[0];
 
-        $this->spreadsheet["headers"] = array_slice($spreadsheet,5,1);
-        $this->spreadsheet["data"] = array_slice($spreadsheet,6);
+        $this->preview["headers"] = array_slice($this->spreadsheet,5,1);
+        $this->preview["data"] = array_slice($this->spreadsheet,6);
     }
 
     public function render()
