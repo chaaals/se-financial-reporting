@@ -2,7 +2,7 @@
 
 namespace App\Livewire\TrialBalance;
 
-use App\Exports\ReportExport;
+use App\Exports\TrialBalanceExport;
 use App\Models\TrialBalance;
 use Illuminate\Support\Facades\Route;
 use Livewire\Component;
@@ -23,7 +23,7 @@ class PreviewTrialBalance extends Component
     }
 
     public function export() {
-        $export = new ReportExport(json_decode($this->trial_balance->tb_data));
+        $export = new TrialBalanceExport(json_decode($this->trial_balance->tb_data));
 
         return Excel::download($export, 'TB_REPORT.xlsx');
     }
