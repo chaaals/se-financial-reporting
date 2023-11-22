@@ -33,8 +33,8 @@ class AddFinancialReport extends Component
                 "report_name" => $report_name,
                 "start_date" => date("Y-m-d"),
                 "end_date" => date("Y-m-d"),
-                "report_type" => $report_type, // Example report type
-                "report_status" => "Draft", // Example report status
+                "report_type" => $report_type,
+                "report_status" => "Draft",
                 "approved" => false,
                 "tb_id" => $tb_id, 
             ]);
