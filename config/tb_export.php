@@ -35,7 +35,7 @@
         "data" => [
             "accountTitles" => [
                 "cell" => fn(int $row): string => "A$row",
-                "mergeRange" => fn(int $row): string => "A$row:E$row"
+                "mergeRange" => fn(int $row): string => "A$row:D$row"
             ],
             "debit" => [
                 "cell" => fn(int $row): string => "F$row",

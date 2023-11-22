@@ -7,6 +7,7 @@ use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Events\AfterSheet;
+use Maatwebsite\Excel\Events\BeforeSheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 
 class TrialBalanceExport implements FromArray, ShouldAutoSize, WithEvents
@@ -24,6 +25,13 @@ class TrialBalanceExport implements FromArray, ShouldAutoSize, WithEvents
 
     public function registerEvents(): array {
         return [
+            BeforeSheet::class => function (BeforeSheet $event){
+                $sheet = $event->sheet->getDelegate();
+
+                foreach(range('A', 'I') as $columnID) {
+                    $sheet->getColumnDimension($columnID)->setWidth(16);
+                }
+            },
             AfterSheet::class => function (AfterSheet $event) {
                 $tb_config = Config::get("tb_export");
                 $startRow = $tb_config["startRow"];
@@ -42,7 +50,7 @@ class TrialBalanceExport implements FromArray, ShouldAutoSize, WithEvents
                     // cells
                     $accTitleCell = $accountTitles["cell"]($i);
                     $debitCell = $debit["cell"]($i);
-                    $creditCell =$credit["cell"]($i);
+                    $creditCell = $credit["cell"]($i);
 
                     // values
                     $accTitleData = $sheet->getCell($accTitleCell)->getValue();
@@ -57,7 +65,7 @@ class TrialBalanceExport implements FromArray, ShouldAutoSize, WithEvents
                     // re-set values
                     $sheet->setCellValue($accTitleCell, $accTitleData);
                     $sheet->setCellValue($debitCell, $debitData);
-                    $sheet->setCellValue($creditCell, $creditData);   
+                    $sheet->setCellValue($creditCell, $creditData);
                 }
             }
         ];
