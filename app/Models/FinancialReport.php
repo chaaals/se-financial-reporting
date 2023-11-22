@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class FinancialReport extends Model
 {
+    protected $primaryKey = 'report_id';
     use HasFactory;
 
     protected $fillable = [
@@ -17,5 +18,9 @@ class FinancialReport extends Model
         'report_status',
         'approved',
         'tb_id'
+    ];
+
+    protected $casts = [
+        'report_id' => 'string',
     ];
 }
