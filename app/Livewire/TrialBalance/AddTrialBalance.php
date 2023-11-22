@@ -19,21 +19,10 @@ class AddTrialBalance extends Component
 
     public function add(){
         if($this->spreadsheet){
-            $tb_data = [];
-
-            foreach($this->spreadsheet["data"] as $rows){
-                if($rows[4]){
-                    $tb_data[$rows[4]] = [
-                        "debit" => $rows[5],
-                        "credit" => $rows[7]
-                    ];
-                }
-            }
-
             TrialBalance::create([
                 "tb_name" => "test tb",
                 "period" => date("Y-m-d"),
-                "tb_data" => json_encode($tb_data)
+                "tb_data" => json_encode($this->spreadsheet)
             ]);
 
             $this->reset();
