@@ -1,3 +1,3 @@
-<x-trial-balance-layout>
+<x-general-layout pageTitle="Financial Report">
     <livewire:financial-report.add-financial-report />
-</x-trial-balance-layout>
+</x-general-layout>
