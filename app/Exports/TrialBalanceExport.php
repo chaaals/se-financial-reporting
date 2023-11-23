@@ -33,7 +33,7 @@ class TrialBalanceExport implements FromArray, ShouldAutoSize, WithEvents
                 }
             },
             AfterSheet::class => function (AfterSheet $event) {
-                $tb_config = Config::get("tb_export");
+                $tb_config = Config::get("trialbalance");
                 $startRow = $tb_config["startRow"];
                 $sheet = $event->sheet;
                 extract($tb_config["data"]);
