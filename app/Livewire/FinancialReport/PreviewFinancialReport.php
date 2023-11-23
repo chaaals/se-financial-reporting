@@ -17,6 +17,12 @@ class PreviewFinancialReport extends Component
     public $editedTBID;
     public $editedApproved;
     public $editedReportStatus;
+    protected $rules = [
+        'editedReportName' => 'nullable|max:255',
+        'editedApproved' => 'required|boolean',
+        'editedReportStatus' => 'required|in:Draft,For Approval,Approved',
+        'editedTBID' => 'required',
+    ];
 
     public function mount(){
         $report_id = Route::current()->parameter("report_id");
@@ -50,7 +56,8 @@ class PreviewFinancialReport extends Component
     }
 
     public function updateFinancialReport()
-    {        
+    {
+        $this->validate();
         // check if the report is already approved but changed to not approved
         if ($this->financial_report->approved) {
             if (!$this->editedApproved) {

@@ -18,6 +18,13 @@ class ListFinancialReport extends Component
     public $editedReportStatus;
     public $editedTBID;
 
+    protected $rules = [
+        'editedReportName' => 'nullable|max:255',
+        'editedApproved' => 'required|boolean',
+        'editedReportStatus' => 'required|in:Draft,For Approval,Approved',
+        'editedTBID' => 'required',
+    ];
+
     public function mount() {
         // TODO: Change to DB queries
         $this->financial_reports = FinancialReport::all();
@@ -54,6 +61,7 @@ class ListFinancialReport extends Component
 
     public function updateFinancialReport()
     {
+        $this->validate();
         $report = FinancialReport::find($this->editedReportID);
 
         // check if the report is already approved but changed to not approved
