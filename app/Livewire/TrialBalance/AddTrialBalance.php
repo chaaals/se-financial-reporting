@@ -34,8 +34,8 @@ class AddTrialBalance extends Component
         $this->validate();
         $path = $this->imported_spreadsheet->getRealPath();
         
-        $this->spreadsheet = Excel::toArray(new TrialBalanceImport,$path)[0];
-
+        $this->spreadsheet = (new TrialBalanceImport)->toArray($path)[0];
+        
         $this->preview["headers"] = array_slice($this->spreadsheet,5,1);
         $this->preview["data"] = array_slice($this->spreadsheet,6);
     }
