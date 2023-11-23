@@ -28,7 +28,7 @@ class ListFinancialReport extends Component
     public function mount() {
         // TODO: Change to DB queries
         $this->financial_reports = FinancialReport::all();
-        $this->trial_balances = TrialBalance::all();    
+        $this->trial_balances = TrialBalance::all();
     }
 
     public function confirmDelete($report_id)
