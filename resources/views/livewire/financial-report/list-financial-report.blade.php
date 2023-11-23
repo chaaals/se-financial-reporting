@@ -5,7 +5,7 @@
             @if ($editMode && $editedReportID === $fr->report_id)
                 <div>
                     <label for="report_name">Report Name:</label>
-                    <input id="report_name" type="text" wire:model="editedReportName">
+                    <input id="report_name" type="text" wire:model="editedReportName" placeholder="optional">
                 </div>
                 <div>
                     <label for="tb_ids">Trial Balance:</label>
