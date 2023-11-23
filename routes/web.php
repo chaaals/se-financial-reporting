@@ -20,3 +20,9 @@ Route::group(['prefix'=> '/trial-balances'], function () {
     Route::view('add','add-trial-balance');
     Route::view('/{tb_id}', 'preview-trial-balance');
 });
+
+Route::group(['prefix'=> '/financial-reports'], function () {
+    Route::view('/','financial-report');
+    Route::view('add','add-financial-report');
+    Route::view('/{report_id}', 'preview-financial-report');
+});

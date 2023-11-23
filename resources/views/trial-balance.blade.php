@@ -1,3 +1,3 @@
-<x-trial-balance-layout>
+<x-general-layout pageTitle="Trial Balance">
     <livewire:trial-balance.list-trial-balance />
-</x-trial-balance-layout>
+</x-general-layout>
