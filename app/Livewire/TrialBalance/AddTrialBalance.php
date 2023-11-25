@@ -7,7 +7,6 @@ use App\Models\TrialBalance;
 use Livewire\Attributes\Rule;
 use Livewire\Component;
 use Livewire\WithFileUploads;
-use Maatwebsite\Excel\Facades\Excel;
 
 class AddTrialBalance extends Component
 {
@@ -16,24 +15,14 @@ class AddTrialBalance extends Component
     #[Rule("nullable|sometimes|file|mimes:xlsx,xls")]
     public $imported_spreadsheet;
     public $spreadsheet = [];
+    public $preview = [];
 
     public function add(){
         if($this->spreadsheet){
-            $tb_data = [];
-
-            foreach($this->spreadsheet["data"] as $rows){
-                if($rows[4]){
-                    $tb_data[$rows[4]] = [
-                        "debit" => $rows[5],
-                        "credit" => $rows[7]
-                    ];
-                }
-            }
-
             TrialBalance::create([
                 "tb_name" => "test tb",
                 "period" => date("Y-m-d"),
-                "tb_data" => json_encode($tb_data)
+                "tb_data" => json_encode($this->spreadsheet)
             ]);
 
             $this->reset();
@@ -44,10 +33,10 @@ class AddTrialBalance extends Component
         $this->validate();
         $path = $this->imported_spreadsheet->getRealPath();
         
-        $spreadsheet = Excel::toArray(new TrialBalanceImport,$path)[0];
-
-        $this->spreadsheet["headers"] = array_slice($spreadsheet,5,1);
-        $this->spreadsheet["data"] = array_slice($spreadsheet,6);
+        $this->spreadsheet = (new TrialBalanceImport)->toArray($path)[0];
+        
+        $this->preview["headers"] = array_slice($this->spreadsheet,5,1);
+        $this->preview["data"] = array_slice($this->spreadsheet,6);
     }
 
     public function render()

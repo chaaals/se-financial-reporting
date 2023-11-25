@@ -17,11 +17,11 @@
         <div x-show="uploading" x-cloak>Loading file...</div>
     </div>
 
-    @if($spreadsheet)
+    @if($preview)
         <section style="padding: 1rem;">
             <table>
                 <thead>
-                    @foreach($spreadsheet["headers"] as $rows)
+                    @foreach($preview["headers"] as $rows)
                         <tr>
                             @foreach($rows as $col_index=>$col)
                                 @if($col || !in_array($col_index, [1,2,3,6,8,9]))
@@ -32,7 +32,7 @@
                     @endforeach
                 </thead>
                 <tbody>
-                    @foreach($spreadsheet["data"] as $rows)
+                    @foreach($preview["data"] as $rows)
                         <tr>
                             @foreach($rows as $col_index=>$col)
                                 @if(!in_array($col_index, [1,2,3,6,8,9]))

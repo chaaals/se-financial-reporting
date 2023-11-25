@@ -3,7 +3,6 @@
         <section>
             <div>{{ $trial_balance->tb_name }}</div>
             <div>{{ $trial_balance->period }}</div>
-            <div>{{ $trial_balance->tb_data }}</div>
 
             <div>
                 <!-- delete -->
@@ -13,6 +12,11 @@
                     <button wire:click="deleteTrialBalance('{{ $trial_balance->tb_id }}')">Confirm Delete</button>
                     <button wire:click="$set('confirming', null)">Cancel</button>
                 @endif
+            </div>
+
+            <div>
+                {{-- export --}}
+                <button wire:click="export">Export</button>
             </div>
         </section>
     @endif
