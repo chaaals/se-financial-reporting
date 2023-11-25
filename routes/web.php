@@ -29,5 +29,5 @@ Route::group(['prefix'=> '/financial-reports'], function () {
 
 Route::group(['prefix'=> '/financial-statements'], function () {
     Route::view('/','financial-statements');
-    Route::view('/{statement_id}', 'preview-financial-report');
+    Route::view('/{statement_id}', 'preview-financial-statement');
 });

@@ -1,9 +1,8 @@
 <div>
-    {{-- A good traveler has no fixed plans and is not intent upon arriving. --}}
     @if(!$financialStatements->isEmpty())
         @foreach($financialStatements as $fs)
-            <div>{{ $fs->statement_type }}</div>
-            <div>{{ $fs->fs_data }}</div>
+            <div>Statement name: <a href="/financial-statements/{{ $fs->statement_id }}">{{ $fs->statement_name }}</a></div>
+            <div>Statement type: {{ $fs->statement_type }}</div>
         @endforeach
 
     @else
