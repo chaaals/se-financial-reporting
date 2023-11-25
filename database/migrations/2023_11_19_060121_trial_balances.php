@@ -16,6 +16,7 @@ return new class extends Migration
                 ->default(DB::raw('(UUID())'))
                 ->primary();
             $table->string('tb_name');
+            $table->boolean('closing');
             $table->date('period');
             $table->longText('tb_data'); // json
             $table->timestamp('created_at');

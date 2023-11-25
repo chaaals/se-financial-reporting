@@ -14,7 +14,7 @@ class AddTrialBalance extends Component
 
     public $tbName;
     public $period;
-    public $isClosing = false;
+    public $isClosing = true; // default to true
     public $importedSpreadsheet;
 
     public $spreadsheet = [];
@@ -28,11 +28,12 @@ class AddTrialBalance extends Component
 
     public function add(){
         $this->validate();
+    
         if($this->spreadsheet){
             TrialBalance::create([
-                "tb_name" => "test tb",
+                "tb_name" => $this->tbName ?? "test tb",
                 "period" => $this->period,
-                // is_closing => $this->isClosing
+                "closing" => $this->isClosing,
                 "tb_data" => json_encode($this->spreadsheet)
             ]);
 

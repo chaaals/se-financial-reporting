@@ -16,7 +16,7 @@
                 <div>@error('period')<span>{{ $message }}</span>@enderror</div>
             </div>
             <div>
-                <label htmlFor='isClosingTrialBalance'>Is Closing?</label>
+                <label htmlFor='isClosingTrialBalance'>Closing</label>
                 <input id='isClosingTrialBalance' type='checkbox' wire:model='isClosing' />
                 <div>@error('isClosing')<span>{{ $message }}</span>@enderror</div>
             </div>

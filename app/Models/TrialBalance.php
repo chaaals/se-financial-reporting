@@ -14,6 +14,7 @@ class TrialBalance extends Model
     protected $fillable = [
         'tb_name',
         'period',
+        'closing',
         'tb_data',
     ];
 

@@ -4,6 +4,7 @@
         @foreach($trial_balances as $tb)
             <a href="/trial-balances/{{ $tb->tb_id }}">{{ $tb->tb_name }}</a>
             <div>{{ $tb->period }}</div>
+            <div>{{ $tb->closing }}</div>
             <div>
                 <!-- delete -->
                 <button wire:click="confirmDelete('{{ $tb->tb_id }}')">Delete</button>
