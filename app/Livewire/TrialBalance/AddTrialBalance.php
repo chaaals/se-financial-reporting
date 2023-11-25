@@ -12,16 +12,27 @@ class AddTrialBalance extends Component
 {
     use WithFileUploads;
 
-    #[Rule("nullable|sometimes|file|mimes:xlsx,xls")]
-    public $imported_spreadsheet;
+    public $tbName;
+    public $period;
+    public $isClosing = false;
+    public $importedSpreadsheet;
+
     public $spreadsheet = [];
     public $preview = [];
+    protected $rules = [
+        "tbName" => "nullable|max:255",
+        "period" => "required",
+        "isClosing" => "nullable",
+        "importedSpreadsheet" => "required|file|mimes:xlsx,xls",
+    ];
 
     public function add(){
+        $this->validate();
         if($this->spreadsheet){
             TrialBalance::create([
                 "tb_name" => "test tb",
-                "period" => date("Y-m-d"),
+                "period" => $this->period,
+                // is_closing => $this->isClosing
                 "tb_data" => json_encode($this->spreadsheet)
             ]);
 
@@ -30,8 +41,7 @@ class AddTrialBalance extends Component
     }
 
     public function previewSpreadsheet(){
-        $this->validate();
-        $path = $this->imported_spreadsheet->getRealPath();
+        $path = $this->importedSpreadsheet->getRealPath();
         
         $this->spreadsheet = (new TrialBalanceImport)->toArray($path)[0];
         
@@ -41,7 +51,7 @@ class AddTrialBalance extends Component
 
     public function render()
     {
-        if($this->imported_spreadsheet){
+        if($this->importedSpreadsheet){
             $this->previewSpreadsheet();
         }
 

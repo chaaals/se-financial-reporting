@@ -6,11 +6,28 @@
         x-on:livewire-upload-error="uploading = false"
     >
         <form wire:submit.prevent="add">
-            <input
-                type="file"
-                accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel""
-                wire:model.live="imported_spreadsheet"
-            />
+            <div>
+                <label htmlFor='trialBalanceName'>Trial Balance Name</label>
+                <input id='trialBalanceName' type='text' wire:model='tbName' />
+            </div>
+            <div>
+                <label htmlFor='trialBalancePeriod'>Trial Balance period</label>
+                <input id='trialBalancePeriod' type='date' wire:model='period' />
+                <div>@error('period')<span>{{ $message }}</span>@enderror</div>
+            </div>
+            <div>
+                <label htmlFor='isClosingTrialBalance'>Is Closing?</label>
+                <input id='isClosingTrialBalance' type='checkbox' wire:model='isClosing' />
+                <div>@error('isClosing')<span>{{ $message }}</span>@enderror</div>
+            </div>
+            <div>
+                <input
+                    type="file"
+                    accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel""
+                    wire:model.live="importedSpreadsheet"
+                />
+                <div>@error('importedSpreadsheet')<span>{{ $message }}</span>@enderror</div>
+            </div>
 
             <button type="submit">Add Trial Balance</button>
         </form>
