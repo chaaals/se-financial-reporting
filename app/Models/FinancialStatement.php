@@ -10,8 +10,9 @@ class FinancialStatement extends Model
     use HasFactory;
 
     protected $fillable = [
-        'tb_id',
         'statement_type',
+        'statement_name',
+        'tb_id',
         'fs_data'
     ];
 }

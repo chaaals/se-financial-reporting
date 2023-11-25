@@ -15,6 +15,7 @@ return new class extends Migration
             $table->uuid('statement_id')
                 ->default(DB::raw('(UUID())'))
                 ->primary();
+            $table->string('statement_name');
             $table->foreignUuid('tb_id')
                 ->constrained(table:'trial_balances', column: 'tb_id')
                 ->cascadeOnDelete();
