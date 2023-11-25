@@ -17,6 +17,7 @@
     </head>
 
     <body>
+        <x-financial-reporting.navbar />
         <main>{{ $slot }}</main>
 
         @livewireScripts
