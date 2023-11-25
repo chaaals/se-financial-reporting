@@ -15,12 +15,14 @@ use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome');
 
-Route::view('dashboard', 'dashboard')
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+Route::group(['prefix'=> '/trial-balances'], function () {
+    Route::view('/','trial-balance');
+    Route::view('add','add-trial-balance');
+    Route::view('/{tb_id}', 'preview-trial-balance');
+});
 
-Route::view('profile', 'profile')
-    ->middleware(['auth'])
-    ->name('profile');
-
-require __DIR__.'/auth.php';
+Route::group(['prefix'=> '/financial-reports'], function () {
+    Route::view('/','financial-report');
+    Route::view('add','add-financial-report');
+    Route::view('/{report_id}', 'preview-financial-report');
+});
