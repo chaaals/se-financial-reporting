@@ -16,9 +16,15 @@
         @livewireStyles
     </head>
 
-    <body>
+    <body class="relative w-screen h-screen overflow-x-hidden overflow-y-scroll">
         <x-financial-reporting.navbar />
-        <main>{{ $slot }}</main>
+
+        <main class="flex w-full h-full">
+            <section class="hidden md:block">
+                <x-financial-reporting.sidebar />
+            </section>
+            <section class="grow">{{ $slot }}</section>
+        </main>
 
         @livewireScripts
     </body>
