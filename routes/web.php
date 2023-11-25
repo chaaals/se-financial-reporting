@@ -26,3 +26,8 @@ Route::group(['prefix'=> '/financial-reports'], function () {
     Route::view('add','add-financial-report');
     Route::view('/{report_id}', 'preview-financial-report');
 });
+
+Route::group(['prefix'=> '/financial-statements'], function () {
+    Route::view('/','financial-statements');
+    Route::view('/{statement_id}', 'preview-financial-report');
+});
