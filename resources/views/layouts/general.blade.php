@@ -20,7 +20,7 @@
         <x-financial-reporting.navbar />
 
         <main class="flex w-full h-full">
-            <section class="hidden md:block">
+            <section class="hidden md:block md:h-full">
                 <x-financial-reporting.sidebar />
             </section>
             <section class="grow">{{ $slot }}</section>
