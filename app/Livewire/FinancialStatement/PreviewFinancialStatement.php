@@ -10,6 +10,7 @@ use Livewire\Component;
 class PreviewFinancialStatement extends Component
 {
     public FinancialStatement $financialStatement;
+    public $confirming = null;
 
     public function mount(){
         $statementId = Route::current()->parameter("statement_id");
@@ -19,6 +20,20 @@ class PreviewFinancialStatement extends Component
             $this->financialStatement = $fs;
         }
     }
+
+    public function confirmDelete($statement_id)
+    {
+        $this->confirming = $statement_id;
+    }
+
+    public function deleteFinancialStatement($statement_id)
+    {
+        // delete by ID
+        FinancialStatement::find($statement_id)->delete();
+        $this->reset('confirming');
+        $this->redirect("/financial-statements");
+    }
+
     public function render()
     {
         return view('livewire.financial-statement.preview-financial-statement');
