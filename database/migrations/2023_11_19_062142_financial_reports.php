@@ -18,10 +18,9 @@ return new class extends Migration
             $table->string('report_name');
             $table->year('fiscal_year');
             $table->enum('interim_period', ['Quarterly', 'Annual']);
-            $table->enum('quarter', ['Q1', 'Q2', 'Q3', 'Q4']);
-            $table->string('template_name');
-            $table->enum('report_status', ['Draft','For Approval', 'Approved']);
-            $table->boolean('approved');
+            $table->enum('quarter', ['Q1', 'Q2', 'Q3', 'Q4'])->nullable();
+            $table->enum('report_status', ['Draft','For Approval', 'Approved'])->default("Draft");
+            $table->boolean('approved')->default(false);
             $table->foreignUuid('tb_id')
                 ->constrained(table: 'trial_balances', column: 'tb_id')
                 ->cascadeOnDelete();
