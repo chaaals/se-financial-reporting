@@ -12,9 +12,9 @@ class FinancialReport extends Model
 
     protected $fillable = [
         'report_name',
-        'start_date',
-        'end_date',
-        'report_type',
+        'fiscal_year',
+        'interim_period',
+        'quarter',
         'report_status',
         'approved',
         'tb_id'
