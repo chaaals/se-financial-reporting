@@ -16,11 +16,11 @@ return new class extends Migration
                 ->default(DB::raw('(UUID())'))
                 ->primary();
             $table->string('report_name');
-            $table->date('start_date');
-            $table->date('end_date');
-            $table->enum('report_type', ['Quarterly', 'Annual']);
-            $table->enum('report_status', ['Draft','For Approval', 'Approved']);
-            $table->boolean('approved');
+            $table->year('fiscal_year');
+            $table->enum('interim_period', ['Quarterly', 'Annual']);
+            $table->enum('quarter', ['Q1', 'Q2', 'Q3', 'Q4'])->nullable();
+            $table->enum('report_status', ['Draft','For Approval', 'Approved'])->default("Draft");
+            $table->boolean('approved')->default(false);
             $table->foreignUuid('tb_id')
                 ->constrained(table: 'trial_balances', column: 'tb_id')
                 ->cascadeOnDelete();

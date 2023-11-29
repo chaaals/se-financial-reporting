@@ -14,13 +14,21 @@ class PreviewFinancialReport extends Component
     public $confirming = null;
     public $editMode = false;
     public $editedReportName;
+    public $editedFiscalYear;
+    public $editedInterimPeriod;
+    public $editedQuarter;
     public $editedTBID;
     public $editedApproved;
     public $editedReportStatus;
+
+    public $years;
     protected $rules = [
         'editedReportName' => 'nullable|max:255',
-        'editedApproved' => 'required|boolean',
+        'editedFiscalYear' => 'required',
+        'editedInterimPeriod' => 'required|in:Quarterly,Annual',
         'editedReportStatus' => 'required|in:Draft,For Approval,Approved',
+        'editedQuarter' => 'nullable',
+        'editedApproved' => 'required|boolean',
         'editedTBID' => 'required',
     ];
 
@@ -32,9 +40,13 @@ class PreviewFinancialReport extends Component
         $this->trial_balances = TrialBalance::all();
 
         $this->editedReportName = $this->financial_report->report_name;
+        $this->editedFiscalYear = $this->financial_report->fiscal_year;
+        $this->editedInterimPeriod = $this->financial_report->interim_period;
+        $this->editedQuarter = $this->financial_report->quarter;
         $this->editedApproved = $this->financial_report->approved;
         $this->editedReportStatus = $this->financial_report->report_status;
         $this->editedTBID = $this->financial_report->tb_id;
+        $this->years = range(date('Y'), date('Y') - 50);
     }
 
     public function confirmDelete($report_id)
@@ -69,10 +81,17 @@ class PreviewFinancialReport extends Component
         if ($this->editedApproved) {
             $this->editedReportStatus = 'Approved';
         }
+
+        if ($this->editedInterimPeriod === "Annual" && $this->editedQuarter != null) {
+            $this->editedQuarter = null;
+        } 
         
 
         // update fields
         $this->financial_report->report_name = $this->editedReportName;
+        $this->financial_report->fiscal_year = $this->editedFiscalYear;
+        $this->financial_report->interim_period = $this->editedInterimPeriod;
+        $this->financial_report->quarter = $this->editedQuarter;
         $this->financial_report->approved = $this->editedApproved;
         $this->financial_report->report_status = $this->editedReportStatus;
         $this->financial_report->tb_id = $this->editedTBID;

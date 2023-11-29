@@ -8,6 +8,30 @@
                         <input id="report_name" type="text" wire:model="editedReportName" placeholder="optional">
                     </div>
                     <div>
+                        <label for="fiscal_year">Fiscal Year:</label>
+                        <select id="fiscal_year" wire:model="editedFiscalYear">
+                            @foreach ($years as $year)
+                                <option value="{{ $year }}">{{ $year }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <label for="interim_period">Interim Period:</label>
+                        <select id="interim_period" wire:model="editedInterimPeriod">
+                            <option value="Quarterly">Quarterly</option>
+                            <option value="Annual">Annual</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="quarter">Quarter:</label>
+                        <select id="quarter" wire:model="editedQuarter">
+                            <option value="Q1">Q1</option>
+                            <option value="Q2">Q2</option>
+                            <option value="Q3">Q3</option>
+                            <option value="Q4">Q4</option>
+                        </select>
+                    </div>
+                    <div>
                         <label for="tb_ids">Trial Balance:</label>
                         @if ($trial_balances)
                             <select id="tb_ids" wire:model="editedTBID">
@@ -41,12 +65,12 @@
                 </div>
             @else
                     <div>Report Name: {{ $financial_report->report_name }}</div>
-                    <div>Start Date: {{ $financial_report->start_date }}</div>
-                    <div>End Date: {{ $financial_report->end_date }}</div>
-                    <div>Report Type: {{ $financial_report->report_type }}</div>
+                    <div>Fiscal Year: {{ $financial_report->fiscal_year }}</div>
+                    <div>Interim Period: {{ $financial_report->interim_period }}</div>
+                    <div>Quarter: {{ $financial_report->quarter }}</div>
                     <div>Report Status: {{ $financial_report->report_status }}</div>
                     <div>Approved: {{ $financial_report->approved }}</div>
-                    <div>Trial Balance ID: {{ $financial_report->tb_id }}</div>
+                    <div>tb_id: {{ $financial_report->tb_id }}</div>
 
                     <div>
                         <!-- edit button -->
