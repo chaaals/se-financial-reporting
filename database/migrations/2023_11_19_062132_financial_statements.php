@@ -20,12 +20,14 @@ return new class extends Migration
             $table->foreignUuid('tb_id')
                 ->constrained(table:'trial_balances', column: 'tb_id')
                 ->cascadeOnDelete();
+            $table->string('template_name');
+            $table->longText('fs_data'); // json
+            $table->timestamp('created_at');
+
             $table->foreign('template_name')
                 ->references('template_name')
                 ->on('report_templates')
                 ->onDelete('restrict');
-            $table->longText('fs_data'); // json
-            $table->timestamp('created_at');
         });
     }
 
