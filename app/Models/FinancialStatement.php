@@ -13,6 +13,7 @@ class FinancialStatement extends Model
         'statement_type',
         'statement_name',
         'tb_id',
+        'template_name',
         'fs_data'
     ];
     protected $casts = [
