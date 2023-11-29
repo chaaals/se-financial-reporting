@@ -12,10 +12,27 @@
         </select>
     </div>
     <div>
-        <label for="report_type">Report Type:</label>
-        <select id="report_type" wire:model="report_type">
+        <label for="fiscal_year">Fiscal Year:</label>
+        <select id="fiscal_year" wire:model="fiscal_year">
+            @foreach ($years as $year)
+                <option value="{{ $year }}">{{ $year }}</option>
+            @endforeach
+        </select>
+    </div>
+    <div>
+        <label for="interim_period">Interim Period:</label>
+        <select id="interim_period" wire:model="interim_period">
             <option value="Quarterly">Quarterly</option>
             <option value="Annual">Annual</option>
+        </select>
+    </div>
+    <div>
+        <label for="quarter">Quarter:</label>
+        <select id="quarter" wire:model="quarter">
+            <option value="Q1">Q1</option>
+            <option value="Q2">Q2</option>
+            <option value="Q3">Q3</option>
+            <option value="Q4">Q4</option>
         </select>
     </div>
     <div>

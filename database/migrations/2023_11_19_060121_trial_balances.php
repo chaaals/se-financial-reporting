@@ -16,10 +16,18 @@ return new class extends Migration
                 ->default(DB::raw('(UUID())'))
                 ->primary();
             $table->string('tb_name');
-            $table->boolean('closing');
-            $table->date('period');
+            $table->enum('tb_type', ['pre','post'])->nullable();
+            $table->date('date');
+            $table->string('template_name');
+            $table->enum('interim_period', ['Monthly','Quarterly', 'Annual']);
             $table->longText('tb_data'); // json
             $table->timestamp('created_at');
+
+            $table->foreign('template_name')
+                ->references('template_name')
+                ->on('report_templates')
+                ->onDelete('restrict')
+                ->default('tb');
         });
     }
 
