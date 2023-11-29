@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('financial_statements', function (Blueprint $table) {
             $table->uuid('statement_id')
+                ->default(DB::raw('(UUID())'))
                 ->primary();
             $table->string('statement_name');
             $table->enum('statement_type', ['SFPO', 'SFPE', 'SCF']);
