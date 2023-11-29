@@ -17,7 +17,7 @@ class AddFinancialReport extends Component
     public $trial_balances = [];
     protected $rules = [
         'report_name' => 'nullable|max:255',
-        'fiscal_year' => 'required|max:4',
+        'fiscal_year' => 'required',
         'interim_period' => 'required|in:Quarterly,Annual',
         'report_status' => 'required|in:Draft,For Approval',
         'quarter' => 'nullable',

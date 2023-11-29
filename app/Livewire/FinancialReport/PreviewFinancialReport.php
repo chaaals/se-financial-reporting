@@ -24,7 +24,7 @@ class PreviewFinancialReport extends Component
     public $years;
     protected $rules = [
         'editedReportName' => 'nullable|max:255',
-        'editedFiscalYear' => 'required|max:4',
+        'editedFiscalYear' => 'required',
         'editedInterimPeriod' => 'required|in:Quarterly,Annual',
         'editedReportStatus' => 'required|in:Draft,For Approval,Approved',
         'editedQuarter' => 'nullable',
