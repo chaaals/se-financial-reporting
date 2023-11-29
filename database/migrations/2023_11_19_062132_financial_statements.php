@@ -13,12 +13,16 @@ return new class extends Migration
     {
         Schema::create('financial_statements', function (Blueprint $table) {
             $table->uuid('statement_id')
-                ->default(DB::raw('(UUID())'))
                 ->primary();
+            $table->string('statement_name');
+            $table->enum('statement_type', ['SFPO', 'SFPE', 'SCF']);
             $table->foreignUuid('tb_id')
                 ->constrained(table:'trial_balances', column: 'tb_id')
                 ->cascadeOnDelete();
-            $table->enum('statement_type', ['SFPO', 'SFPE', 'SCNAE', 'SCF', 'SCBAA']);
+            $table->foreign('template_name')
+                ->references('template_name')
+                ->on('report_templates')
+                ->onDelete('restrict');
             $table->longText('fs_data'); // json
             $table->timestamp('created_at');
         });
