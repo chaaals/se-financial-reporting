@@ -16,9 +16,10 @@ return new class extends Migration
                 ->default(DB::raw('(UUID())'))
                 ->primary();
             $table->string('report_name');
-            $table->date('start_date');
-            $table->date('end_date');
-            $table->enum('report_type', ['Quarterly', 'Annual']);
+            $table->year('fiscal_year');
+            $table->enum('interim_period', ['Quarterly', 'Annual']);
+            $table->enum('quarter', ['Q1', 'Q2', 'Q3', 'Q4']);
+            $table->string('template_name');
             $table->enum('report_status', ['Draft','For Approval', 'Approved']);
             $table->boolean('approved');
             $table->foreignUuid('tb_id')
