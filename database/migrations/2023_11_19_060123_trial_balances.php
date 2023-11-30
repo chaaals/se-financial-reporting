@@ -15,13 +15,12 @@ return new class extends Migration
             $table->uuid('tb_id')
                 ->default(DB::raw('(UUID())'))
                 ->primary();
-            $table->string('tb_name');
+            $table->foreignUuid('report_id')
+                ->constrained(table:'financial_reports', column: 'report_id')
+                ->cascadeOnDelete();
             $table->enum('tb_type', ['pre','post'])->nullable();
-            $table->date('date');
             $table->string('template_name');
-            $table->enum('interim_period', ['Monthly','Quarterly', 'Annual']);
             $table->longText('tb_data'); // json
-            $table->timestamp('created_at');
 
             $table->foreign('template_name')
                 ->references('template_name')
