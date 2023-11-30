@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('report_templates', function (Blueprint $table) {
-            $table->string('template_name', 6)
+            $table->string('template_name', 20)
                 ->primary();
             $table->longText('template');
         });
