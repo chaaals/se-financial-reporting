@@ -15,14 +15,12 @@ return new class extends Migration
             $table->uuid('statement_id')
                 ->default(DB::raw('(UUID())'))
                 ->primary();
-            $table->string('statement_name');
-            $table->enum('statement_type', ['SFPO', 'SFPE', 'SCF']);
-            $table->foreignUuid('tb_id')
-                ->constrained(table:'trial_balances', column: 'tb_id')
+            $table->enum('fs_type', ['SFPO', 'SFPE', 'SCF']);
+            $table->foreignUuid('report_id')
+                ->constrained(table:'financial_reports', column: 'report_id')
                 ->cascadeOnDelete();
             $table->string('template_name');
             $table->longText('fs_data'); // json
-            $table->timestamp('created_at');
 
             $table->foreign('template_name')
                 ->references('template_name')
