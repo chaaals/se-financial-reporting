@@ -21,9 +21,8 @@ return new class extends Migration
             $table->enum('quarter', ['Q1', 'Q2', 'Q3', 'Q4'])->nullable();
             $table->enum('report_status', ['Draft','For Approval', 'Approved'])->default("Draft");
             $table->boolean('approved')->default(false);
-            $table->foreignUuid('tb_id')
-                ->constrained(table: 'trial_balances', column: 'tb_id')
-                ->cascadeOnDelete();
+            $table->longText('notes')->nullable();
+            $table->date('date');
             $table->timestamp('created_at');
             $table->timestamp('updated_at');
         });
