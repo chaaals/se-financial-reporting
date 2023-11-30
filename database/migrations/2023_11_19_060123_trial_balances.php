@@ -11,23 +11,22 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('financial_statements', function (Blueprint $table) {
-            $table->uuid('statement_id')
+        Schema::create('trial_balances', function (Blueprint $table) {
+            $table->uuid('tb_id')
                 ->default(DB::raw('(UUID())'))
                 ->primary();
-            $table->string('statement_name');
-            $table->enum('statement_type', ['SFPO', 'SFPE', 'SCF']);
-            $table->foreignUuid('tb_id')
-                ->constrained(table:'trial_balances', column: 'tb_id')
+            $table->foreignUuid('report_id')
+                ->constrained(table:'financial_reports', column: 'report_id')
                 ->cascadeOnDelete();
+            $table->enum('tb_type', ['pre','post'])->nullable();
             $table->string('template_name');
-            $table->longText('fs_data'); // json
-            $table->timestamp('created_at');
+            $table->longText('tb_data'); // json
 
             $table->foreign('template_name')
                 ->references('template_name')
                 ->on('report_templates')
-                ->onDelete('restrict');
+                ->onDelete('restrict')
+                ->default('tb');
         });
     }
 
@@ -36,6 +35,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('financial_statements');
+        Schema::dropIfExists('trial_balances');
     }
 };
