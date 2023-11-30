@@ -12,9 +12,8 @@ class TrialBalance extends Model
 
     const UPDATED_AT = null;
     protected $fillable = [
-        'tb_name',
-        'period',
-        'closing',
+        'report_id',
+        'tb_type',
         'tb_data',
     ];
 
