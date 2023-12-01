@@ -9,8 +9,7 @@ class TrialBalance extends Model
 {
     protected $primaryKey = 'tb_id';
     use HasFactory;
-
-    const UPDATED_AT = null;
+    public $timestamps = false;
     protected $fillable = [
         'report_id',
         'tb_type',
