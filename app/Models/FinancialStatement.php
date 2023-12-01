@@ -10,11 +10,15 @@ class FinancialStatement extends Model
     protected $primaryKey = 'statement_id';
     use HasFactory;
     protected $fillable = [
-        'statement_type',
-        'statement_name',
-        'tb_id',
+        'fs_type',
+        'fs_data',
+        'report_name',
+        'report_status',
+        'quarter',
+        'approved',
+        'date',
+        'interim_period',
         'template_name',
-        'fs_data'
     ];
     protected $casts = [
         'statement_id' => 'string',
