@@ -54,6 +54,7 @@ class AddTrialBalance extends Component
             $this->quarter = null;
             if ($this->interim_period === "Annual") {
                 $this->reportName = "Annual Financial Report " . date('Y');
+                $this->tbType = "pre";
             } else {
                 $this->reportName = "Financial Report " . date('Y-m');
             }
