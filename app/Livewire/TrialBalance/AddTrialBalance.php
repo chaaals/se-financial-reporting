@@ -13,7 +13,7 @@ class AddTrialBalance extends Component
     use WithFileUploads;
 
     public $tbName;
-    public $reportName;
+    public $tbType;
     public $date;
     public $interimPeriod;
     public $quarter;
@@ -25,7 +25,7 @@ class AddTrialBalance extends Component
     protected $rules = [
         "tbName" => "nullable|max:255",
         "date" => "required|date",
-        "reportName" => "nullable|in:pre,post",
+        "tbType" => "nullable|in:pre,post",
         "importedSpreadsheet" => "required|file|mimes:xlsx,xls,ods",
         'interimPeriod' => 'required|in:Quarterly,Annual',
         'quarter' => 'nullable',
@@ -40,29 +40,28 @@ class AddTrialBalance extends Component
 
     public function add(){
         $fr_month = date('m', strtotime($this->date));
-        $reportName = null;
 
         if ($this->interimPeriod === 'Quarterly') {
             $this->rules['quarter'] = 'required|in:Q1,Q2,Q3,Q4';
             $quarter = ceil($fr_month / 3);
             $this->quarter = "Q$quarter";
-            $reportName = "Q$quarter Financial Report " . date('Y');
+            $this->tbName = "Q$quarter Financial Report " . date('Y');
         } else {
             $this->quarter = null;
             if ($this->interimPeriod === "Annual") {
-                $this->reportName = "Annual Financial Report " . date('Y');
-                $this->reportName = "pre";
+                $this->tbName = "Annual Financial Report " . date('Y');
+                $this->tbType = "pre";
             } else {
-                $this->reportName = "Financial Report " . date('Y-m');
+                $this->tbName = "Financial Report " . date('Y-m');
             }
         }
 
         $this->validate();
         if($this->spreadsheet){
             TrialBalance::create([
-                "tb_type" => $this->reportName ?? null,
+                "tb_type" => $this->tbType ?? null,
                 "tb_data" => json_encode($this->spreadsheet),
-                "report_name" => $reportName,
+                "report_name" => $this->tbName,
                 "interim_period" => $this->interimPeriod,
                 "quarter" => $this->quarter,
                 "report_status" => 'Draft',
