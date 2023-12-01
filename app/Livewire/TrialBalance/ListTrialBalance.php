@@ -3,7 +3,6 @@
 namespace App\Livewire\TrialBalance;
 
 use App\Models\TrialBalance;
-use App\Models\FinancialReport;
 use Livewire\Component;
 
 class ListTrialBalance extends Component
@@ -14,18 +13,17 @@ class ListTrialBalance extends Component
     public function mount() {
         // TODO: Change to DB query
         $this->trial_balances = TrialBalance::all();
-        $this->financial_reports = FinancialReport::all();
     }
 
-    public function confirmDelete($report_id)
+    public function confirmDelete($tbID)
     {
-        $this->confirming = $report_id;
+        $this->confirming = $tbID;
     }
 
-    public function deleteTrialBalance($report_id)
+    public function deleteTrialBalance($tbID)
     {
         // delete by ID
-        FinancialReport::find($report_id)->delete();
+        TrialBalance::find($tbID)->delete();
         // refresh
         // TODO: Change to DB query
         $this->trial_balances = TrialBalance::all();
