@@ -16,6 +16,7 @@ export default {
             },
             colors: {
                 primary: "#2D349A",
+                accentOne: "#E1E6EF",
                 active: "#2D6B9A",
             },
         },

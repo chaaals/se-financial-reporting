@@ -16,7 +16,7 @@
         @livewireStyles
     </head>
 
-    <body class="relative w-screen h-screen overflow-x-hidden overflow-y-scroll">
+    <body class="relative w-screen h-screen overflow-x-hidden overflow-y-scroll md:w-full">
         <livewire:layout.navbar />
 
         <main class="flex w-full h-full">

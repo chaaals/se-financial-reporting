@@ -25,7 +25,7 @@ $logout = function (Logout $logout) {
         </button>
 
         <section
-            class="fixed top-0 left-0 w-screen h-screen bg-primary py-2 flex flex-col md:hidden"
+            class="fixed top-0 left-0 w-screen h-screen bg-primary py-2 flex flex-col z-10 md:hidden"
             x-show="open"
             x-cloak
         >
