@@ -1,30 +1,4 @@
 <section class="w-full p-4">
-    {{-- @if($trial_balances)
-    <section>
-        @foreach($trial_balances as $tb)
-            <a href="/trial-balances/{{ $tb->tb_id }}">{{ $tb->report_name }}</a>
-            @if ($tb->tb_type)
-                <div>Type: {{ $tb->tb_type }}</div>
-            @endif
-            <div>Status: {{ $tb->report_status }}</div>
-            <div>Date: {{ $tb->date }}</div>
-            @if ($tb->quarter)
-                <div>Quarter: {{ $tb->quarter }}</div>
-            @endif
-            <div>Interim Period: {{ $tb->interim_period }}</div>
-
-            <div>
-                <!-- delete -->
-                <button wire:click="confirmDelete('{{ $tb->tb_id }}')">Delete</button>
-                <!-- confirm deletion -->
-                @if ($confirming === $tb->tb_id)
-                    <button wire:click="deleteTrialBalance('{{ $tb->tb_id }}')">Confirm Delete</button>
-                    <button wire:click="$set('confirming', null)">Cancel</button>
-                @endif
-            </div>
-        @endforeach
-    </section>
-    @endif --}}
 
     <section class="bg-white drop-shadow-md rounded-lg">
         <table class="w-full table-auto rounded-t-md overflow-hidden">
@@ -66,8 +40,8 @@
 
             <tbody>
                 @if($trial_balances)
-                    @foreach($trial_balances as $tb)
-                        <tr class="bg-accentOne">
+                    @foreach($trial_balances as $index=>$tb)
+                        <tr class={{ $index%2 == 0 ? 'bg-accentOne' : 'bg-white' }}>
                             <td class="p-2">
                                 {{ $tb->report_name }}
                             </td>
@@ -83,7 +57,11 @@
                             <td class="p-2 md:table-cell">
                                 {{ $tb->report_status }}
                             </td>
-                            <td class="p-2">Delete</td>
+                            <td class="flex items-center justify-center p-2">
+                                <button>
+                                    <x-financial-reporting.assets.trash-icon />
+                                </button>
+                            </td>
                         </tr>
                     @endforeach
                 @endif
@@ -91,9 +69,9 @@
 
             <tfoot>
                 <tr>
-                    <td class="flex items-center">
-                        <h4>Rows per page</h4>
-                        <select wire:model='rows' wire:change='updatePage'>
+                    <td class="flex items-center p-2">
+                        <h4>Rows per page: </h4>
+                        <select class="border-none active:border-none" wire:model='rows' wire:change='updatePage'>
                             <option value={{ 10 }}>10</option>
                             <option value={{ 15 }}>15</option>
                             <option value={{ 20 }}>20</option>
