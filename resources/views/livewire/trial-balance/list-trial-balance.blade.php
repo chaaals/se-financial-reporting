@@ -25,7 +25,7 @@
         @endforeach
     </section>
     @endif --}}
-{{-- border-2 border-solid border-indigo-500/50 --}}
+
     <section class="bg-white drop-shadow-md rounded-lg">
         <table class="w-full table-auto rounded-t-md overflow-hidden">
             <thead class="bg-primary text-white">
@@ -65,24 +65,38 @@
             </thead>
 
             <tbody>
-                <tr class="bg-accentOne">
-                    <td class="p-2">Trial Balance report 1</td>
-                    <td class="p-2">Pre-closing</td>
-                    <td class="p-2">Monthly</td>
-                    <td class="p-2">{{ date("M-d-Y") }}</td>
-                    <td class="p-2">Draft</td>
-                    <td class="p-2"></td>
-                </tr>
+                @if($trial_balances)
+                    @foreach($trial_balances as $tb)
+                        <tr class="bg-accentOne">
+                            <td class="p-2">
+                                {{ $tb->report_name }}
+                            </td>
+                            <td class="hidden p-2 md:table-cell">
+                                {{ $tb->tb_type ?? "Monthly Pre-closing" }}
+                            </td>
+                            <td class="hidden p-2 md:table-cell">
+                                {{ $tb->interim_period }}
+                            </td>
+                            <td class="hidden p-2 md:table-cell">
+                                {{ $tb->date }}
+                            </td>
+                            <td class="p-2 md:table-cell">
+                                {{ $tb->report_status }}
+                            </td>
+                            <td class="p-2">Delete</td>
+                        </tr>
+                    @endforeach
+                @endif
             </tbody>
 
             <tfoot>
                 <tr>
                     <td class="flex items-center">
                         <h4>Rows per page</h4>
-                        <select>
-                            <option>10</option>
-                            <option>15</option>
-                            <option>20</option>
+                        <select wire:model='rows' wire:change='updatePage'>
+                            <option value={{ 10 }}>10</option>
+                            <option value={{ 15 }}>15</option>
+                            <option value={{ 20 }}>20</option>
                         </select>
                     </td>
                     <td class="hidden md:table-cell"></td>
@@ -90,8 +104,8 @@
                     <td class="hidden md:table-cell"></td>
                     <td></td>
                     <td class="flex items-center justify-between p-4">
-                        <button>{{ "<" }}</button>
-                        <button>{{ ">" }}</button>
+                        <button wire:click="previous">{{ "<" }}</button>
+                        <button wire:click="next">{{ ">" }}</button>
                     </td>
                 </tr>
             </tfoot>
