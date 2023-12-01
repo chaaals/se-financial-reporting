@@ -15,13 +15,21 @@ return new class extends Migration
             $table->uuid('tb_id')
                 ->default(DB::raw('(UUID())'))
                 ->primary();
-            $table->foreignUuid('report_id')
-                ->constrained(table:'financial_reports', column: 'report_id')
-                ->cascadeOnDelete();
             $table->enum('tb_type', ['pre','post'])->nullable();
-            $table->string('template_name');
             $table->longText('tb_data'); // json
 
+            $table->string('report_name');
+            $table->enum('report_status', ['Draft','For Approval', 'Approved'])->default('Draft');
+            $table->enum('quarter', ['Q1', 'Q2', 'Q3', 'Q4'])->nullable();
+            $table->boolean('approved')->default(false);
+            $table->date('date');
+            $table->enum('interim_period', ['Quarterly', 'Annual'])->nullable();
+            $table->year('fiscal_year');
+            $table->longText('notes')->nullable();
+            $table->string('template_name');
+            $table->timestamp('created_at');
+            $table->timestamp('updated_at');
+            
             $table->foreign('template_name')
                 ->references('template_name')
                 ->on('report_templates')
