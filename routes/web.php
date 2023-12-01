@@ -13,21 +13,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::view('/', 'welcome');
+Route::view('/', 'home')->middleware('auth');
 
-Route::group(['prefix'=> '/trial-balances'], function () {
+Route::prefix('/trial-balances')->middleware('auth')->group(function () {
     Route::view('/','trial-balance');
     Route::view('add','add-trial-balance');
     Route::view('/{tb_id}', 'preview-trial-balance');
 });
 
-Route::group(['prefix'=> '/financial-reports'], function () {
-    Route::view('/','financial-report');
-    Route::view('add','add-financial-report');
-    Route::view('/{report_id}', 'preview-financial-report');
+
+Route::prefix('/financial-statements')->middleware('auth')->group(function () {
+    Route::view('/','trial-balance'); // change to fs
+    Route::view('add','add-trial-balance'); // change to fs
+    Route::view('/{tb_id}', 'preview-trial-balance'); // change to fs
 });
 
-Route::group(['prefix'=> '/financial-statements'], function () {
-    Route::view('/','financial-statements');
-    Route::view('/{statement_id}', 'preview-financial-statement');
-});
+require __DIR__.'/auth.php';

@@ -15,15 +15,15 @@ class ListTrialBalance extends Component
         $this->trial_balances = TrialBalance::all();
     }
 
-    public function confirmDelete($tbId)
+    public function confirmDelete($tbID)
     {
-        $this->confirming = $tbId;
+        $this->confirming = $tbID;
     }
 
-    public function deleteTrialBalance($tbId)
+    public function deleteTrialBalance($tbID)
     {
         // delete by ID
-        TrialBalance::find($tbId)->delete();
+        TrialBalance::find($tbID)->delete();
         // refresh
         // TODO: Change to DB query
         $this->trial_balances = TrialBalance::all();

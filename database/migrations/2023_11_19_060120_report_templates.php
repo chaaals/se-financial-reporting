@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('report_templates', function (Blueprint $table) {
-            $table->string('template_name')
+            $table->string('template_name', 20)
                 ->primary();
-                $table->longText('template');
+            $table->longText('template');
         });
 
         DB::table('report_templates')->insert([
