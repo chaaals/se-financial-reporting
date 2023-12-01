@@ -12,14 +12,11 @@ use Livewire\Form;
 
 class LoginForm extends Form
 {
-    #[Rule('required|string|email')]
-    public string $email = '';
+    #[Rule('required|string')]
+    public string $admin_username = '';
 
     #[Rule('required|string')]
     public string $password = '';
-
-    #[Rule('boolean')]
-    public bool $remember = false;
 
     /**
      * Attempt to authenticate the request's credentials.
@@ -29,8 +26,8 @@ class LoginForm extends Form
     public function authenticate(): void
     {
         $this->ensureIsNotRateLimited();
-
-        if (! Auth::attempt($this->only(['email', 'password']), $this->remember)) {
+        
+        if (! Auth::attempt($this->only(['admin_username', 'password']))) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
@@ -67,6 +64,6 @@ class LoginForm extends Form
      */
     protected function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->email).'|'.request()->ip());
+        return Str::transliterate(Str::lower($this->admin_username).'|'.request()->ip());
     }
 }
