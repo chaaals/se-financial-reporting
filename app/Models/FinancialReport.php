@@ -17,7 +17,8 @@ class FinancialReport extends Model
         'quarter',
         'report_status',
         'approved',
-        'tb_id'
+        'date',
+        'notes',
     ];
 
     protected $casts = [
