@@ -17,11 +17,12 @@
             </div>
             <div>
                 <label for="interim_period">Interim Period</label>
-                <select id="interim_period" wire:model="interim_period">
+                <select id="interim_period" wire:model="interimPeriod">
                     <option value="Quarterly">Monthly</option>
                     <option value="Quarterly">Quarterly</option>
                     <option value="Annual">Annual</option>
                 </select>
+                <div>@error('interimPeriod')<span>{{ $message }}</span>@enderror</div>
             </div>
             <div>
                 <input
