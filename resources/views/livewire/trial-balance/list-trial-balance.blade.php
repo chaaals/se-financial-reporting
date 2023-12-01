@@ -50,10 +50,34 @@
                     <x-financial-reporting.assets.table-sort />
                 </button>
             </th>
+            <th class="relative text-left p-2">
+                Actions
+            </th>
         </thead>
 
         <tbody>
         
         </tbody>
+
+        <tfoot>
+            <tr>
+                <td class="flex items-center">
+                    <h4>Rows per page</h4>
+                    <select>
+                        <option>10</option>
+                        <option>20</option>
+                        <option>10</option>
+                    </select>
+                </td>
+                <td class="hidden md:table-cell"></td>
+                <td class="hidden md:table-cell"></td>
+                <td class="hidden md:table-cell"></td>
+                <td></td>
+                <td class="flex items-center justify-between p-4">
+                    <button>{{ "<" }}</button>
+                    <button>{{ ">" }}</button>
+                </td>
+            </tr>
+        </tfoot>
     </table>
 </section>
