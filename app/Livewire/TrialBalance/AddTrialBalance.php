@@ -4,7 +4,6 @@ namespace App\Livewire\TrialBalance;
 
 use App\Imports\TrialBalanceImport;
 use App\Models\TrialBalance;
-use App\Models\FinancialReport;
 use Livewire\Attributes\Rule;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -14,9 +13,8 @@ class AddTrialBalance extends Component
     use WithFileUploads;
 
     public $tbName;
-    public $tbType;
+    public $reportName;
     public $date;
-    public $fiscalYear;
     public $interimPeriod;
     public $quarter;
     
@@ -27,11 +25,10 @@ class AddTrialBalance extends Component
     protected $rules = [
         "tbName" => "nullable|max:255",
         "date" => "required|date",
-        "tbType" => "nullable|in:pre,post",
-        // "importedSpreadsheet" => "required|file|mimes:xlsx,xls,ods",
+        "reportName" => "nullable|in:pre,post",
+        "importedSpreadsheet" => "required|file|mimes:xlsx,xls,ods",
         'interimPeriod' => 'required|in:Quarterly,Annual',
         'quarter' => 'nullable',
-        'fiscalYear' => 'required',
     ];
 
     public function mount()
@@ -52,30 +49,25 @@ class AddTrialBalance extends Component
             $reportName = "Q$quarter Financial Report " . date('Y');
         } else {
             $this->quarter = null;
-            if ($this->interim_period === "Annual") {
+            if ($this->interimPeriod === "Annual") {
                 $this->reportName = "Annual Financial Report " . date('Y');
-                $this->tbType = "pre";
+                $this->reportName = "pre";
             } else {
                 $this->reportName = "Financial Report " . date('Y-m');
             }
         }
-        $this->fiscalYear = date('Y', strtotime($this->date));
 
         $this->validate();
         if($this->spreadsheet){
-            $financialReport = FinancialReport::create([
+            TrialBalance::create([
+                "tb_type" => $this->reportName ?? null,
+                "tb_data" => json_encode($this->spreadsheet),
                 "report_name" => $reportName,
-                "fiscal_year" => $this->fiscalYear,
                 "interim_period" => $this->interimPeriod,
                 "quarter" => $this->quarter,
                 "report_status" => 'Draft',
                 "approved" => false,
                 "date" => $this->date,
-            ]);
-            TrialBalance::create([
-                "tb_type" => $this->tbType ?? null,
-                "tb_data" => json_encode($this->spreadsheet),
-                "report_id" => $financialReport->report_id,
             ]);
             $this->reset();
         }
