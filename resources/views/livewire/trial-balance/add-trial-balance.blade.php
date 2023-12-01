@@ -13,11 +13,12 @@
             <div>
                 <label htmlFor='trialBalancePeriod'>Trial Balance period</label>
                 <input id='trialBalancePeriod' type='date' wire:model='date' />
-                <div>@error('period')<span>{{ $message }}</span>@enderror</div>
+                <div>@error('date')<span>{{ $message }}</span>@enderror</div>
             </div>
             <div>
                 <label for="interim_period">Interim Period</label>
                 <select id="interim_period" wire:model="interim_period">
+                    <option value="Quarterly">Monthly</option>
                     <option value="Quarterly">Quarterly</option>
                     <option value="Annual">Annual</option>
                 </select>
