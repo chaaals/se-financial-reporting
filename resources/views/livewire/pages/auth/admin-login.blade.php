@@ -28,16 +28,16 @@ $login = function () {
     <form wire:submit="login">
         {{-- Admin Name --}}
         <div>
-            <label htmlFor="adminName">Admin Username</label>
-            <input id="adminName" type="text" wire:model="form.admin_username" />
+            <label class="block" htmlFor="adminName">Admin Username</label>
+            <input id="adminName" type="text" wire:model="form.admin_username" placeholder="name@role" />
         </div>
 
         <!-- Password -->
         <div class="mt-4">
-            <label htmlFor="adminPassword">Password</label>
-            <input id="adminPassword" type="text" wire:model="form.password" />
+            <label class="block" htmlFor="adminPassword">Password</label>
+            <input id="adminPassword" type="password" wire:model="form.password" placeholder="••••••••••" />
         </div>
 
-        <button type="submit">Log In</button>
+        <button class="bg-sky-600 text-white w-full mt-4 p-2 rounded-lg" type="submit">Log In</button>
     </form>
 </section>
