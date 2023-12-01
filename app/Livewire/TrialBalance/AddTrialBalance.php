@@ -45,14 +45,14 @@ class AddTrialBalance extends Component
             $this->rules['quarter'] = 'required|in:Q1,Q2,Q3,Q4';
             $quarter = ceil($fr_month / 3);
             $this->quarter = "Q$quarter";
-            $this->tbName = "Q$quarter Financial Report " . date('Y');
+            $this->tbName = "Q$quarter Trial Balance " . date('Y');
         } else {
             $this->quarter = null;
             if ($this->interimPeriod === "Annual") {
-                $this->tbName = "Annual Financial Report " . date('Y');
+                $this->tbName = "Annual Trial Balance " . date('Y');
                 $this->tbType = "pre";
             } else {
-                $this->tbName = "Financial Report " . date('Y-m');
+                $this->tbName = "Trial Balance " . date('Y-m');
             }
         }
 
