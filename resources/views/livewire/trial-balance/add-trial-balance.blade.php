@@ -8,17 +8,19 @@
         <form wire:submit.prevent="add">
             <div>
                 <label htmlFor='trialBalanceName'>Trial Balance Name</label>
-                <input id='trialBalanceName' type='text' wire:model='tbName' />
+                <input id='trialBalanceName' type='text' wire:model='tbName' placeholder='optional' />
             </div>
             <div>
                 <label htmlFor='trialBalancePeriod'>Trial Balance period</label>
-                <input id='trialBalancePeriod' type='date' wire:model='period' />
+                <input id='trialBalancePeriod' type='date' wire:model='date' />
                 <div>@error('period')<span>{{ $message }}</span>@enderror</div>
             </div>
             <div>
-                <label htmlFor='isClosingTrialBalance'>Closing</label>
-                <input id='isClosingTrialBalance' type='checkbox' wire:model='isClosing' />
-                <div>@error('isClosing')<span>{{ $message }}</span>@enderror</div>
+                <label for="interim_period">Interim Period</label>
+                <select id="interim_period" wire:model="interim_period">
+                    <option value="Quarterly">Quarterly</option>
+                    <option value="Annual">Annual</option>
+                </select>
             </div>
             <div>
                 <input
