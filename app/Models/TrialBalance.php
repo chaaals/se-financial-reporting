@@ -19,4 +19,9 @@ class TrialBalance extends Model
     protected $casts = [
         'tb_id' => 'string',
     ];
+
+    public function financialReport()
+    {
+        return $this->belongsTo(FinancialReport::class, 'report_id', 'report_id');
+    }
 }
