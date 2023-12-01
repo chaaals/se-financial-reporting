@@ -27,7 +27,7 @@ class AddTrialBalance extends Component
         "date" => "required|date",
         "tbType" => "nullable|in:pre,post",
         "importedSpreadsheet" => "required|file|mimes:xlsx,xls,ods",
-        'interimPeriod' => 'required|in:Quarterly,Annual',
+        'interimPeriod' => 'required|in:Monthly,Quarterly,Annual',
         'quarter' => 'nullable',
     ];
 
