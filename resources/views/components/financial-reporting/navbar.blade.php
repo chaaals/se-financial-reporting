@@ -13,7 +13,7 @@
         </button>
 
         <section
-            class="fixed top-0 left-0 w-screen h-screen bg-sidebar py-2 flex flex-col md:hidden"
+            class="fixed top-0 left-0 w-screen h-screen bg-primary py-2 flex flex-col md:hidden"
             x-show="open"
             x-cloak
         >

@@ -16,7 +16,7 @@
         @livewireStyles
     </head>
 
-    <body class="relative w-screen h-screen overflow-x-hidden overflow-y-scroll">
+    <body class="relative w-screen h-screen overflow-x-hidden overflow-y-scroll md:w-full">
         <x-financial-reporting.navbar />
 
         <main class="flex w-full h-full">
