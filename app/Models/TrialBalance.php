@@ -9,16 +9,19 @@ class TrialBalance extends Model
 {
     protected $primaryKey = 'tb_id';
     use HasFactory;
-
-    const UPDATED_AT = null;
     protected $fillable = [
-        'tb_name',
-        'period',
-        'closing',
+        'tb_type',
         'tb_data',
+        'report_name',
+        'report_status',
+        'quarter',
+        'approved',
+        'date',
+        'interim_period',
     ];
 
     protected $casts = [
         'tb_id' => 'string',
     ];
+
 }
