@@ -9,7 +9,6 @@ class TrialBalance extends Model
 {
     protected $primaryKey = 'tb_id';
     use HasFactory;
-    public $timestamps = false;
     protected $fillable = [
         'tb_type',
         'tb_data',
