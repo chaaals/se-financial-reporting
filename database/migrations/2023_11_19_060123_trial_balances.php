@@ -24,12 +24,11 @@ return new class extends Migration
             $table->boolean('approved')->default(false);
             $table->date('date');
             $table->enum('interim_period', ['Quarterly', 'Annual'])->nullable();
-            $table->year('fiscal_year');
             $table->longText('notes')->nullable();
             $table->string('template_name');
             $table->timestamp('created_at');
             $table->timestamp('updated_at');
-            
+
             $table->foreign('template_name')
                 ->references('template_name')
                 ->on('report_templates')

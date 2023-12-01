@@ -23,7 +23,6 @@ return new class extends Migration
             $table->boolean('approved')->default(false);
             $table->date('date');
             $table->enum('interim_period', ['Quarterly', 'Annual']);
-            $table->year('fiscal_year');
             $table->longText('notes')->nullable();
             $table->string('template_name');
             $table->timestamp('created_at');
