@@ -17,7 +17,7 @@ $logout = function (Logout $logout) {
         <section class="hidden md:flex md:items-center">
             <x-financial-reporting.assets.user-icon />
             {{-- TODO: Add logic to get logged user --}}
-            <button wire:click='logout'>{{ auth()->user()->admin_name }}</button>
+            <button wire:click='logout'>{{ auth()->user()->first_name }} {{ auth()->user()->last_name }}</button>
         </section>
 
         <button class="md:hidden" x-on:click="open = true" x-show="! open">

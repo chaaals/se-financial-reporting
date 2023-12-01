@@ -15,19 +15,25 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('admin_name');
+            $table->string('admin_username');
+            $table->string('first_name');
+            $table->string('last_name');
             $table->string('password');
             $table->enum('role', ['accounting', 'ovpf']);
         });
         
         DB::table('users')->insert([
             [
-                'admin_name' => 'Mara',
+                'admin_username' => 'mara@accounting',
+                'first_name' => 'Mara',
+                'last_name' => 'Calinao',
                 'password' => Hash::make('admin123'),
                 'role' => 'accounting'
             ],
             [
-                'admin_name' => 'Luzviminda',
+                'admin_username' => 'luzviminda@ovpf',
+                'first_name' => 'Luzviminda',
+                'last_name' => 'Landicho',
                 'password' => Hash::make('admin123'),
                 'role' => 'ovpf'
             ]

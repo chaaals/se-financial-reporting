@@ -28,8 +28,8 @@ $login = function () {
     <form wire:submit="login">
         {{-- Admin Name --}}
         <div>
-            <label htmlFor="adminName">Admin Name</label>
-            <input id="adminName" type="text" wire:model="form.admin_name" />
+            <label htmlFor="adminName">Admin Username</label>
+            <input id="adminName" type="text" wire:model="form.admin_username" />
         </div>
 
         <!-- Password -->
