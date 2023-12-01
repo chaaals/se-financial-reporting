@@ -23,9 +23,9 @@ Route::prefix('/trial-balances')->middleware('auth')->group(function () {
 
 
 Route::prefix('/financial-statements')->middleware('auth')->group(function () {
-    Route::view('/','trial-balance'); // change to fs
-    Route::view('add','add-trial-balance'); // change to fs
-    Route::view('/{tb_id}', 'preview-trial-balance'); // change to fs
+    Route::view('/','financial-statements'); // change to fs
+    Route::view('add','add-financial-statement'); // change to fs
+    Route::view('/{statement_id}', 'preview-financial-statement'); // change to fs
 });
 
 require __DIR__.'/auth.php';
