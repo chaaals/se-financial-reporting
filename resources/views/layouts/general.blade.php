@@ -16,12 +16,12 @@
         @livewireStyles
     </head>
 
-    <body class="relative w-screen h-screen overflow-x-hidden overflow-y-scroll md:w-full">
-        <x-financial-reporting.navbar />
+    <body class="relative w-screen h-screen overflow-x-hidden overflow-y-scroll">
+        <livewire:layout.navbar />
 
         <main class="flex w-full h-full">
             <section class="hidden md:block md:h-full">
-                <x-financial-reporting.sidebar />
+                <livewire:layout.sidebar />
             </section>
             <section class="grow">{{ $slot }}</section>
         </main>
