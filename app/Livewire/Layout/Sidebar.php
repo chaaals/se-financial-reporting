@@ -19,7 +19,7 @@ class Sidebar extends Component
         ];
 
         $route = Route::current()->getPrefix();
-        $this->styles[$route] = $base . " bg-active";
+        $this->styles[$route ? $route : "/"] = $base . " bg-active";
     }
 
     public function render()
