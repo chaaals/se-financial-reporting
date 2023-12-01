@@ -23,7 +23,7 @@ return new class extends Migration
             $table->enum('quarter', ['Q1', 'Q2', 'Q3', 'Q4'])->nullable();
             $table->boolean('approved')->default(false);
             $table->date('date');
-            $table->enum('interim_period', ['Quarterly', 'Annual'])->nullable();
+            $table->enum('interim_period', ['Monthly', 'Quarterly', 'Annual']);
             $table->longText('notes')->nullable();
             $table->string('template_name');
             $table->timestamp('created_at');
