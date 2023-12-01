@@ -16,11 +16,18 @@ return new class extends Migration
                 ->default(DB::raw('(UUID())'))
                 ->primary();
             $table->enum('fs_type', ['SFPO', 'SFPE', 'SCF']);
-            $table->foreignUuid('report_id')
-                ->constrained(table:'financial_reports', column: 'report_id')
-                ->cascadeOnDelete();
-            $table->string('template_name');
             $table->longText('fs_data'); // json
+            $table->string('report_name');
+            $table->enum('report_status', ['Draft','For Approval', 'Approved'])->default('Draft');
+            $table->enum('quarter', ['Q1', 'Q2', 'Q3', 'Q4'])->nullable();
+            $table->boolean('approved')->default(false);
+            $table->date('date');
+            $table->enum('interim_period', ['Quarterly', 'Annual']);
+            $table->year('fiscal_year');
+            $table->longText('notes')->nullable();
+            $table->string('template_name');
+            $table->timestamp('created_at');
+            $table->timestamp('updated_at');
 
             $table->foreign('template_name')
                 ->references('template_name')
