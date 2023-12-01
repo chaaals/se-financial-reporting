@@ -11,17 +11,18 @@ class TrialBalance extends Model
     use HasFactory;
     public $timestamps = false;
     protected $fillable = [
-        'report_id',
         'tb_type',
         'tb_data',
+        'report_name',
+        'report_status',
+        'quarter',
+        'approved',
+        'date',
+        'interim_period',
     ];
 
     protected $casts = [
         'tb_id' => 'string',
     ];
 
-    public function financialReport()
-    {
-        return $this->belongsTo(FinancialReport::class, 'report_id', 'report_id');
-    }
 }
