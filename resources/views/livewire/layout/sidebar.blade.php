@@ -1,6 +1,6 @@
 <section
     x-data="{ fs_expanded: false }"
-    class="flex flex-col justify-between w-full h-full p-4 gap-2 md:w-400 md:bg-sidebar md:p-4">
+    class="flex flex-col justify-between w-full h-full p-4 gap-2 md:w-400 md:bg-primary md:p-4">
     <section>
         <section class="{{ $styles['/'] }}">
             <x-financial-reporting.assets.home-icon />

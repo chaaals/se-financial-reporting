@@ -3,17 +3,17 @@
 namespace App\Livewire\TrialBalance;
 
 use App\Models\TrialBalance;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class ListTrialBalance extends Component
 {
-    public $trial_balances = [];
-    public $confirming = null;
+    use WithPagination;
 
-    public function mount() {
-        // TODO: Change to DB query
-        $this->trial_balances = TrialBalance::all();
-    }
+    public $hasMorePages;
+    public $confirming = null;
+    public $rows = 10;
 
     public function confirmDelete($tbID)
     {
@@ -29,9 +29,31 @@ class ListTrialBalance extends Component
         $this->trial_balances = TrialBalance::all();
         $this->reset('confirming');
     }
+
+    public function previous(){
+        $this->previousPage();
+    }
+
+    public function next(){
+        if($this->hasMorePages){
+            $this->nextPage();
+        }
+    }
+
+    public function updatePage(){
+        // 
+    }
     
     public function render()
     {
-        return view('livewire.trial-balance.list-trial-balance');
+        $trial_balances = DB::table('trial_balances')
+                                    ->select('tb_id','report_name','date', 'interim_period', 'quarter', 'created_at', 'updated_at', 'report_status')
+                                    ->paginate($this->rows);
+
+        $this->hasMorePages = $trial_balances->hasMorePages();
+        
+        return view('livewire.trial-balance.list-trial-balance', [
+           "trial_balances" => $trial_balances
+        ]);
     }
 }

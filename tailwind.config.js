@@ -15,8 +15,13 @@ export default {
                 sans: ["Figtree", ...defaultTheme.fontFamily.sans],
             },
             colors: {
-                sidebar: "#2D349A",
+                primary: "#2D349A",
+                secondary: "#AB830F",
+                accentOne: "#E1E6EF",
                 active: "#2D6B9A",
+            },
+            height: {
+                160: "42.5rem",
             },
         },
     },
