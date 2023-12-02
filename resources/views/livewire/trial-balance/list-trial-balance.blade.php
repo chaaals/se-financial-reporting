@@ -1,92 +1,110 @@
 <section class="w-full p-4">
-
-    <section class="bg-white drop-shadow-md rounded-lg">
-        <table class="w-full table-auto rounded-t-md overflow-hidden">
-            <thead class="bg-primary text-white">
-                <th class="relative text-left p-2">
-                    Report name
+<section class="bg-white drop-shadow-md rounded-lg">
+    <section class="h-160 bg-white rounded-t-lg overflow-hidden overflow-y-scroll scrollbar">
+        <table class="w-full">
+            <thead>
+                <th class="w-36 bg-primary text-white relative text-left p-2 sticky top-0">
+                    Name
                     <button class="absolute top-4 right-4 md:top-1 md:right-2">
                         <x-financial-reporting.assets.table-sort />
                     </button>
                 </th>
-                <th class="relative hidden md:table-cell md:text-left p-2">
-                    Report type
-                    <button class="absolute top-1 right-2">
-                        <x-financial-reporting.assets.table-sort />
-                    </button>
-                </th>
-                <th class="relative hidden text-left md:table-cell p-2">
-                    Interim period
-                    <button class="absolute top-1 right-2">
-                        <x-financial-reporting.assets.table-sort />
-                    </button>
-                </th>
-                <th class="relative hidden text-left md:table-cell p-2">
+                <th class="w-36 bg-primary text-white relative text-left p-2 sticky top-0">
                     Date
                     <button class="absolute top-1 right-2">
                         <x-financial-reporting.assets.table-sort />
                     </button>
                 </th>
-                <th class="relative text-left p-2">
-                    Report status
+                <th class="w-36 bg-primary text-white relative text-left p-2 sticky top-0">
+                    Period
+                    <button class="absolute top-1 right-2">
+                        <x-financial-reporting.assets.table-sort />
+                    </button>
+                </th>
+                <th class="w-24 bg-primary text-white relative text-left p-2 sticky top-0">
+                    Quarter
+                    <button class="absolute top-1 right-2">
+                        <x-financial-reporting.assets.table-sort />
+                    </button>
+                </th>
+                <th class="w-40 bg-primary text-white relative text-left p-2 sticky top-0">
+                    Created At
                     <button class="absolute top-4 right-4 md:top-1 md:right-2">
                         <x-financial-reporting.assets.table-sort />
                     </button>
                 </th>
-                <th class="relative text-left p-2">
-                    Actions
+                <th class="w-40 bg-primary text-white relative text-left p-2 sticky top-0">
+                    Updated At
+                    <button class="absolute top-4 right-4 md:top-1 md:right-2">
+                        <x-financial-reporting.assets.table-sort />
+                    </button>
                 </th>
+                <th class="w-24 bg-primary text-white relative text-left p-2 sticky top-0">
+                    Status
+                    <button class="absolute top-4 right-4 md:top-1 md:right-2">
+                        <x-financial-reporting.assets.table-sort />
+                    </button>
+                </th>
+
+                <th class="w-20 bg-primary text-white relative text-left p-2 sticky top-0"></th>
             </thead>
 
             <tbody>
                 @if($trial_balances)
                     @foreach($trial_balances as $index=>$tb)
                         <tr class={{ $index%2 == 0 ? 'bg-accentOne' : 'bg-white' }}>
-                            <td class="p-2">
+                            <td class="h-16 p-2 text-center whitespace-nowrap">
                                 {{ $tb->report_name }}
                             </td>
-                            <td class="hidden p-2 md:table-cell">
-                                {{ $tb->tb_type ?? "Monthly Pre-closing" }}
+                            <td class="h-16 p-2 text-center whitespace-nowrap">
+                                {{ date('M d, Y', strtotime($tb->date)) }}
                             </td>
-                            <td class="hidden p-2 md:table-cell">
+                            <td class="h-16 p-2 text-center whitespace-nowrap">
                                 {{ $tb->interim_period }}
                             </td>
-                            <td class="hidden p-2 md:table-cell">
-                                {{ $tb->date }}
+                            <td class="h-16 p-2 text-center whitespace-nowrap">
+                                {{ $tb->quarter ?? "-" }}
                             </td>
-                            <td class="p-2 md:table-cell">
+                            <td class="h-16 p-2 text-center whitespace-wrap">
+                                {{ date('M d, Y H:i:s', strtotime($tb->created_at)) }}
+                            </td>
+                            <td class="h-16 p-2 text-center whitespace-wrap">
+                                {{ date('M d, Y H:i:s', strtotime($tb->updated_at)) }}
+                            </td>
+                            <td class="h-16 p-2 text-center whitespace-nowrap">
                                 {{ $tb->report_status }}
                             </td>
-                            <td class="flex items-center justify-center p-2">
-                                <button>
-                                    <x-financial-reporting.assets.trash-icon />
-                                </button>
+                            <td class="h-16 p-2">
+                                <div class="flex items-center justify-center">
+                                    <button class="h-full items-center">
+                                        <x-financial-reporting.assets.trash-icon />
+                                    </button>
+                                </div>
                             </td>
                         </tr>
                     @endforeach
                 @endif
             </tbody>
-
-            <tfoot>
-                <tr>
-                    <td class="flex items-center p-2">
-                        <h4>Rows per page: </h4>
-                        <select class="border-none active:border-none" wire:model='rows' wire:change='updatePage'>
-                            <option value={{ 10 }}>10</option>
-                            <option value={{ 15 }}>15</option>
-                            <option value={{ 20 }}>20</option>
-                        </select>
-                    </td>
-                    <td class="hidden md:table-cell"></td>
-                    <td class="hidden md:table-cell"></td>
-                    <td class="hidden md:table-cell"></td>
-                    <td></td>
-                    <td class="flex items-center justify-between p-4">
-                        <button wire:click="previous">{{ "<" }}</button>
-                        <button wire:click="next">{{ ">" }}</button>
-                    </td>
-                </tr>
-            </tfoot>
         </table>
+
     </section>
+    <section class="flex items-center justify-between px-4">
+        <div class="flex items-center gap-2">
+            <h4>Rows per page: </h4>
+            <select class="border-none active:border-none" wire:model='rows' wire:change='updatePage'>
+                <option value={{ 10 }}>10</option>
+                <option value={{ 15 }}>15</option>
+                <option value={{ 20 }}>20</option>
+            </select>
+        </div>
+        <div class="w-32 flex items-center justify-between p-4">
+            <button wire:click="previous">
+                <x-financial-reporting.assets.arrow-left />
+            </button>
+            <button wire:click="next">
+                <x-financial-reporting.assets.arrow-right />
+            </button>
+        </div>
+    </section>
+</section>
 </section>

@@ -47,7 +47,7 @@ class ListTrialBalance extends Component
     public function render()
     {
         $trial_balances = DB::table('trial_balances')
-                                    ->select('tb_id','report_name','report_status','tb_type','interim_period','date')
+                                    ->select('tb_id','report_name','date', 'interim_period', 'quarter', 'created_at', 'updated_at', 'report_status')
                                     ->paginate($this->rows);
 
         $this->hasMorePages = $trial_balances->hasMorePages();
