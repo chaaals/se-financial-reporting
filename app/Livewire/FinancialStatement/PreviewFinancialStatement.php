@@ -4,9 +4,14 @@ namespace App\Livewire\FinancialStatement;
 
 // use App\Exports\FinancialStatementExport;
 use App\Models\FinancialStatement;
+use App\Models\ReportTemplate;
 use Illuminate\Support\Facades\Route;
 use Livewire\Component;
 use Maatwebsite\Excel\Facades\Excel;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Storage;
+use DateTime;
 
 class PreviewFinancialStatement extends Component
 {
@@ -32,11 +37,11 @@ class PreviewFinancialStatement extends Component
     ];
 
     public function mount(){
-        $tb_id = Route::current()->parameter("statement_id");
-        $query = FinancialStatement::where('statement_id', $tb_id)->get();
+        $fs_id = Route::current()->parameter("statement_id");
+        $query = FinancialStatement::where('statement_id', $fs_id)->get();
 
-        foreach($query as $tb){
-            $this->financialStatement= $tb;
+        foreach($query as $fs){
+            $this->financialStatement= $fs;
         }
 
         // default values
@@ -50,11 +55,50 @@ class PreviewFinancialStatement extends Component
         
     }
 
-    // public function export() {
-    //     $export = new FinancialStatementExport(json_decode($this->financialStatement->tb_data));
+    public function export() {
+        $filePath = 'public/uploads/'.$this->editedFSType.'.xlsx';
+        $newFilePath = 'uploads/'.$this->editedFSType.'.xlsx';
+        Storage::copy($filePath, $newFilePath);
 
-    //     return Excel::download($export, 'TB_REPORT.xlsx');
-    // }
+        $spreadsheet = IOFactory::load(storage_path('app/' . $newFilePath));
+
+        // Get row numbers from the report_template table based on fsType
+        $templateName = strtolower($this->editedFSType) . '_vals';
+        $jsonMap = ReportTemplate::where('template_name', $templateName)->value('template');
+        $rowNumbers = array_values(json_decode($jsonMap, true));
+        $fsData = array_values(json_decode($this->financialStatement->fs_data));
+        $combinedData = array_combine($rowNumbers, $fsData);
+        $column = ($this->editedFSType === 'SCF') ? 'E' : 'F';
+        
+        foreach ($combinedData as $row => $value) {
+            $spreadsheet->getActiveSheet()->setCellValue($column . $row, $value);
+        }
+
+        $editedYear = date('Y', strtotime($this->editedDate));
+        $date = [
+            'Q1'=> "March 31, ".$editedYear,
+            'Q2'=> "June 31, ".$editedYear,
+            'Q3'=> "September 31, ".$editedYear,
+            'Q4'=> "December 31, ".$editedYear,
+        ];
+        $dateHeader = $spreadsheet->getActiveSheet()->getCell('A6')->getValue();
+        if ($this->editedInterimPeriod === 'Quarterly') {
+            $newDateHeader = str_replace('<date>', $date[$this->editedQuarter], $dateHeader);
+        } else {
+            $newDateHeader = 'For the Year Ended December 31, '.$editedYear;
+        }
+        $spreadsheet->getActiveSheet()->setCellValue('A6', $newDateHeader);
+        
+        $writer = new Xlsx($spreadsheet);
+        $writer->save(storage_path('app/'.$newFilePath));
+        
+        $headers = [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ];
+        $filename = $this->financialStatement->report_name;
+        return response()->download(storage_path('app/'.$newFilePath), $filename.'.xlsx', $headers)
+            ->deleteFileAfterSend(true);
+    }
 
     public function confirmDelete($tbId)
     {

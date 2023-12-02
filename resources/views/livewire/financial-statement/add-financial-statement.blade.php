@@ -11,7 +11,7 @@
                 <input id='fsName' type='text' wire:model='fsName' placeholder='optional' />
             </div>
             <div>
-                <label for="fs_type">Interim Period</label>
+                <label for="fs_type">Type</label>
                 <select id="fs_type" wire:model="fsType">
                     <option value="SFPO">SFPO</option>
                     <option value="SFPE">SFPE</option>
@@ -33,11 +33,10 @@
                 <div>@error('date')<span>{{ $message }}</span>@enderror</div>
             </div>
             <div>
-                <input
+                <input 
                     type="file"
-                    accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel""
-                    wire:model.live="importedSpreadsheet"
-                />
+                    accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                    wire:model="importedSpreadsheet">
                 <div>@error('importedSpreadsheet')<span>{{ $message }}</span>@enderror</div>
             </div>
 
