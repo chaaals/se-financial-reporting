@@ -11,6 +11,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Storage;
+use DateTime;
 
 class PreviewFinancialStatement extends Component
 {
@@ -72,6 +73,22 @@ class PreviewFinancialStatement extends Component
         foreach ($combinedData as $row => $value) {
             $spreadsheet->getActiveSheet()->setCellValue($column . $row, $value);
         }
+
+        $editedYear = date('Y', strtotime($this->editedDate));
+        $date = [
+            'Q1'=> "March 31, ".$editedYear,
+            'Q2'=> "June 31, ".$editedYear,
+            'Q3'=> "September 31, ".$editedYear,
+            'Q4'=> "December 31, ".$editedYear,
+        ];
+        $dateHeader = $spreadsheet->getActiveSheet()->getCell('A6')->getValue();
+        if ($this->editedInterimPeriod === 'Quarterly') {
+            $newDateHeader = str_replace('<date>', $date[$this->editedQuarter], $dateHeader);
+        } else {
+            $newDateHeader = 'For the Year Ended December 31, '.$editedYear;
+        }
+        $spreadsheet->getActiveSheet()->setCellValue('A6', $newDateHeader);
+        
         $writer = new Xlsx($spreadsheet);
         $writer->save(storage_path('app/'.$newFilePath));
         
