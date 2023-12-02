@@ -39,43 +39,43 @@
                 <thead>
                     <th class="w-36 bg-primary text-white relative text-left p-2 sticky top-0">
                         Name
-                        <button class="absolute top-4 right-4 md:top-1 md:right-2">
+                        <button wire:click="sort(0)" wire:target="sortBy" class="absolute top-4 right-4 md:top-1 md:right-2">
                             <x-financial-reporting.assets.table-sort />
                         </button>
                     </th>
                     <th class="w-36 bg-primary text-white relative text-left p-2 sticky top-0">
                         Date
-                        <button class="absolute top-1 right-2">
+                        <button wire:click="sort(1)" wire:target="sortBy" class="absolute top-1 right-2">
                             <x-financial-reporting.assets.table-sort />
                         </button>
                     </th>
                     <th class="w-36 bg-primary text-white relative text-left p-2 sticky top-0">
                         Period
-                        <button class="absolute top-1 right-2">
+                        <button wire:click="sort(2)" wire:target="sortBy" class="absolute top-1 right-2">
                             <x-financial-reporting.assets.table-sort />
                         </button>
                     </th>
                     <th class="w-24 bg-primary text-white relative text-left p-2 sticky top-0">
                         Quarter
-                        <button class="absolute top-1 right-2">
+                        <button wire:click="sort(3)" wire:target="sortBy" class="absolute top-1 right-2">
                             <x-financial-reporting.assets.table-sort />
                         </button>
                     </th>
                     <th class="w-40 bg-primary text-white relative text-left p-2 sticky top-0">
                         Created At
-                        <button class="absolute top-4 right-4 md:top-1 md:right-2">
+                        <button wire:click='sort(4)' wire:target="sortBy" class="absolute top-4 right-4 md:top-1 md:right-2">
                             <x-financial-reporting.assets.table-sort />
                         </button>
                     </th>
                     <th class="w-40 bg-primary text-white relative text-left p-2 sticky top-0">
                         Updated At
-                        <button class="absolute top-4 right-4 md:top-1 md:right-2">
+                        <button wire:click="sort(5)" wire:target="sortBy" class="absolute top-4 right-4 md:top-1 md:right-2">
                             <x-financial-reporting.assets.table-sort />
                         </button>
                     </th>
                     <th class="w-24 bg-primary text-white relative text-left p-2 sticky top-0">
                         Status
-                        <button class="absolute top-4 right-4 md:top-1 md:right-2">
+                        <button wire:click="sort(6)" wire:target="sortBy" class="absolute top-4 right-4 md:top-1 md:right-2">
                             <x-financial-reporting.assets.table-sort />
                         </button>
                     </th>

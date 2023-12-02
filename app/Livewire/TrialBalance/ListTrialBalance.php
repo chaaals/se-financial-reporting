@@ -19,6 +19,18 @@ class ListTrialBalance extends Component
     public $filterPeriod;
     public $filterQuarter;
     public $filterStatus;
+
+    public $sortIndices = [
+        0 => "report_name",
+        1 => "date",
+        2 => "interim_period",
+        3 => "quarter",
+        4 => "created_at",
+        5 => "updated_at",
+        6 => "report_status",
+    ];
+
+    public $sortBy;
     
     public $filterOptions = [
         "Period" => [
@@ -60,8 +72,12 @@ class ListTrialBalance extends Component
         }
     }
 
+    public function sort(int $sortIndex){
+        $this->sortBy = $this->sortIndices[$sortIndex];
+    }
+
     public function refreshFilters(){
-        $this->reset(['filterPeriod', 'filterQuarter', 'filterStatus']);
+        $this->reset(['filterPeriod', 'filterQuarter', 'filterStatus', 'sortBy']);
     }
 
     public function create(){
@@ -69,7 +85,7 @@ class ListTrialBalance extends Component
     }
 
     public function updatePage(){
-        // 
+        $this->setPage(1);
     }
     
     public function render()
@@ -79,16 +95,27 @@ class ListTrialBalance extends Component
         // we can change the role in the future
         $defaultReportStatus = auth()->user()->role === 'accounting' ? 'Draft' : 'For Approval';
 
-        if($this->filterPeriod || $this->filterStatus){
+        $isCorrectPeriodFilter = in_array($this->filterPeriod, ['Monthly', 'Annual', 'Quarterly']);
+        $isCorrectStatusFilter = in_array($this->filterStatus, ['Draft', 'For Approval', 'Approved']);
+
+        if($isCorrectPeriodFilter || $isCorrectStatusFilter){
             if($this->filterPeriod === 'Quarterly' && $this->filterQuarter){
                 $query->where('interim_period', '=', $this->filterPeriod)
                       ->where('quarter', '=', $this->filterQuarter);
-            } else {
+            }
+            
+            if($isCorrectPeriodFilter){
                 $query->where('interim_period', '=', $this->filterPeriod);
             }
+
+            $query->where('report_status', '=', $this->filterStatus ?? $defaultReportStatus);
         }
 
-        $res = $query->where('report_status', '=', $this->filterStatus ?? $defaultReportStatus)->paginate($this->rows);
+        if($this->sortBy){
+            $query->orderBy($this->sortBy, 'desc');
+        }
+
+        $res = $query->paginate($this->rows);
 
         $this->hasMorePages = $res->hasMorePages();
         
