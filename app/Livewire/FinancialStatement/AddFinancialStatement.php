@@ -50,10 +50,10 @@ class AddFinancialStatement extends Component
                 $this->rules['quarter'] = 'required|in:Q1,Q2,Q3,Q4';
                 $quarter = ceil($fr_month / 3);
                 $this->quarter = "Q$quarter";
-                $this->fsName = "Q$quarter Financial Statement " . date('Y');
+                $this->fsName = "Q$quarter $this->fsType " . date('Y');
             } else {
                 $this->quarter = null;
-                $this->fsName = "Annual Financial Statement " . date('Y');
+                $this->fsName = "Annual $this->fsType " . date('Y');
             }
         }
 
@@ -92,6 +92,8 @@ class AddFinancialStatement extends Component
             $row = $sheet->getCell($column . $row)->getValue() ?? 0;
         }
         $this->fsData = json_encode($rowValues);
+        
+        Storage::disk('local')->delete($path);
     }
 
     public function render()
