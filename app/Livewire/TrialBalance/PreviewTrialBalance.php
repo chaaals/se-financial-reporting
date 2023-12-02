@@ -85,9 +85,13 @@ class PreviewTrialBalance extends Component
             $this->editedReportStatus = 'Approved';
         }
 
-        if ($this->editedInterimPeriod === "Annual" && $this->editedQuarter != null) {
+        if ($this->editedInterimPeriod === "Annual") {
             $this->editedQuarter = null;
-        } 
+        } else {
+            $tb_month = date('m', strtotime($this->editedDate));
+            $quarter = ceil($tb_month / 3);
+            $this->editedQuarter = "Q$quarter";
+        }
         
         // update fields
         $this->trial_balance->report_name = $this->editedReportName;

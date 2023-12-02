@@ -7,33 +7,40 @@
     >
         <form wire:submit.prevent="add">
             <div>
-                <label htmlFor='trialBalanceName'>Trial Balance Name</label>
-                <input id='trialBalanceName' type='text' wire:model='tbName' placeholder='optional' />
+                <label htmlFor='fsName'>Financial Statement Name</label>
+                <input id='fsName' type='text' wire:model='fsName' placeholder='optional' />
             </div>
             <div>
-                <label htmlFor='trialBalancePeriod'>Trial Balance period</label>
-                <input id='trialBalancePeriod' type='date' wire:model='date' />
-                <div>@error('date')<span>{{ $message }}</span>@enderror</div>
+                <label for="fs_type">Type</label>
+                <select id="fs_type" wire:model="fsType">
+                    <option value="SFPO">SFPO</option>
+                    <option value="SFPE">SFPE</option>
+                    <option value="SCF">SCF</option>
+                </select>
+                <div>@error('fsType')<span>{{ $message }}</span>@enderror</div>
             </div>
             <div>
                 <label for="interim_period">Interim Period</label>
                 <select id="interim_period" wire:model="interimPeriod">
-                    <option value="Quarterly">Monthly</option>
                     <option value="Quarterly">Quarterly</option>
                     <option value="Annual">Annual</option>
                 </select>
                 <div>@error('interimPeriod')<span>{{ $message }}</span>@enderror</div>
             </div>
             <div>
-                <input
+                <label htmlFor='fsPeriod'>Quarter</label>
+                <input id='fsPeriod' type='date' wire:model='date' />
+                <div>@error('date')<span>{{ $message }}</span>@enderror</div>
+            </div>
+            <div>
+                <input 
                     type="file"
-                    accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel""
-                    wire:model.live="importedSpreadsheet"
-                />
+                    accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                    wire:model="importedSpreadsheet">
                 <div>@error('importedSpreadsheet')<span>{{ $message }}</span>@enderror</div>
             </div>
 
-            <button type="submit">Add Trial Balance</button>
+            <button type="submit">Add Financial Statement</button>
         </form>
         <div x-show="uploading" x-cloak>Loading file...</div>
     </div>

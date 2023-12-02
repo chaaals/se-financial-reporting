@@ -7,11 +7,20 @@ use Illuminate\Database\Eloquent\Model;
 
 class FinancialStatement extends Model
 {
+    protected $primaryKey = 'statement_id';
     use HasFactory;
-
     protected $fillable = [
-        'tb_id',
-        'statement_type',
-        'fs_data'
+        'fs_type',
+        'fs_data',
+        'report_name',
+        'report_status',
+        'quarter',
+        'approved',
+        'date',
+        'interim_period',
+        'template_name',
+    ];
+    protected $casts = [
+        'statement_id' => 'string',
     ];
 }
