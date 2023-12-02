@@ -1,4 +1,38 @@
 <section class="w-full p-4">
+    <section class="w-full flex items-center justify-between flex-col bg-white drop-shadow-md rounded-lg mb-8 p-2 md:flex-row">
+        <h1 class="text-primary text-header font-bold font-inter">Trial Balances</h1>
+
+        <section class="flex items-center flex-col gap-4 md:flex-row">
+            <section class="flex items-center gap-4">
+            @foreach($filterOptions as $key=>$filter)
+               <select 
+                    class="w-20 text-xs appearance-none rounded-lg border-neutral pr-8 md:w-24 md:text-sm"
+                    @if (in_array($key, ['Quarter']) && !in_array($filterPeriod, ['Quarterly']))
+                        disabled
+                    @endif
+                    wire:model={{ $filter['model'] }}
+                    wire:change="updatePage"
+                >
+                        <option selected hidden>{{ $key }}</option>
+                    @foreach($filter['options'] as $option)
+                        <option value='{{ $option }}'>{{ $option }}</option>
+                    @endforeach
+               </select>
+            @endforeach
+
+                <button wire:click='refreshFilters'>
+                    <x-financial-reporting.assets.refresh />
+                </button>
+            </section>
+            
+            <section>
+                <button wire:click="create" class="bg-secondary text-white px-4 py-2 rounded-lg text-xs md:text-base">
+                    Create Trial Balance
+                </button>
+            </section>
+        </section>
+    </section>
+
     <section class="hidden bg-white drop-shadow-md rounded-lg md:block">
         <section class="h-160 bg-white rounded-t-lg overflow-hidden overflow-y-scroll scrollbar">
             <table class="w-full">

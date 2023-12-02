@@ -3,6 +3,7 @@
 namespace App\Livewire\TrialBalance;
 
 use App\Models\TrialBalance;
+use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -14,6 +15,25 @@ class ListTrialBalance extends Component
     public $hasMorePages;
     public $confirming = null;
     public $rows = 10;
+
+    public $filterPeriod;
+    public $filterQuarter;
+    public $filterStatus;
+    
+    public $filterOptions = [
+        "Period" => [
+            "model" => "filterPeriod",
+            "options" => ["Monthly", "Quarterly", "Annual"]
+        ],
+        "Quarter" => [
+            "model" => "filterQuarter",
+            "options" => ["Q1", "Q2", "Q3", "Q4"]
+        ],
+        "Status" => [
+            "model" => "filterStatus",
+            "options" => ["Draft", "For Approval", "Approved"]
+        ],
+    ];
 
     public function confirmDelete($tbID)
     {
@@ -40,20 +60,40 @@ class ListTrialBalance extends Component
         }
     }
 
+    public function refreshFilters(){
+        $this->reset(['filterPeriod', 'filterQuarter', 'filterStatus']);
+    }
+
+    public function create(){
+        return $this->redirect('/trial-balances/add', navigate: true);
+    }
+
     public function updatePage(){
         // 
     }
     
     public function render()
     {
-        $trial_balances = DB::table('trial_balances')
-                                    ->select('tb_id','report_name','date', 'interim_period', 'quarter', 'created_at', 'updated_at', 'report_status')
-                                    ->paginate($this->rows);
+        $query = DB::table('trial_balances')->select('tb_id','report_name','date', 'interim_period', 'quarter', 'created_at', 'updated_at', 'report_status');
 
-        $this->hasMorePages = $trial_balances->hasMorePages();
+        // we can change the role in the future
+        $defaultReportStatus = auth()->user()->role === 'accounting' ? 'Draft' : 'For Approval';
+
+        if($this->filterPeriod || $this->filterStatus){
+            if($this->filterPeriod === 'Quarterly' && $this->filterQuarter){
+                $query->where('interim_period', '=', $this->filterPeriod)
+                      ->where('quarter', '=', $this->filterQuarter);
+            } else {
+                $query->where('interim_period', '=', $this->filterPeriod);
+            }
+        }
+
+        $res = $query->where('report_status', '=', $this->filterStatus ?? $defaultReportStatus)->paginate($this->rows);
+
+        $this->hasMorePages = $res->hasMorePages();
         
         return view('livewire.trial-balance.list-trial-balance', [
-           "trial_balances" => $trial_balances
+           "trial_balances" => $res
         ]);
     }
 }
