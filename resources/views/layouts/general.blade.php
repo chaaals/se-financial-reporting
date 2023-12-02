@@ -19,7 +19,7 @@
     <body class="relative w-screen h-screen overflow-x-hidden overflow-y-scroll md:w-full">
         <livewire:layout.navbar />
 
-        <main class="flex w-full h-full">
+        <main class="flex w-full h-full overflow-y-hidden">
             <section class="hidden md:block md:h-full">
                 <livewire:layout.sidebar />
             </section>

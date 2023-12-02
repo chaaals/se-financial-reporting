@@ -1,5 +1,5 @@
 <section class="w-full p-4">
-    <section class="w-full flex items-center justify-between flex-col bg-white drop-shadow-md rounded-lg mb-8 p-2 md:flex-row">
+    <section class="w-full flex items-center justify-between flex-col bg-white drop-shadow-md rounded-lg mb-4 p-2 md:flex-row 2xl:mb-8">
         <h1 class="text-primary text-header font-bold font-inter">Trial Balances</h1>
 
         <section class="flex items-center flex-col gap-4 md:flex-row">
@@ -34,7 +34,7 @@
     </section>
 
     <section class="hidden bg-white drop-shadow-md rounded-lg md:block">
-        <section class="h-160 bg-white rounded-t-lg overflow-hidden overflow-y-scroll scrollbar">
+        <section class="h-160 bg-white rounded-t-lg overflow-hidden overflow-y-scroll scrollbar sm:h-128 2xl:h-160">
             <table class="w-full">
                 <thead>
                     <th class="w-36 bg-primary text-white relative text-left p-2 sticky top-0">

@@ -26,6 +26,7 @@ export default {
                 neutral: "#D6D7D8",
             },
             height: {
+                128: "32rem",
                 160: "42.5rem",
             },
         },
