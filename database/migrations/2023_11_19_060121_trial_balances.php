@@ -18,8 +18,8 @@ return new class extends Migration
             $table->enum('tb_type', ['pre','post'])->nullable();
             $table->longText('tb_data'); // json
 
-            $table->string('report_name');
-            $table->enum('report_status', ['Draft','For Approval', 'Approved'])->default('Draft');
+            $table->string('tb_name');
+            $table->enum('tb_status', ['Draft','For Approval', 'Approved'])->default('Draft');
             $table->enum('quarter', ['Q1', 'Q2', 'Q3', 'Q4'])->nullable();
             $table->boolean('approved')->default(false);
             $table->date('date');
