@@ -12,9 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('financial_statements', function (Blueprint $table) {
-            $table->id('fs_id')
-                ->default(DB::raw('(UUID())'))
-                ->primary();
+            $table->id('fs_id');
             $table->foreignUuid('collection_id')
                 ->constrained(table: 'financial_statement_collections', column: 'collection_id')
                 ->cascadeOnDelete();
