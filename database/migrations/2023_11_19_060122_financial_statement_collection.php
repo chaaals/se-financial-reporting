@@ -16,7 +16,7 @@ return new class extends Migration
                 ->default(DB::raw('(UUID())'))
                 ->primary();
             $table->string('collection_name');
-            $table->enum('collection_status', ['Draft','For Approval', 'Approved'])->default('Draft');
+            $table->enum('collection_status', ['Draft','For Approval', 'Change Requested', 'Approved'])->default('Draft');
             $table->enum('quarter', ['Q1', 'Q2', 'Q3', 'Q4'])->nullable();
             $table->boolean('approved')->default(false);
             $table->date('date');
