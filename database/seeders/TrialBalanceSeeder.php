@@ -13,12 +13,12 @@ class TrialBalanceSeeder extends Seeder
      */
     public function run(): void
     {
-        TrialBalance::factory(10)->create([
+        TrialBalance::factory(5)->create([
             'tb_data' => '{ data: sample data }',
             'report_name' => 'Test TB report',
-            'report_status' => 'Draft',
+            'report_status' => 'Approved',
             'date' => date('Y-m-d'),
-            'interim_period' => 'Monthly',
+            'interim_period' => 'Annual',
             'template_name' => 'tb'
         ]);
     }
