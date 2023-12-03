@@ -1,5 +1,5 @@
-<div>
-    @if ($trial_balance)
+<section class="w-full p-4">
+    {{-- @if ($trial_balance)
         <section>
             @if ($editMode)
                 <div>
@@ -73,9 +73,66 @@
 
                 <div>
                     {{-- export --}}
-                    <button wire:click="export">Export</button>
+                    {{-- <button wire:click="export">Export</button>
                 </div>
             @endif
         </section>
-    @endif
-</div>
+    @endif --}}
+
+    {{-- header --}}
+    <section class="w-full flex items-center justify-between flex-col bg-white drop-shadow-md rounded-lg mb-4 p-2 md:flex-row 2xl:mb-8">
+        <h1 class="text-primary text-header font-bold font-inter">{{ $trial_balance->report_name }}</h1>
+
+        <button
+            {{-- wire:click="create" --}}
+            class="bg-secondary text-white px-4 py-2 rounded-lg text-xs md:text-base">
+            Export Trial Balance
+        </button>
+    </section>
+
+    <section class="flex gap-4">
+        {{-- placeholder for previews --}}
+        <section class="w-full border-2 border-dashed border-primary text-center sm:h-136 2xl:h-160">Trial Balance Preview</section>
+        <section class="w-72 h-136 flex flex-col justify-between bg-white drop-shadow-md rounded-lg p-4 2xl:h-160">
+            <section>
+                <div class="mb-0.5">
+                    <span class="text-xs font-inter text-slate-500">Trial Balance Name</span>
+                    <p class="font-inter font-bold">{{ $trial_balance->report_name }}</p>
+                </div>
+                <div class="mb-0.5">
+                    <span class="text-xs font-inter text-slate-500">Date</span>
+                    <p class="font-inter font-bold">{{ $trial_balance->date }}</p>
+                </div>
+                <div class="mb-0.5">
+                    <span class="text-xs font-inter text-slate-500">Period</span>
+                    <p class="font-inter font-bold">{{ $trial_balance->interim_period }}</p>
+                </div>
+
+                @if($trial_balance->quarter)
+                <div class="mb-0.5">
+                    <span class="text-xs font-inter text-slate-500">Quarter</span>
+                    <p class="font-inter font-bold">{{ $trial_balance->quarter }}</p>
+                </div>
+                @endif
+                <div class="mb-0.5">
+                    <span class="text-xs font-inter text-slate-500">Created At</span>
+                    <p class="font-inter font-bold">{{ $trial_balance->created_at }}</p>
+                </div>
+                <div class="mb-0.5">
+                    <span class="text-xs font-inter text-slate-500">Updated At</span>
+                    <p class="font-inter font-bold">{{ $trial_balance->updated_at }}</p>
+                </div>
+            </section>
+
+            <section>
+                <button class="">
+                    Hello
+                    <select class="w-10 pr-0">
+                        <option>Draft</option>
+                        <option>For Approval</option>
+                    </select>
+                </button>
+            </section>
+        </section>
+    </section>
+</section>
