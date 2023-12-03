@@ -36,7 +36,6 @@ class AddTrialBalance extends Component
     {
         // default values so user does not need to interact with the form and just save
         $this->date = date('Y-m-d');
-        $this->interimPeriod = "Monthly";
 
         $formattedDate = date('M d, Y',strtotime($this->date));
         $this->tbName = "Trial Balance Report as of $formattedDate";
