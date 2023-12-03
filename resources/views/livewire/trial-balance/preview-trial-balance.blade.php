@@ -1,4 +1,4 @@
-<section class="w-full p-4">
+<section x-data="{ isActionModalOpen: false }" class="w-full p-4">
     {{-- @if ($trial_balance)
         <section>
             @if ($editMode)
@@ -125,14 +125,51 @@
             </section>
 
             <section>
-                <button class="">
-                    Hello
-                    <select class="w-10 pr-0">
-                        <option>Draft</option>
-                        <option>For Approval</option>
-                    </select>
+                <button class="w-full bg-primary flex rounded-lg text-white" x-on:click="isActionModalOpen = true">
+                    <span class="w-full h-full p-2 text-center">{{ $trial_balance->report_status }}</span>
                 </button>
             </section>
         </section>
     </section>
+
+
+    <div
+        x-cloak
+        x-show="isActionModalOpen"
+        role="dialog"
+        class="fixed top-0 left-0 w-screen h-screen bg-black/50 z-10 flex items-center justify-center">
+
+        <div>
+            <form class="w-80 bg-white drop-shadow-md rounded-lg">
+                <h1>Do you want to update report status?</h1>
+
+                <div class="flex items-center gap-4">
+                    <p>{{ $trial_balance->report_status }}</p>
+
+                    <span>to</span>
+                        {{-- TODO: Change in the future, sync with integ team for user roles --}}
+                        {{-- TODO: Modify p tags to input for wire:model --}}
+                        @if(auth()->user()->role === "accounting")
+                            @if($trial_balance->report_status === "Draft")
+                                <p><strong>For Approval</strong></p>
+                            @else
+                                <p><strong>Draft</strong></p>
+                            @endif
+                        @else
+                            @if($trial_balance->report_status === "Draft")
+                                <p><strong>For Approval</strong></p>
+                            @else
+                                <select>
+                                    <option>Approved</option>
+                                    <option>Change Requested</option>
+                                </select>
+                            @endif
+                        @endif
+                </div>
+
+                <button type="button" x-on:click="isActionModalOpen = false">Cancel</button>
+                <button type="submit">Update</button>
+            </form>
+        </div>
+    </div>
 </section>
