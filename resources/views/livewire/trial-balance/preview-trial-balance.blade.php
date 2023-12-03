@@ -124,10 +124,21 @@
                 </div>
             </section>
 
-            <section>
-                <button class="w-full bg-primary flex rounded-lg text-white" x-on:click="isActionModalOpen = true">
-                    <span class="w-full h-full p-2 text-center">{{ $trial_balance->report_status }}</span>
+            <section x-data="{ isToolTipVisible: false }" class="flex items-center gap-2">
+                <button class="w-full text-center bg-primary rounded-lg text-white p-2" x-on:click="isActionModalOpen = true">
+                    {{ $trial_balance->report_status }}
                 </button>
+                <div class="relative" x-on:mouseenter="isToolTipVisible = true" x-on:mouseleave="isToolTipVisible = false">
+                    <x-financial-reporting.assets.info />
+
+                    <div
+                        x-cloak
+                        x-show="isToolTipVisible"
+                        class="absolute -left-46 -top-24 rounded-t-lg rounded-bl-lg bg-black bg-opacity-75 w-48 p-2 text-sm after:content-[''] after:absolute after:top-full after:left-2/4 after:ml-22 after:border-4 after:border-solid after:border-t-black after:border-opacity-75 after:border-r-transparent after:border-b-transparent after:border-l-transparent">
+                        <p class="text-white">You can update the status of the report by clicking this button.</p>
+                    </div>
+                    <div></div>
+                </div>
             </section>
         </section>
     </section>

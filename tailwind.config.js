@@ -25,6 +25,12 @@ export default {
                 active: "#2D6B9A",
                 neutral: "#D6D7D8",
             },
+            margin: {
+                22: "5.5rem",
+            },
+            spacing: {
+                46: "11.25rem",
+            },
             height: {
                 128: "32rem",
                 136: "36rem",
