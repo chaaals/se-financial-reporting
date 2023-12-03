@@ -1,7 +1,7 @@
 <div class="flex w-full">
     <div
         class="relative p-4"
-        x-data="{ uploading: false }"
+        x-data="{ uploading: false, quarterly_active: false, import_active: false }"
         x-on:livewire-upload-start="uploading = true"
         x-on:livewire-upload-finish="uploading = false"
         x-on:livewire-upload-error="uploading = false"
@@ -29,7 +29,7 @@
                             class="checked:bg-black checked:hover:bg-secondary focus:ring-0""
                             value="Monthly"
                             wire:model="interimPeriod"
-                            wire:change="updatePage" />
+                            x-on:click="quarterly_active = false" />
                         <label class="text-sm md:text-base" for="Monthly">Monthly</label>
                     </section>
                     <section>
@@ -39,7 +39,7 @@
                             class="checked:bg-black checked:hover:bg-secondary focus:ring-0""
                             value="Quarterly"
                             wire:model="interimPeriod"
-                            wire:change="updatePage" />
+                            x-on:click="quarterly_active = true" />
                         <label class="text-sm md:text-base" for="Quarterly">Quarterly</label>
                     </section>
                     <section>
@@ -49,7 +49,7 @@
                             class="checked:bg-black checked:hover:bg-secondary focus:ring-0""
                             value="Annual"
                             wire:model="interimPeriod"
-                            wire:change="updatePage" />
+                            x-on:click="quarterly_active = false"/>
                         <label class="text-sm md:text-base" for="Annual">Annual</label>
                     </section>
                 </fieldset>
@@ -57,8 +57,7 @@
                 <div>@error('interimPeriod')<span>{{ $message }}</span>@enderror</div>
             </div>
 
-            @if($interimPeriod == 'Quarterly')
-            <div class="mb-4">
+            <div x-cloak x-show="quarterly_active" class="mb-4">
                 <label class="text-md font-bold" for="quarter">Quarter</label>
 
                 <fieldset id="quarter" class="flex items-center gap-4 pl-4 md:pl-8">
@@ -80,7 +79,6 @@
                     </section>
                 </fieldset>
             </div>
-            @endif
 
             <div class="mb-4">
                 <label class="text-md font-bold" for="source">Source</label>
@@ -93,7 +91,7 @@
                             class="checked:bg-black checked:hover:bg-secondary focus:ring-0"
                             value="import"
                             wire:model="source"
-                            wire:change="updatePage" />
+                            x-on:click="import_active = true" />
                         <label class="text-sm md:text-base" for="import">Import Trial Balance</label>
                     </section>
                     <section>
@@ -103,14 +101,13 @@
                             class="checked:bg-black checked:hover:bg-secondary focus:ring-0"
                             value="general_ledger"
                             wire:model="source"
-                            wire:change="updatePage" />
+                            x-on:click="import_active = false" />
                         <label class="text-sm md:text-base" for="import">From General Ledger</label>
                     </section>
                 </fieldset>
             </div>
 
-            @if($source == 'import')
-            <div class="w-full h-44 relative mb-4 rounded-md bg-primary bg-opacity-5 border-2 border-dashed border-primary border-opacity-30 md:w-96">
+            <div x-cloak x-show="import_active" class="w-full h-44 relative mb-4 rounded-md bg-primary bg-opacity-5 border-2 border-dashed border-primary border-opacity-30 md:w-96">
                 <label
                     class="w-full h-full flex flex-col items-center justify-center md:w-96"
                     for="file-upload"
@@ -138,9 +135,9 @@
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
                 </div>
+                
                 <div>@error('importedSpreadsheet')<span>{{ $message }}</span>@enderror</div>
             </div>
-            @endif
 
             <section class="w-full flex items-center justify-between md:w-96">
                 <button class="border-accentOne border-2 rounded-lg px-4 py-2" type="button" wire:click="cancel">

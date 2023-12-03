@@ -40,7 +40,6 @@ class AddTrialBalance extends Component
 
         $formattedDate = date('M d, Y',strtotime($this->date));
         $this->tbName = "Trial Balance Report as of $formattedDate";
-        $this->source = "import"; // TODO: remove
     }
 
     public function add(){
@@ -80,10 +79,6 @@ class AddTrialBalance extends Component
 
     public function cancel(){
         return $this->redirect('/trial-balances', navigate: true);
-    }
-
-    public function updatePage(){
-
     }
 
     public function previewSpreadsheet(){
