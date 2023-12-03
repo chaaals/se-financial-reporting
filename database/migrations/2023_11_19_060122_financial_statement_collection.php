@@ -11,27 +11,22 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('financial_statements', function (Blueprint $table) {
-            $table->uuid('statement_id')
+        Schema::create('financial_statement_collections', function (Blueprint $table) {
+            $table->uuid('collection_id')
                 ->default(DB::raw('(UUID())'))
                 ->primary();
-            $table->enum('fs_type', ['SFPO', 'SFPE', 'SCF']);
-            $table->longText('fs_data'); // json
-            $table->string('report_name');
-            $table->enum('report_status', ['Draft','For Approval', 'Approved'])->default('Draft');
+            $table->string('collection_name');
+            $table->enum('collection_status', ['Draft','For Approval', 'Approved'])->default('Draft');
             $table->enum('quarter', ['Q1', 'Q2', 'Q3', 'Q4'])->nullable();
             $table->boolean('approved')->default(false);
             $table->date('date');
             $table->enum('interim_period', ['Quarterly', 'Annual']);
             $table->longText('notes')->nullable();
-            $table->string('template_name');
+            $table->foreignUuid('tb_id')
+                ->constrained(table: 'trial_balances', column: 'tb_id')
+                ->cascadeOnDelete();
             $table->timestamp('created_at');
             $table->timestamp('updated_at');
-
-            $table->foreign('template_name')
-                ->references('template_name')
-                ->on('report_templates')
-                ->onDelete('restrict');
         });
     }
 
