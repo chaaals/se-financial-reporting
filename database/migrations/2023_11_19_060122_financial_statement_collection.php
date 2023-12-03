@@ -21,7 +21,6 @@ return new class extends Migration
             $table->boolean('approved')->default(false);
             $table->date('date');
             $table->enum('interim_period', ['Quarterly', 'Annual']);
-            $table->longText('notes')->nullable();
             $table->foreignUuid('tb_id')
                 ->constrained(table: 'trial_balances', column: 'tb_id')
                 ->cascadeOnDelete();

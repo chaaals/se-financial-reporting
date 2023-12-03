@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('financial_statements', function (Blueprint $table) {
-            $table->uuid('fs_id')
+            $table->id('fs_id')
                 ->default(DB::raw('(UUID())'))
                 ->primary();
             $table->foreignUuid('collection_id')

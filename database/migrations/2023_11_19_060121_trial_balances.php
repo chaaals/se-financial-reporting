@@ -24,7 +24,6 @@ return new class extends Migration
             $table->boolean('approved')->default(false);
             $table->date('date');
             $table->enum('interim_period', ['Monthly', 'Quarterly', 'Annual']);
-            $table->longText('notes')->nullable();
             $table->string('template_name')->default('tb');
             $table->timestamp('created_at');
             $table->timestamp('updated_at');

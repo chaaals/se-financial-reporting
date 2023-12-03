@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('report_notes', function (Blueprint $table) {
-            $table->uuid('note_id')
+            $table->id('note_id')
                 ->default(DB::raw('(UUID())'))
                 ->primary();
             $table->foreignUuid('tb_id')
