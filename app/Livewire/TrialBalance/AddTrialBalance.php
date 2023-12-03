@@ -18,6 +18,7 @@ class AddTrialBalance extends Component
     public $interimPeriod;
     public $quarter;
     
+    public $source;
     public $importedSpreadsheet;
 
     public $spreadsheet = [];
@@ -35,7 +36,11 @@ class AddTrialBalance extends Component
     {
         // default values so user does not need to interact with the form and just save
         $this->date = date('Y-m-d');
-        $this->interimPeriod = "Quarterly";
+        $this->interimPeriod = "Monthly";
+
+        $formattedDate = date('M d, Y',strtotime($this->date));
+        $this->tbName = "Trial Balance Report as of $formattedDate";
+        $this->source = "import"; // TODO: remove
     }
 
     public function add(){
@@ -71,6 +76,14 @@ class AddTrialBalance extends Component
             $this->reset();
         }
         $this->redirect('/trial-balances');
+    }
+
+    public function cancel(){
+        return $this->redirect('/trial-balances', navigate: true);
+    }
+
+    public function updatePage(){
+
     }
 
     public function previewSpreadsheet(){
