@@ -26,7 +26,6 @@ Route::prefix('/financial-statements')->middleware('auth')->group(function () {
     Route::view('/','financial-statement-collections'); 
     Route::view('add','add-financial-statement-collection'); 
     Route::view('/{collection_id}', 'preview-financial-statement-collection'); 
-    Route::view('/{collection_id}/{fs_id}', 'preview-financial-statement'); 
 });
 
 require __DIR__.'/auth.php';
