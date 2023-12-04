@@ -96,7 +96,7 @@
                         @foreach($trial_balances as $index=>$tb)
                             <tr class={{ $index%2 == 0 ? 'bg-accentOne' : 'bg-white' }}>
                                 <td class="h-16 p-2 text-center whitespace-wrap">
-                                    <a href="/trial-balances/{{ $tb->tb_id }}">{{ $tb->report_name }}</a>
+                                    <a href="/trial-balances/{{ $tb->tb_id }}">{{ $tb->tb_name }}</a>
                                 </td>
                                 <td class="h-16 p-2 text-center whitespace-nowrap">
                                     {{ date('M d, Y', strtotime($tb->date)) }}
@@ -114,7 +114,7 @@
                                     {{ date('M d, Y H:i:s', strtotime($tb->updated_at)) }}
                                 </td>
                                 <td class="h-16 p-2 hidden text-center whitespace-nowrap md:table-cell">
-                                    {{ $tb->report_status }}
+                                    {{ $tb->tb_status }}
                                 </td>
                                 <td class="h-16 p-2">
                                     <div class="flex items-center justify-center">
