@@ -58,11 +58,18 @@
                     <div>Quarter: {{ $fsCollection->quarter }}</div>
                 @endif
                 <div>Interim Period: {{ $fsCollection->interim_period }}</div>
+                <!-- previewing fs -->
                 <div>
                     @if ($financialStatements)
                     <div>Financial Statements:
                         @foreach($financialStatements as $fs)
-                        <div><a href="/financial-statements/{{ $fsCollection->collection_id }}/{{ $fs->fs_id }}">{{ $fs->fs_type }}</a></div>
+                        <div><button wire:click="previewFSinit({{ $fs->fs_id }})">{{ $fs->fs_type }}</button></div>
+                            @if ($previewFS === $fs->fs_id)
+                            <div>
+                                <div>{{ $fs->fs_data }}</div>
+                                <button wire:click="$set('previewFS', null)">Close</button>
+                            </div>
+                            @endif
                         @endforeach
                     </div>
                     @else

@@ -25,6 +25,7 @@ class PreviewFinancialStatementCollection extends Component
     public $editedQuarter;
     public $editedApproved;
     public $editedFSCStatus;
+    public $previewFS = null;
 
     protected $rules = [
         'editedFSCName' => 'nullable|max:255',
@@ -108,6 +109,10 @@ class PreviewFinancialStatementCollection extends Component
         FinancialStatementCollection::find($fscID)->delete();
         $this->reset('confirming');
         $this->redirect("/financial-statements");
+    }
+
+    public function previewFSinit($fsID) {
+        $this->previewFS = $fsID;
     }
 
     public function toggleEditMode()
