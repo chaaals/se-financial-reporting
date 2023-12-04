@@ -22,6 +22,10 @@ class Sidebar extends Component
         $this->styles[$route ? $route : "/"] = $base . " bg-active";
     }
 
+    public function goto(string $url){
+        return $this->redirect($url, navigate: true);
+    }
+
     public function render()
     {
         return view('livewire.layout.sidebar');
