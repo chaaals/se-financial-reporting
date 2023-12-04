@@ -19,13 +19,13 @@ class ListTrialBalance extends Component
     
     public $sortBy;
     public $sortIndices = [
-        0 => "report_name",
+        0 => "tb_name",
         1 => "date",
         2 => "interim_period",
         3 => "quarter",
         4 => "created_at",
         5 => "updated_at",
-        6 => "report_status",
+        6 => "tb_status",
     ];
     
     public $searchInput;
@@ -101,7 +101,7 @@ class ListTrialBalance extends Component
     
     public function render()
     {
-        $query = DB::table('trial_balances')->select('tb_id','report_name','date', 'interim_period', 'quarter', 'created_at', 'updated_at', 'report_status');
+        $query = DB::table('trial_balances')->select('tb_id','tb_name','date', 'interim_period', 'quarter', 'created_at', 'updated_at', 'tb_status');
 
         $isCorrectPeriodFilter = in_array($this->filterPeriod, ['Monthly', 'Annual', 'Quarterly']);
         $isCorrectStatusFilter = in_array($this->filterStatus, ['Draft', 'For Approval', 'Approved']);
@@ -119,20 +119,20 @@ class ListTrialBalance extends Component
 
         if($this->searchInput){
             $searchInput = "%$this->searchInput%";
-            $query->where('report_name', 'like', $searchInput);
+            $query->where('tb_name', 'like', $searchInput);
             $this->searchInput = null;
         }
 
         if($this->sortBy){
             // refactor suggestion: modify enums to follow alphabetical order para madali sorting
-            if(in_array($this->sortBy, ['interim_period', 'quarter', 'report_status'])){
+            if(in_array($this->sortBy, ['interim_period', 'quarter', 'tb_status'])){
                 $query->orderBy($this->sortBy, 'desc');
             } else {
                 $query->orderBy($this->sortBy, 'asc');
             }
         }
 
-        $res = $query->where('report_status', '=', $this->filterStatus)->paginate($this->rows);
+        $res = $query->where('tb_status', '=', $this->filterStatus)->paginate($this->rows);
 
         $this->hasMorePages = $res->hasMorePages();
         
