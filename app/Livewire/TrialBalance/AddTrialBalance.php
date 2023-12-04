@@ -62,12 +62,12 @@ class AddTrialBalance extends Component
         $this->validate();
         if($this->spreadsheet){
             TrialBalance::create([
+                "tb_name" => $this->tbName,
                 "tb_type" => $this->tbType ?? null,
+                "tb_status" => 'Draft',
                 "tb_data" => json_encode($this->spreadsheet),
-                "report_name" => $this->tbName,
                 "interim_period" => $this->interimPeriod,
                 "quarter" => $this->quarter,
-                "report_status" => 'Draft',
                 "approved" => false,
                 "date" => $this->date,
             ]);
