@@ -81,7 +81,7 @@
 
     {{-- header --}}
     <section class="w-full flex items-center justify-between flex-col bg-white drop-shadow-md rounded-lg mb-4 p-2 md:flex-row 2xl:mb-8">
-        <h1 class="text-primary text-header font-bold font-inter">{{ $trial_balance->report_name }}</h1>
+        <h1 class="text-primary text-header font-bold font-inter">{{ $trial_balance->tb_name }}</h1>
 
         <button
             {{-- wire:click="create" --}}
@@ -97,7 +97,7 @@
             <section>
                 <div class="mb-0.5">
                     <span class="text-xs font-inter text-slate-500">Trial Balance Name</span>
-                    <p class="font-inter font-bold">{{ $trial_balance->report_name }}</p>
+                    <p class="font-inter font-bold">{{ $trial_balance->tb_name }}</p>
                 </div>
                 <div class="mb-0.5">
                     <span class="text-xs font-inter text-slate-500">Date</span>
@@ -126,7 +126,7 @@
 
             <section x-data="{ isToolTipVisible: false }" class="flex items-center gap-2">
                 <button class="w-full text-center bg-primary rounded-lg text-white p-2" x-on:click="isActionModalOpen = true">
-                    {{ $trial_balance->report_status }}
+                    {{ $trial_balance->tb_status }}
                 </button>
                 <div class="relative" x-on:mouseenter="isToolTipVisible = true" x-on:mouseleave="isToolTipVisible = false">
                     <x-financial-reporting.assets.info />
@@ -155,19 +155,19 @@
                 <h1>Do you want to update report status?</h1>
 
                 <div class="flex items-center gap-4">
-                    <p>{{ $trial_balance->report_status }}</p>
+                    <p>{{ $trial_balance->tb_status }}</p>
 
                     <span>to</span>
                         {{-- TODO: Change in the future, sync with integ team for user roles --}}
                         {{-- TODO: Modify p tags to input for wire:model --}}
                         @if(auth()->user()->role === "accounting")
-                            @if($trial_balance->report_status === "Draft")
+                            @if($trial_balance->tb_status === "Draft")
                                 <p><strong>For Approval</strong></p>
                             @else
                                 <p><strong>Draft</strong></p>
                             @endif
                         @else
-                            @if($trial_balance->report_status === "Draft")
+                            @if($trial_balance->tb_status === "Draft")
                                 <p><strong>For Approval</strong></p>
                             @else
                                 <select>
