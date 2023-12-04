@@ -7,19 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class FinancialStatementCollection extends Model
 {
-    protected $primaryKey = 'collection_id';
+    protected $primaryKey = 'fs_id';
     use HasFactory;
     protected $fillable = [
-        'collection_name',
-        'collection_status',
-        'quarter',
-        'approved',
-        'date',
-        'interim_period',
-        'tb_id',
+        'collection_id',
+        'fs_type',
+        'fs_data',
         'template_name',
     ];
     protected $casts = [
-        'collection_id' => 'string',
+        'fs_id' => 'string',
     ];
 }
