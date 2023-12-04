@@ -15,10 +15,10 @@ class TrialBalanceSeeder extends Seeder
     {
         TrialBalance::factory(5)->create([
             'tb_data' => '{ data: sample data }',
-            'report_name' => 'Test TB report',
-            'report_status' => 'Approved',
+            'tb_name' => 'Test TB report',
+            'tb_status' => 'Draft',
             'date' => date('Y-m-d'),
-            'interim_period' => 'Annual',
+            'interim_period' => 'Monthly',
             'template_name' => 'tb'
         ]);
     }
