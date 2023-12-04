@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class FinancialStatementCollection extends Model
+class FinancialStatement extends Model
 {
     protected $primaryKey = 'fs_id';
     use HasFactory;
