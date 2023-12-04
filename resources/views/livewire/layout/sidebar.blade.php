@@ -1,20 +1,19 @@
 <section
-    x-data="{ fs_expanded: false }"
     class="flex flex-col justify-between w-full h-full p-4 gap-2 md:w-400 md:bg-primary md:p-4">
     <section>
         <section class="{{ $styles['/'] }}">
             <x-financial-reporting.assets.home-icon />
-            <a class="text-white" href="/">Home</a>
+            <button class="text-white" wire:click="goto('/')">Home</button>
         </section>
 
         <section class="{{ $styles['/trial-balances'] }}">
             <x-financial-reporting.assets.tb-icon />
-            <a class="text-white" href="/trial-balances">Trial Balances</a>
+            <button class="text-white" wire:click="goto('/trial-balances')">Trial Balances</button>
         </section>
 
         <section class="{{ $styles['/financial-statements'] }}">
             <x-financial-reporting.assets.fs-icon />
-            <a class="text-white" href="/financial-statements">Financial Statements</a>
+            <button class="text-white" wire:click="goto('/financial-statements')">Financial Statements</button>
         </section>
     </section>
 
