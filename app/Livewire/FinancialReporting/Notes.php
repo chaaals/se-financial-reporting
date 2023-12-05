@@ -10,10 +10,11 @@ class Notes extends Component
     public $reportId;
     public $reportType;
     public $reportName;
-    public $comment;
+    public $note;
+    public $notes;
 
     protected $rules = [
-        "comment" => "required|max:120",
+        "note" => "required|max:120",
     ];
 
     public function mount(string $reportId, string $reportType, string $reportName){
@@ -31,25 +32,30 @@ class Notes extends Component
         DB::table("report_notes")->insert([
             "tb_id" => $this->reportType === "tb" ? $this->reportId : null,
             "collection_id" => $this->reportType === "col" ? $this->reportId : null,
-            "content" => $this->comment,
+            "content" => $this->note,
             "author" => "$firstName $lastName"
         ]);
 
-        $this->comment = null;
+        $this->note = null;
     }
 
-    public function delete(){
+    public function delete(int $noteIndex){
+        if($this->notes->isEmpty()) {
+            return;
+        }
 
+        $note = $this->notes[$noteIndex];
+        DB::table("report_notes")->where("note_id", "=", $note->note_id)->delete();
     }
 
     public function render()
     {
-        $comments = DB::table("report_notes")
-                    ->select("content", "author", "created_at", "updated_at")
+        $this->notes = DB::table("report_notes")
+                    ->select("note_id","content", "author", "created_at", "updated_at")
                     ->where("tb_id", "=", $this->reportId)
                     ->orwhere("collection_id", "=", $this->reportId)
                     ->get();
 
-        return view('livewire.financial-reporting.notes', ["comments" => $comments, "numComments" => count($comments), "xColor" => "#2D349A"]);
+        return view('livewire.financial-reporting.notes', ["notes" => $this->notes, "numNotes" => count($this->notes), "xColor" => "#2D349A"]);
     }
 }
