@@ -83,17 +83,26 @@
     <section class="w-full flex items-center justify-between flex-col bg-white drop-shadow-md rounded-lg mb-4 p-2 md:flex-row 2xl:mb-8">
         <h1 class="text-primary text-header font-bold font-inter">{{ $trial_balance->tb_name }}</h1>
 
-        <button
-            {{-- wire:click="create" --}}
-            class="bg-secondary text-white px-4 py-2 rounded-lg text-xs md:text-base">
-            Export Trial Balance
-        </button>
+
+        <section class="flex items-center gap-4">
+            <div>
+                <livewire:financial-reporting.notes
+                :reportId="$trial_balance->tb_id"
+                :reportType="$reportType"
+                :reportName="$trial_balance->tb_name" />
+            </div>
+            <button
+                {{-- wire:click="create" --}}
+                class="bg-secondary text-white px-4 py-2 rounded-lg text-xs md:text-base">
+                Export Trial Balance
+            </button>
+        </section>
     </section>
 
     <section class="flex gap-4">
         {{-- placeholder for previews --}}
         <section class="w-full border-2 border-dashed border-primary text-center sm:h-136 2xl:h-160">Trial Balance Preview</section>
-        <section class="w-72 h-136 flex flex-col justify-between bg-white drop-shadow-md rounded-lg p-4 2xl:h-160">
+        <section class="w-72 h-136 flex flex-col justify-between bg-white drop-shadow-md rounded-lg p-4 -z-10 2xl:h-160">
             <section>
                 <div class="mb-0.5">
                     <span class="text-xs font-inter text-slate-500">Trial Balance Name</span>

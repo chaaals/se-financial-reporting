@@ -24,6 +24,8 @@ export default {
                 accentOne: "#E1E6EF",
                 active: "#2D6B9A",
                 neutral: "#D6D7D8",
+                neutralTwo: "#222222",
+                neutralThree: "#B4BBC6",
             },
             margin: {
                 22: "5.5rem",

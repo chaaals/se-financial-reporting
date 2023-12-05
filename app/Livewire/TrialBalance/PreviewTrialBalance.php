@@ -11,6 +11,7 @@ use Maatwebsite\Excel\Facades\Excel;
 class PreviewTrialBalance extends Component
 {
     public TrialBalance $trial_balance;
+    public $reportType = "tb";
     public $confirming = null;
     public $editMode = false;
     public $editedReportName;
