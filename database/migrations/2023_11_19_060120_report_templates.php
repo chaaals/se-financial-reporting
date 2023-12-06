@@ -44,7 +44,7 @@ return new class extends Migration
             ],
             [
                 'template_name' => 'sfpe_vals',
-                'template' => '[14,15,16,17,22,23,24,25,26,27]',
+                'template' => '[14,15,16,17,22,23,24,25,26,27,35,36]',
             ],
             [
                 'template_name' => 'scf_vals',
