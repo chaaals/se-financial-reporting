@@ -1,5 +1,5 @@
 <section
-    class="relative w-10 h-10 flex items-center justify-center"
+    class="relative w-10 h-10 flex items-center justify-center hidden md:block"
     x-data="{ isCommentBoxVisible: false }">
     <section class="w-full h-full flex items-center justify-center font-inter">
         <button class="relative" x-on:click="isCommentBoxVisible = true">
@@ -12,7 +12,7 @@
     <section
         x-cloak
         x-show="isCommentBoxVisible"
-        class="hidden absolute top-0 right-0 w-96 h-128 bg-white drop-shadow-none rounded-lg md:flex md:flex-col">
+        class="absolute top-0 right-0 w-96 h-128 bg-white drop-shadow-none rounded-lg md:flex md:flex-col">
         <section class="w-full flex items-center justify-between border-neutralThree-opacity-30 border-b-2 p-2">
             <h3 class="text-md font-bold">{{ $reportName }} Thread</h3>
             <button x-on:click="isCommentBoxVisible = false">

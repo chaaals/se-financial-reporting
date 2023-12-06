@@ -98,11 +98,11 @@
         </section>
     </section>
 
-    <section class="flex gap-4">
+    <section class="flex flex-col gap-4 md:flex-row">
         {{-- placeholder for previews --}}
         <section class="w-full border-2 border-dashed border-primary text-center sm:h-136 2xl:h-160">Trial Balance Preview</section>
         
-        <section class="w-72 h-136 flex flex-col justify-between bg-white rounded-lg p-4 2xl:h-160">
+        <section class="w-full flex flex-col gap-4 justify-between bg-white rounded-lg p-4 md:w-72 md:h-136 2xl:h-160">
             <section>
                 <div class="mb-0.5">
                     <span class="text-xs font-inter text-slate-500">Trial Balance Name</span>
