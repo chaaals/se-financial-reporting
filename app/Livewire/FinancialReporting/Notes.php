@@ -51,7 +51,7 @@ class Notes extends Component
     public function render()
     {
         $this->notes = DB::table("report_notes")
-                    ->select("note_id","content", "author", "created_at", "updated_at")
+                    ->select("note_id","content", "author", "created_at")
                     ->where("tb_id", "=", $this->reportId)
                     ->orwhere("collection_id", "=", $this->reportId)
                     ->get();
