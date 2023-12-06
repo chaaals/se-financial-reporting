@@ -85,12 +85,11 @@
 
 
         <section class="flex items-center gap-4">
-            <div>
-                <livewire:financial-reporting.notes
+            <livewire:financial-reporting.notes
                 :reportId="$trial_balance->tb_id"
                 :reportType="$reportType"
                 :reportName="$trial_balance->tb_name" />
-            </div>
+            
             <button
                 {{-- wire:click="create" --}}
                 class="bg-secondary text-white px-4 py-2 rounded-lg text-xs md:text-base">
@@ -102,7 +101,8 @@
     <section class="flex gap-4">
         {{-- placeholder for previews --}}
         <section class="w-full border-2 border-dashed border-primary text-center sm:h-136 2xl:h-160">Trial Balance Preview</section>
-        <section class="w-72 h-136 flex flex-col justify-between bg-white drop-shadow-md rounded-lg p-4 -z-10 2xl:h-160">
+        
+        <section class="w-72 h-136 flex flex-col justify-between bg-white rounded-lg p-4 2xl:h-160">
             <section>
                 <div class="mb-0.5">
                     <span class="text-xs font-inter text-slate-500">Trial Balance Name</span>
@@ -134,7 +134,8 @@
             </section>
 
             <section x-data="{ isToolTipVisible: false }" class="flex items-center gap-2">
-                <button class="w-full text-center bg-primary rounded-lg text-white p-2" x-on:click="isActionModalOpen = true">
+                <button
+                    class="w-full text-center @if($statusColor === 'draft') {{'bg-draft'}} @elseif($statusColor === 'forapproval') {{'bg-forapproval'}} @elseif($statusColor === 'approved') {{'bg-approved'}} @elseif($statusColor === 'changerequested') {{'bg-changerequested'}} @endif rounded-lg text-white p-2" x-on:click="isActionModalOpen = true">
                     {{ $trial_balance->tb_status }}
                 </button>
                 <div class="relative" x-on:mouseenter="isToolTipVisible = true" x-on:mouseleave="isToolTipVisible = false">
@@ -146,18 +147,18 @@
                         class="absolute -left-46 -top-24 rounded-t-lg rounded-bl-lg bg-black bg-opacity-75 w-48 p-2 text-sm after:content-[''] after:absolute after:top-full after:left-2/4 after:ml-22 after:border-4 after:border-solid after:border-t-black after:border-opacity-75 after:border-r-transparent after:border-b-transparent after:border-l-transparent">
                         <p class="text-white">You can update the status of the report by clicking this button.</p>
                     </div>
-                    <div></div>
                 </div>
             </section>
         </section>
     </section>
 
 
+    {{-- Modal --}}
     <div
         x-cloak
         x-show="isActionModalOpen"
         role="dialog"
-        class="fixed top-0 left-0 w-screen h-screen bg-black/50 z-10 flex items-center justify-center">
+        class="fixed top-0 left-0 w-screen h-screen bg-black/50 flex items-center justify-center">
 
         <div>
             <form class="w-80 bg-white drop-shadow-md rounded-lg">
