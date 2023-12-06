@@ -48,54 +48,50 @@ class PreviewFinancialStatementCollection extends Component
         $this->editedQuarter = $this->fsCollection->quarter;
         $this->editedApproved = $this->fsCollection->approved;
         $this->editedFSCStatus = $this->fsCollection->collection_status;
-        $this->editedFSType = $this->fsCollection->fs_type;
         
     }
 
     public function export() {
-        dd("todo");
-    //     $filePath = 'public/uploads/'.$this->editedFSType.'.xlsx';
-    //     $newFilePath = 'uploads/'.$this->editedFSType.'.xlsx';
-    //     Storage::copy($filePath, $newFilePath);
+        $filePath = 'public/uploads/FS.xlsx';
+        $newFilePath = 'uploads/FS.xlsx';
+        Storage::copy($filePath, $newFilePath);
 
-    //     $spreadsheet = IOFactory::load(storage_path('app/' . $newFilePath));
+        $spreadsheet = IOFactory::load(storage_path('app/' . $newFilePath));
 
-    //     // Get row numbers from the collection_template table based on fsType
-    //     $templateName = strtolower($this->editedFSType) . '_vals';
-    //     $jsonMap = ReportTemplate::where('template_name', $templateName)->value('template');
-    //     $rowNumbers = array_values(json_decode($jsonMap, true));
-    //     $fsData = array_values(json_decode($this->fsCollection->fs_data));
-    //     $combinedData = array_combine($rowNumbers, $fsData);
-    //     $column = ($this->editedFSType === 'SCF') ? 'E' : 'F';
-        
-    //     foreach ($combinedData as $row => $value) {
-    //         $spreadsheet->getActiveSheet()->setCellValue($column . $row, $value);
-    //     }
+        // sfpo, sfpe, scf in order
+        $fsDataResults = DB::select('SELECT fs_data FROM financial_statements WHERE collection_id = ?', [$this->fsCollection->collection_id]);
+        $jsonData = array_column($fsDataResults, 'fs_data');
+        // key : val == rowNumber : fsData
+        $combinedData = array_map('json_decode', $jsonData, array_fill(0, count($jsonData), true));
 
-    //     $editedYear = date('Y', strtotime($this->editedDate));
-    //     $date = [
-    //         'Q1'=> "March 31, ".$editedYear,
-    //         'Q2'=> "June 31, ".$editedYear,
-    //         'Q3'=> "September 31, ".$editedYear,
-    //         'Q4'=> "December 31, ".$editedYear,
-    //     ];
-    //     $dateHeader = $spreadsheet->getActiveSheet()->getCell('A6')->getValue();
-    //     if ($this->editedInterimPeriod === 'Quarterly') {
-    //         $newDateHeader = str_replace('<date>', $date[$this->editedQuarter], $dateHeader);
-    //     } else {
-    //         $newDateHeader = 'For the Year Ended December 31, '.$editedYear;
-    //     }
-    //     $spreadsheet->getActiveSheet()->setCellValue('A6', $newDateHeader);
-        
-    //     $writer = new Xlsx($spreadsheet);
-    //     $writer->save(storage_path('app/'.$newFilePath));
-        
-    //     $headers = [
-    //         'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    //     ];
-    //     $filename = $this->fsCollection->collection_name;
-    //     return response()->download(storage_path('app/'.$newFilePath), $filename.'.xlsx', $headers)
-    //         ->deleteFileAfterSend(true);
+        for ($i=0 ; $i<3 ; $i++) {
+            $column = ($i === 2) ? 'E' : 'F'; 
+            foreach ($combinedData[$i] as $row => $value) {
+                $spreadsheet->getSheet($i)->setCellValue($column . $row, $value);
+            }
+            $editedYear = date('Y', strtotime($this->editedDate));
+            $date = [
+                'Q1'=> "March 31, ".$editedYear,
+                'Q2'=> "June 31, ".$editedYear,
+                'Q3'=> "September 31, ".$editedYear,
+                'Q4'=> "December 31, ".$editedYear,
+            ];
+            $dateHeader = $spreadsheet->getActiveSheet()->getCell('A6')->getValue();
+            if ($this->editedInterimPeriod === 'Quarterly') {
+                $newDateHeader = str_replace('<date>', $date[$this->editedQuarter], $dateHeader);
+            } else {
+                $newDateHeader = 'For the Year Ended December 31, '.$editedYear;
+            }
+            $spreadsheet->getSheet($i)->setCellValue('A6', $newDateHeader);
+        }
+        $writer = new Xlsx($spreadsheet);
+        $writer->save(storage_path('app/'.$newFilePath));
+        $headers = [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ];
+        $filename = $this->fsCollection->collection_name;
+        return response()->download(storage_path('app/'.$newFilePath), $filename.'.xlsx', $headers)
+            ->deleteFileAfterSend(true);
     }
 
     public function confirmDelete($fscID)
