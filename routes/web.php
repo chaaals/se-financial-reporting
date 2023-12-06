@@ -23,9 +23,9 @@ Route::prefix('/trial-balances')->middleware('auth')->group(function () {
 
 
 Route::prefix('/financial-statements')->middleware('auth')->group(function () {
-    Route::view('/','financial-statements'); 
-    Route::view('add','add-financial-statement'); 
-    Route::view('/{statement_id}', 'preview-financial-statement'); 
+    Route::view('/','financial-statement-collections'); 
+    Route::view('add','add-financial-statement-collection'); 
+    Route::view('/{collection_id}', 'preview-financial-statement-collection'); 
 });
 
 require __DIR__.'/auth.php';

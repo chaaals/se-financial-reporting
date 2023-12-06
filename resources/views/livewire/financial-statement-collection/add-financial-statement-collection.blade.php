@@ -1,27 +1,27 @@
 <div>
-    <div
-        x-data="{ uploading: false }"
-        x-on:livewire-upload-start="uploading = true"
-        x-on:livewire-upload-finish="uploading = false"
-        x-on:livewire-upload-error="uploading = false"
-    >
+    <div>
         <form wire:submit.prevent="add">
             <div>
                 <label htmlFor='fsName'>Financial Statement Name</label>
-                <input id='fsName' type='text' wire:model='fsName' placeholder='optional' />
+                <input id='fsName' type='text' wire:model='fsName' placeholder='optional' @if($confirming) disabled @endif/>
             </div>
             <div>
-                <label for="fs_type">Type</label>
-                <select id="fs_type" wire:model="fsType">
-                    <option value="SFPO">SFPO</option>
-                    <option value="SFPE">SFPE</option>
-                    <option value="SCF">SCF</option>
+                <label for="tbs">Trial Balance</label>
+                @if($confirming)
+                <select id="tbs" wire:model="tbID" disabled>
+                    <option value="{{ $this->tbID }}">{{ $this->tbName }} </option>
+                @else
+                <select id="tbs" wire:model="tbID">
+                    @foreach($trialBalances as $trialBalance)
+                        <option value="{{ $trialBalance->tb_id }}">{{ $trialBalance->tb_name }} </option>
+                    @endforeach
+                @endif
                 </select>
                 <div>@error('fsType')<span>{{ $message }}</span>@enderror</div>
             </div>
             <div>
                 <label for="interim_period">Interim Period</label>
-                <select id="interim_period" wire:model="interimPeriod">
+                <select id="interim_period" wire:model="interimPeriod" @if($confirming) disabled @endif>
                     <option value="Quarterly">Quarterly</option>
                     <option value="Annual">Annual</option>
                 </select>
@@ -29,20 +29,19 @@
             </div>
             <div>
                 <label htmlFor='fsPeriod'>Quarter</label>
-                <input id='fsPeriod' type='date' wire:model='date' />
+                <input id='fsPeriod' type='date' wire:model='date' @if($confirming) disabled @endif />
                 <div>@error('date')<span>{{ $message }}</span>@enderror</div>
             </div>
-            <div>
-                <input 
-                    type="file"
-                    accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-                    wire:model="importedSpreadsheet">
-                <div>@error('importedSpreadsheet')<span>{{ $message }}</span>@enderror</div>
-            </div>
-
             <button type="submit">Add Financial Statement</button>
         </form>
-        <div x-show="uploading" x-cloak>Loading file...</div>
+        <!-- show confirmation -->
+        @if ($confirming)
+            <div>
+                <span>Add all financial statements?</span>
+                <button wire:click="addFS">Yes</button>
+                <button wire:click="cancelAddFS">No</button>
+            </div>
+        @endif
     </div>
 
     @if($preview)
