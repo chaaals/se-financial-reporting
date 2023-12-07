@@ -138,29 +138,31 @@
                 </thead>
 
                 <tbody>
-                    {{-- @if($trial_balances)
-                        @foreach($trial_balances as $index=>$tb)
+                    @if($fs_collection)
+                        @foreach($fs_collection as $index=>$fsc)
                             <tr class={{ $index%2 == 0 ? 'bg-accentOne' : 'bg-white' }}>
-                                <td class="h-16 p-2 text-center whitespace-wrap">
-                                    <a href="/trial-balances/{{ $tb->tb_id }}">{{ $tb->tb_name }}</a>
+                                <td
+                                    class="h-16 p-2 text-center whitespace-wrap cursor-pointer hover:text-secondary"
+                                    wire:click="preview('{{$fsc->collection_id}}')">
+                                    {{ $fsc->collection_name }}
                                 </td>
                                 <td class="h-16 p-2 text-center whitespace-nowrap">
-                                    {{ date('M d, Y', strtotime($tb->date)) }}
+                                    {{ date('M d, Y', strtotime($fsc->date)) }}
                                 </td>
                                 <td class="h-16 p-2 hidden text-center whitespace-nowrap md:table-cell">
-                                    {{ $tb->interim_period }}
+                                    {{ $fsc->interim_period }}
                                 </td>
                                 <td class="h-16 p-2 hidden text-center whitespace-nowrap md:table-cell">
-                                    {{ $tb->quarter ?? "-" }}
+                                    {{ $fsc->quarter ?? "-" }}
                                 </td>
                                 <td class="h-16 p-2 hidden text-center whitespace-wrap md:table-cell">
-                                    {{ date('M d, Y H:i:s', strtotime($tb->created_at)) }}
+                                    {{ date('M d, Y H:i:s', strtotime($fsc->created_at)) }}
                                 </td>
                                 <td class="h-16 p-2 hidden text-center whitespace-wrap md:table-cell">
-                                    {{ date('M d, Y H:i:s', strtotime($tb->updated_at)) }}
+                                    {{ date('M d, Y H:i:s', strtotime($fsc->updated_at)) }}
                                 </td>
                                 <td class="h-16 p-2 hidden text-center whitespace-nowrap md:table-cell">
-                                    {{ $tb->tb_status }}
+                                    {{ $fsc->collection_status }}
                                 </td>
                                 <td class="h-16 p-2">
                                     <div class="flex items-center justify-center">
@@ -171,7 +173,7 @@
                                 </td>
                             </tr>
                         @endforeach
-                    @endif --}}
+                    @endif
                 </tbody>
             </table>
 

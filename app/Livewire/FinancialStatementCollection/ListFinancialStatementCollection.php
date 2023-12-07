@@ -65,6 +65,10 @@ class ListFinancialStatementCollection extends Component
         $this->reset('confirming');
     }
 
+    public function preview(string $fscId){
+        return $this->redirect("/financial-statements/$fscId", navigate: true);
+    }
+
     public function previous(){
         $this->previousPage();
     }
