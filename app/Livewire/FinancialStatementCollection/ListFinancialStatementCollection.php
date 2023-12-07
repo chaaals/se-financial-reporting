@@ -78,6 +78,14 @@ class ListFinancialStatementCollection extends Component
     // public function sort(int $sortIndex){
     //     $this->sortBy = $this->sortIndices[$sortIndex];
     // }
+    public function updatePage(){
+        $this->setPage(1);
+    }
+
+    public function refreshFilters(){
+        $this->filterStatus = auth()->user()->role === 'accounting' ? 'Draft' : 'For Approval';
+        $this->reset(['filterPeriod', 'filterQuarter']);
+    }
 
     public function create(){
         return $this->redirect('/financial-statements/add', navigate: true);
