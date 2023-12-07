@@ -12,8 +12,8 @@ class TrialBalance extends Model
     protected $fillable = [
         'tb_type',
         'tb_data',
-        'report_name',
-        'report_status',
+        'tb_name',
+        'tb_status',
         'quarter',
         'approved',
         'date',

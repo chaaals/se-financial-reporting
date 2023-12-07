@@ -24,9 +24,22 @@ export default {
                 accentOne: "#E1E6EF",
                 active: "#2D6B9A",
                 neutral: "#D6D7D8",
+                neutralTwo: "#222222",
+                neutralThree: "#B4BBC6",
+                draft: "#D6D7D8",
+                forapproval: "#AB830F",
+                approved: "#008000",
+                changerequested: "#DC3545",
+            },
+            margin: {
+                22: "5.5rem",
+            },
+            spacing: {
+                46: "11.25rem",
             },
             height: {
                 128: "32rem",
+                136: "36rem",
                 160: "42.5rem",
             },
         },

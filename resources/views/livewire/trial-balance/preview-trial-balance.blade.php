@@ -1,5 +1,5 @@
-<div>
-    @if ($trial_balance)
+<section x-data="{ isActionModalOpen: false }" class="w-full p-4">
+    {{-- @if ($trial_balance)
         <section>
             @if ($editMode)
                 <div>
@@ -73,9 +73,124 @@
 
                 <div>
                     {{-- export --}}
-                    <button wire:click="export">Export</button>
+                    {{-- <button wire:click="export">Export</button>
                 </div>
             @endif
         </section>
-    @endif
-</div>
+    @endif --}}
+
+    {{-- header --}}
+    <section class="w-full flex items-center justify-between flex-col bg-white drop-shadow-md rounded-lg mb-4 p-2 md:flex-row 2xl:mb-8">
+        <h1 class="text-primary text-header font-bold font-inter">{{ $trial_balance->tb_name }}</h1>
+
+
+        <section class="flex items-center gap-4">
+            <livewire:financial-reporting.notes
+                :reportId="$trial_balance->tb_id"
+                :reportType="$reportType"
+                :reportName="$trial_balance->tb_name" />
+            
+            <button
+                {{-- wire:click="create" --}}
+                class="bg-secondary text-white px-4 py-2 rounded-lg text-xs md:text-base">
+                Export Trial Balance
+            </button>
+        </section>
+    </section>
+
+    <section class="flex flex-col gap-4 md:flex-row">
+        {{-- placeholder for previews --}}
+        <section class="w-full border-2 border-dashed border-primary text-center sm:h-136 2xl:h-160">Trial Balance Preview</section>
+        
+        <section class="w-full flex flex-col gap-4 justify-between bg-white rounded-lg p-4 md:w-72 md:h-136 2xl:h-160">
+            <section>
+                <div class="mb-0.5">
+                    <span class="text-xs font-inter text-slate-500">Trial Balance Name</span>
+                    <p class="font-inter font-bold">{{ $trial_balance->tb_name }}</p>
+                </div>
+                <div class="mb-0.5">
+                    <span class="text-xs font-inter text-slate-500">Date</span>
+                    <p class="font-inter font-bold">{{ $trial_balance->date }}</p>
+                </div>
+                <div class="mb-0.5">
+                    <span class="text-xs font-inter text-slate-500">Period</span>
+                    <p class="font-inter font-bold">{{ $trial_balance->interim_period }}</p>
+                </div>
+
+                @if($trial_balance->quarter)
+                <div class="mb-0.5">
+                    <span class="text-xs font-inter text-slate-500">Quarter</span>
+                    <p class="font-inter font-bold">{{ $trial_balance->quarter }}</p>
+                </div>
+                @endif
+                <div class="mb-0.5">
+                    <span class="text-xs font-inter text-slate-500">Created At</span>
+                    <p class="font-inter font-bold">{{ $trial_balance->created_at }}</p>
+                </div>
+                <div class="mb-0.5">
+                    <span class="text-xs font-inter text-slate-500">Updated At</span>
+                    <p class="font-inter font-bold">{{ $trial_balance->updated_at }}</p>
+                </div>
+            </section>
+
+            <section x-data="{ isToolTipVisible: false }" class="flex items-center gap-2">
+                <button
+                    class="w-full text-center @if($statusColor === 'draft') {{'bg-draft'}} @elseif($statusColor === 'forapproval') {{'bg-forapproval'}} @elseif($statusColor === 'approved') {{'bg-approved'}} @elseif($statusColor === 'changerequested') {{'bg-changerequested'}} @endif rounded-lg text-white p-2" x-on:click="isActionModalOpen = true">
+                    {{ $trial_balance->tb_status }}
+                </button>
+                <div class="relative" x-on:mouseenter="isToolTipVisible = true" x-on:mouseleave="isToolTipVisible = false">
+                    <x-financial-reporting.assets.info />
+
+                    <div
+                        x-cloak
+                        x-show="isToolTipVisible"
+                        class="absolute -left-46 -top-24 rounded-t-lg rounded-bl-lg bg-black bg-opacity-75 w-48 p-2 text-sm after:content-[''] after:absolute after:top-full after:left-2/4 after:ml-22 after:border-4 after:border-solid after:border-t-black after:border-opacity-75 after:border-r-transparent after:border-b-transparent after:border-l-transparent">
+                        <p class="text-white">You can update the status of the report by clicking this button.</p>
+                    </div>
+                </div>
+            </section>
+        </section>
+    </section>
+
+
+    {{-- Modal --}}
+    <div
+        x-cloak
+        x-show="isActionModalOpen"
+        role="dialog"
+        class="fixed top-0 left-0 w-screen h-screen bg-black/50 flex items-center justify-center">
+
+        <div>
+            <form class="w-80 bg-white drop-shadow-md rounded-lg">
+                <h1>Do you want to update report status?</h1>
+
+                <div class="flex items-center gap-4">
+                    <p>{{ $trial_balance->tb_status }}</p>
+
+                    <span>to</span>
+                        {{-- TODO: Change in the future, sync with integ team for user roles --}}
+                        {{-- TODO: Modify p tags to input for wire:model --}}
+                        @if(auth()->user()->role === "accounting")
+                            @if($trial_balance->tb_status === "Draft")
+                                <p><strong>For Approval</strong></p>
+                            @else
+                                <p><strong>Draft</strong></p>
+                            @endif
+                        @else
+                            @if($trial_balance->tb_status === "Draft")
+                                <p><strong>For Approval</strong></p>
+                            @else
+                                <select>
+                                    <option>Approved</option>
+                                    <option>Change Requested</option>
+                                </select>
+                            @endif
+                        @endif
+                </div>
+
+                <button type="button" x-on:click="isActionModalOpen = false">Cancel</button>
+                <button type="submit">Update</button>
+            </form>
+        </div>
+    </div>
+</section>

@@ -86,6 +86,10 @@ class ListTrialBalance extends Component
         
     }
 
+    public function preview(string $tbId){
+        return $this->redirect("/trial-balances/$tbId", navigate: true);
+    }
+
     public function refreshFilters(){
         $this->filterStatus = auth()->user()->role === 'accounting' ? 'Draft' : 'For Approval';
         $this->reset(['filterPeriod', 'filterQuarter', 'sortBy']);

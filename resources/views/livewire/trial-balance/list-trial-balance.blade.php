@@ -95,8 +95,10 @@
                     @if($trial_balances)
                         @foreach($trial_balances as $index=>$tb)
                             <tr class={{ $index%2 == 0 ? 'bg-accentOne' : 'bg-white' }}>
-                                <td class="h-16 p-2 text-center whitespace-wrap">
-                                    <a href="/trial-balances/{{ $tb->tb_id }}">{{ $tb->tb_name }}</a>
+                                <td 
+                                    class="h-16 p-2 text-center whitespace-wrap cursor-pointer hover:text-secondary"
+                                    wire:click="preview('{{ $tb->tb_id }}')">
+                                    {{ $tb->tb_name }}
                                 </td>
                                 <td class="h-16 p-2 text-center whitespace-nowrap">
                                     {{ date('M d, Y', strtotime($tb->date)) }}
