@@ -11,6 +11,7 @@ use Maatwebsite\Excel\Facades\Excel;
 class PreviewTrialBalance extends Component
 {
     public TrialBalance $trial_balance;
+    public $reportType = "tb";
     public $confirming = null;
     public $editMode = false;
     public $editedReportName;
@@ -108,6 +109,8 @@ class PreviewTrialBalance extends Component
 
     public function render()
     {
-        return view('livewire.trial-balance.preview-trial-balance');
+        return view('livewire.trial-balance.preview-trial-balance',
+            ["statusColor" => strtolower(join("", explode(" ",$this->trial_balance->tb_status)))]
+        );
     }
 }
