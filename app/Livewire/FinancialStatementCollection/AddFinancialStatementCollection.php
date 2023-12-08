@@ -34,6 +34,7 @@ class AddFinancialStatementCollection extends Component
     public $fsTypes = ["SFPO", "SFPE", "SCF"];
 
     public $confirming = false;
+    protected $listeners = ["setTbID" => "setTbID"];
 
     protected $rules = [
         "fsName" => "nullable|max:255",
@@ -55,10 +56,10 @@ class AddFinancialStatementCollection extends Component
 
         // default values so user does not need to interact with the form and just save
         $this->date = date('Y-m-d');
-        if (count($this->trialBalances) > 0) {
-            $this->tbID = $this->trialBalances[0]->tb_id;
-            $this->tbName = $this->trialBalances[0]->tb_name;
-        }
+        // if (count($this->trialBalances) > 0) {
+        //     $this->tbID = $this->trialBalances[0]->tb_id;
+        //     $this->tbName = $this->trialBalances[0]->tb_name;
+        // }
     }
 
     public function add(){
@@ -162,6 +163,10 @@ class AddFinancialStatementCollection extends Component
             $results[$rowNumber] = $sum;
         }
         return json_encode($results);
+    }
+
+    publIc function setTbID(string $tbID){
+        $this->tbID = $tbID;
     }
 
     public function cancel(){

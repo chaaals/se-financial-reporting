@@ -19,6 +19,7 @@
                 </select>
                 <div>@error('fsType')<span>{{ $message }}</span>@enderror</div>
             </div> --}}
+
             <div class="flex flex-col items-start mb-4">
                 <label class="text-md font-bold" for="fsDate">Date</label>
                 <input class="w-full rounded-lg focus:ring-0 md:w-96" id="fsDate" type="date" wire:model.live="date" />
@@ -103,23 +104,27 @@
             </div>
             @endif
 
-            <div x-data="{ isWarningVisible: false, isToolTipVisible: false }" class="flex flex-col items-start mb-4">
+            <livewire:financial-reporting.suggestion-search
+                :interimPeriod="$interimPeriod"
+            />
+
+            <div x-data="{ isToolTipVisible: false }" class="flex flex-col items-start mb-4">
                 <label class="flex items-center gap-2 text-md font-bold" for="interim_period">
                     Statement Types
                     <div class="relative" x-on:mouseenter="isToolTipVisible = true" x-on:mouseleave="isToolTipVisible = false">
                     <x-financial-reporting.assets.info />
 
-                    <div
-                        x-cloak
-                        x-show="isToolTipVisible"
-                        class="absolute -left-46 -top-20 rounded-t-lg rounded-bl-lg bg-black bg-opacity-75 w-48 p-2 text-sm after:content-[''] after:absolute after:top-full after:left-2/4 after:ml-22 after:border-4 after:border-solid after:border-t-black after:border-opacity-75 after:border-r-transparent after:border-b-transparent after:border-l-transparent">
-                        <p class="text-white text-xs">
-                            Financial Statements must be complete. Incomplete Financial Statements is not permitted upon creating a collection
-                        </p>
+                        <div
+                            x-cloak
+                            x-show="isToolTipVisible"
+                            class="absolute -left-46 -top-20 rounded-t-lg rounded-bl-lg bg-black bg-opacity-75 w-48 p-2 text-sm after:content-[''] after:absolute after:top-full after:left-2/4 after:ml-22 after:border-4 after:border-solid after:border-t-black after:border-opacity-75 after:border-r-transparent after:border-b-transparent after:border-l-transparent">
+                            <p class="text-white text-xs">
+                                Financial Statements must be complete. Incomplete Financial Statements is not permitted upon creating a collection
+                            </p>
+                        </div>
                     </div>
-                </div>
                 </label>
-
+                
                 <fieldset id="interim_period" class="flex flex-col gap-4 pl-4 md:w-96 md:pl-8 md:flex-row md:flex-wrap md:items-center">
                     <section>
                         <input
