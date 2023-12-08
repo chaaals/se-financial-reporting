@@ -26,8 +26,17 @@ class SuggestionSearch extends Component
     public function render()
     {
         if($this->searchInput && $this->interimPeriod){
-            $this->suggestions = DB::table("trial_balances")
-                                    ->select("tb_id", "tb_name", "interim_period", "date")
+            $this->suggestions = DB::table("trial_balances as tb")
+                                    ->select(
+                                        "tb.tb_id as tb_id",
+                                        "tb.tb_name as tb_name",
+                                        "tb.interim_period as interim_period",
+                                        "tb.date as date")
+                                    ->whereNotExists(function($query){
+                                        $query->select(DB::raw(1))
+                                              ->from("financial_statement_collections as fsc")
+                                              ->whereColumn('tb.tb_id', 'fsc.tb_id');
+                                    })
                                     ->where("interim_period", "=", $this->interimPeriod)
                                     ->where("tb_name", "like", "%$this->searchInput%")
                                     ->limit(10)
