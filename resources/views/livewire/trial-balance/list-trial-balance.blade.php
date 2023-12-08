@@ -156,16 +156,20 @@
     </section>
 
     {{-- Modal --}}
+    @if($trialBalance)
     <div
         x-cloak
         x-show="isActionModalOpen"
         role="dialog"
         class="fixed top-0 left-0 w-screen h-screen bg-black/50 flex items-center justify-center">
-
         <div>
-            <h1>Delete Modal</h1>
-            <button type="button" x-on:click="isActionModalOpen = false">Cancel</button>
+            <h1>Delete Record</h1>
+            <p class="whitespace-normal break-all">
+                Are you sure you want to delete {{$trialBalance->tb_name}}? This will remove record and can't be undone.
+            </p>
+            <button type="button" x-on:click="isActionModalOpen = false" wire:click="setTrialBalance">Cancel</button>
             <button type="button" x-on:click="isActionModalOpen = false" wire:click="delete">Delete</button>
         </div>
     </div>
+    @endif
 </section>
