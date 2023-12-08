@@ -1,4 +1,4 @@
-<section class="w-full p-4">
+<section x-data="{ isActionModalOpen: false }" class="w-full p-4">
     <section class="w-full flex items-center justify-between flex-col bg-white drop-shadow-md rounded-lg mb-4 p-2 md:flex-row 2xl:mb-8">
         <h1 class="text-primary text-header font-bold font-inter">Trial Balances</h1>
 
@@ -120,7 +120,10 @@
                                 </td>
                                 <td class="h-16 p-2">
                                     <div class="flex items-center justify-center">
-                                        <button class="h-full items-center">
+                                        <button
+                                            x-on:click="isActionModalOpen = true"
+                                            wire:click="setTrialBalance({{$index}})"
+                                            class="h-full items-center">
                                             <x-financial-reporting.assets.trash-icon />
                                         </button>
                                     </div>
@@ -151,4 +154,18 @@
             </div>
         </section>
     </section>
+
+    {{-- Modal --}}
+    <div
+        x-cloak
+        x-show="isActionModalOpen"
+        role="dialog"
+        class="fixed top-0 left-0 w-screen h-screen bg-black/50 flex items-center justify-center">
+
+        <div>
+            <h1>Delete Modal</h1>
+            <button type="button" x-on:click="isActionModalOpen = false">Cancel</button>
+            <button type="button" x-on:click="isActionModalOpen = false" wire:click="delete">Delete</button>
+        </div>
+    </div>
 </section>

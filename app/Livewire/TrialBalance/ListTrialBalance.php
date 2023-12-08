@@ -12,6 +12,8 @@ class ListTrialBalance extends Component
 {
     use WithPagination;
 
+    public $trialBalances = [];
+    public $trialBalance = null;
     public $hasMorePages;
     public $confirming = null;
     public $rows = 10;
@@ -99,6 +101,19 @@ class ListTrialBalance extends Component
         return $this->redirect('/trial-balances/add', navigate: true);
     }
 
+    public function delete(){
+        if(count($this->trialBalances) === 0){
+            return;
+        }
+
+        $tb_id = $this->trialBalance->tb_id;
+        DB::table('trial_balances')->where("tb_id", "=", $tb_id)->delete();
+    }
+
+    public function setTrialBalance(int $itemIndex){
+        $this->trialBalance = $this->trialBalances[$itemIndex];
+    }
+
     public function updatePage(){
         $this->setPage(1);
     }
@@ -138,6 +153,7 @@ class ListTrialBalance extends Component
 
         $res = $query->where('tb_status', '=', $this->filterStatus)->paginate($this->rows);
 
+        $this->trialBalances = $res->items();
         $this->hasMorePages = $res->hasMorePages();
         
         return view('livewire.trial-balance.list-trial-balance', [
