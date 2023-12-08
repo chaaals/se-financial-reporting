@@ -38,7 +38,6 @@ class ListFinancialStatementCollection extends Component
 
     public $searchInput;
 
-
     public function mount(){
         // TODO: Change to DB query builder and paginate
         // $this->fsCollections = FinancialStatementCollection::all();
@@ -77,6 +76,10 @@ class ListFinancialStatementCollection extends Component
         if($this->hasMorePages){
             $this->nextPage();
         }
+    }
+
+    public function search(){
+        
     }
 
     // public function sort(int $sortIndex){
