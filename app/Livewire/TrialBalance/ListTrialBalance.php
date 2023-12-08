@@ -55,21 +55,6 @@ class ListTrialBalance extends Component
         $this->filterStatus = auth()->user()->role === 'accounting' ? 'Draft' : 'For Approval';
     }
 
-    public function confirmDelete($tbID)
-    {
-        $this->confirming = $tbID;
-    }
-
-    public function deleteTrialBalance($tbID)
-    {
-        // delete by ID
-        TrialBalance::find($tbID)->delete();
-        // refresh
-        // TODO: Change to DB query
-        $this->trial_balances = TrialBalance::all();
-        $this->reset('confirming');
-    }
-
     public function previous(){
         $this->previousPage();
     }
