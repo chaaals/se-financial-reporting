@@ -29,7 +29,7 @@
             />
     </div>
 
-    <ul x-cloak x-show="showSuggestions" role="listbox" class="w-full max-h-96 absolute top-20 left-0 bg-white drop-shadow-md rounded-lg overflow-hidden overflow-y-scroll scrollbar z-10">
+    <ul x-cloak x-show="showSuggestions" role="listbox" class="w-full max-h-36 absolute top-20 left-0 bg-white drop-shadow-md rounded-lg overflow-hidden overflow-y-scroll scrollbar z-10 md:max-h-96">
         @if(count($suggestions) > 0)
             @foreach($suggestions as $index=>$item)
                 <li
@@ -46,6 +46,10 @@
                     </div>
                 </li>
             @endforeach
+        @elseif(!$searchInput)
+            <li class="cursor-pointer p-4">
+                Searching for a {{ $interimPeriod }} Trial Balance...
+            </li>
         @else
             <li class="cursor-pointer p-4">
                 No results for <strong>{{ $searchInput }}</strong> was found.

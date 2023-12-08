@@ -10,7 +10,7 @@ class SuggestionSearch extends Component
 {
     public $searchInput;
     #[Reactive]
-    public $interimPeriod; // TODO: remove
+    public $interimPeriod;
     public $suggestions = [];
     public $selectedInput;
 
@@ -18,7 +18,9 @@ class SuggestionSearch extends Component
         $this->selectedInput = $this->suggestions[$suggestionIndex];
         $this->searchInput = $this->selectedInput->tb_name;
 
-        $this->dispatch('setTbID', tbID: $this->selectedInput->tb_id);
+        $this->dispatch('setTrialBalance',
+            tbID: $this->selectedInput->tb_id,
+            tbName:$this->selectedInput->tb_name);
     }
 
     public function render()

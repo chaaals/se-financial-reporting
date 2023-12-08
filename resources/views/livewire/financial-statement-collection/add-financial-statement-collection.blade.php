@@ -1,32 +1,18 @@
-<div>
-    <section class="relative p-4" x-data="{ quarterly_active: false }">
+<section>
+    <section class="relative p-4" x-data="{ isActionModalOpen: false ,quarterly_active: false }">
         <form wire:submit.prevent="add">
             <div class="flex flex-col items-start mb-4">
-                <label class="text-md font-bold" for='fsName'>Financial Statement Name</label>
-                <input class="w-full rounded-lg focus:ring-0 md:w-96" id='fsName' type='text' wire:model='fsName' placeholder='Add financial statement name' @if($confirming) disabled @endif/>
+                <label class="text-md font-bold" for='fsName'>Financial Statement Collection</label>
+                <input class="w-full rounded-lg focus:ring-0 md:w-96" id='fsName' type='text' wire:model='fsName' placeholder='Add financial statement collection name' @if($confirming) disabled @endif/>
             </div>
-            {{-- <div>
-                <label for="tbs">Trial Balance</label>
-                @if($confirming)
-                <select id="tbs" wire:model="tbID" disabled>
-                    <option value="{{ $this->tbID }}">{{ $this->tbName }} </option>
-                @else
-                <select id="tbs" wire:model="tbID">
-                    @foreach($trialBalances as $trialBalance)
-                        <option value="{{ $trialBalance->tb_id }}">{{ $trialBalance->tb_name }} </option>
-                    @endforeach
-                @endif
-                </select>
-                <div>@error('fsType')<span>{{ $message }}</span>@enderror</div>
-            </div> --}}
 
-            <div class="flex flex-col items-start mb-4">
+            <div class="flex flex-col items-start">
                 <label class="text-md font-bold" for="fsDate">Date</label>
                 <input class="w-full rounded-lg focus:ring-0 md:w-96" id="fsDate" type="date" wire:model.live="date" />
-                <div>@error('date')<span>{{ $message }}</span>@enderror</div>
+                <div class="mt-4">@error('date')<span class="text-amber-500">{{ $message }}</span>@enderror</div>
             </div>
 
-            <div class="flex flex-col items-start mb-4">
+            <div class="flex flex-col items-start">
                 <label class="text-md font-bold" for="interim_period">Interim Period</label>
 
                 <fieldset id="interim_period" class="flex items-center gap-4 pl-4 md:pl-8">
@@ -53,7 +39,7 @@
                         <label class="text-sm md:text-base" for="Annual">Annual</label>
                     </section>
                 </fieldset>
-                <div>@error('interimPeriod')<span>{{ $message }}</span>@enderror</div>
+                <div class="mt-4">@error('interimPeriod')<span class="text-amber-500">{{ $message }}</span>@enderror</div>
             </div>
 
             @if($date)
@@ -104,9 +90,12 @@
             </div>
             @endif
 
-            <livewire:financial-reporting.suggestion-search
-                :interimPeriod="$interimPeriod"
-            />
+            <div>
+                <livewire:financial-reporting.suggestion-search
+                    :interimPeriod="$interimPeriod"
+                />
+                <div class="mb-4">@error('tbID')<span class="text-amber-500">{{ $message }}</span>@enderror</div>
+            </div>
 
             <div x-data="{ isToolTipVisible: false }" class="flex flex-col items-start mb-4">
                 <label class="flex items-center gap-2 text-md font-bold" for="interim_period">
@@ -161,47 +150,21 @@
 
             <section class="w-full flex items-center justify-between md:w-96">
                 <button class="border-accentOne border-2 rounded-lg px-4 py-2" type="button" wire:click="cancel">Cancel</button>
-                <button class="bg-primary text-white px-4 py-2 rounded-lg" type="submit">Add</button>
+                <button
+                    class="bg-primary text-white px-4 py-2 rounded-lg"
+                    type="submit"
+                    x-on:click="isActionModalOpen = true">
+                    Add
+                </button>
             </section>
         </form>
         <!-- show confirmation -->
-        @if ($confirming)
+        {{-- @if ($confirming)
             <div>
                 <span>Add all financial statements?</span>
                 <button wire:click="addFS">Yes</button>
                 <button wire:click="cancelAddFS">No</button>
             </div>
-        @endif
+        @endif --}}
     </section>
-
-    @if($preview)
-        <section style="padding: 1rem;">
-            <table>
-                <thead>
-                    @foreach($preview["headers"] as $rows)
-                        <tr>
-                            @foreach($rows as $col_index=>$col)
-                                @if($col || !in_array($col_index, [1,2,3,6,8,9]))
-                                    <th style="border: 1px solid red; white-space: nowrap; min-width: 100px;">{{ $col }}</th>
-                                @endif
-                            @endforeach
-                        </tr>
-                    @endforeach
-                </thead>
-                <tbody>
-                    @foreach($preview["data"] as $rows)
-                        <tr>
-                            @foreach($rows as $col_index=>$col)
-                                @if(!in_array($col_index, [1,2,3,6,8,9]))
-                                    <td>
-                                        <pre>{{ $col }}</pre>
-                                    </td>
-                                @endif
-                            @endforeach
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </section>
-    @endif
-</div>
+</section>
