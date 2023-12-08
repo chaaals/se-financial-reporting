@@ -14,7 +14,6 @@ class ListFinancialStatementCollection extends Component
     use WithPagination;
     public $fsCollections;
     public $confirming = null;
-    public $financialStatements;
 
     public $hasMorePages;
     public $rows = 10;
@@ -36,6 +35,16 @@ class ListFinancialStatementCollection extends Component
         ],
     ];
 
+    public $sortBy;
+    public $sortIndices = [
+        0 => "collection_name",
+        1 => "date",
+        2 => "interim_period",
+        3 => "quarter",
+        4 => "created_at",
+        5 => "updated_at",
+        6 => "collection_status",
+    ];
     public $searchInput;
 
     public function mount(){
@@ -82,16 +91,17 @@ class ListFinancialStatementCollection extends Component
         
     }
 
-    // public function sort(int $sortIndex){
-    //     $this->sortBy = $this->sortIndices[$sortIndex];
-    // }
+    public function sort(int $sortIndex){
+        $this->sortBy = $this->sortIndices[$sortIndex];
+    }
+
     public function updatePage(){
         $this->setPage(1);
     }
 
     public function refreshFilters(){
         $this->filterStatus = auth()->user()->role === 'accounting' ? 'Draft' : 'For Approval';
-        $this->reset(['filterPeriod', 'filterQuarter']);
+        $this->reset(['filterPeriod', 'filterQuarter', 'sortBy']);
     }
 
     public function create(){
@@ -120,6 +130,15 @@ class ListFinancialStatementCollection extends Component
             $searchInput = "%$this->searchInput%";
             $query->where('collection_name', 'like', $searchInput);
             $this->searchInput = null;
+        }
+
+        if($this->sortBy){
+            // refactor suggestion: modify enums to follow alphabetical order para madali sorting
+            if(in_array($this->sortBy, ['interim_period', 'quarter', 'collection_status'])){
+                $query->orderBy($this->sortBy, 'desc');
+            } else {
+                $query->orderBy($this->sortBy, 'asc');
+            }
         }
 
         $res = $query->where('collection_status', '=', $this->filterStatus)->paginate($this->rows);
