@@ -31,15 +31,16 @@ class AddFinancialStatementCollection extends Component
     public $preview = [];
     public $trialBalances = [];
     public $fscID;
+    public $fsTypes = ["SFPO", "SFPE", "SCF"];
 
     public $confirming = false;
 
     protected $rules = [
         "fsName" => "nullable|max:255",
         "date" => "required|date",
-        'interimPeriod' => 'required|in:Quarterly,Annual',
-        'quarter' => 'nullable',
-        'tbID' => 'required',
+        "interimPeriod" => "required|in:Quarterly,Annual",
+        "quarter" => "nullable",
+        "tbID" => "required",
     ];
 
     public function mount()
@@ -54,7 +55,6 @@ class AddFinancialStatementCollection extends Component
 
         // default values so user does not need to interact with the form and just save
         $this->date = date('Y-m-d');
-        $this->interimPeriod = "Quarterly";
         if (count($this->trialBalances) > 0) {
             $this->tbID = $this->trialBalances[0]->tb_id;
             $this->tbName = $this->trialBalances[0]->tb_name;
@@ -164,8 +164,23 @@ class AddFinancialStatementCollection extends Component
         return json_encode($results);
     }
 
+    public function cancel(){
+        return $this->redirect('/financial-statements', navigate: true);
+    }
+
     public function render()
     {
+        if($this->date && $this->interimPeriod === 'Quarterly') {
+            $fr_month = date('m', strtotime($this->date));
+            $this->rules['quarter'] = 'required|in:Q1,Q2,Q3,Q4';
+            $quarter = ceil($fr_month / 3);
+            $this->quarter = "Q$quarter";
+        }
+
+        if($this->interimPeriod === "Annual"){
+            $this->quarter = null;
+        }
+
         return view('livewire.financial-statement-collection.add-financial-statement-collection');
     }
 }
