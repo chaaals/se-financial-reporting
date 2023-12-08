@@ -161,14 +161,14 @@
         x-cloak
         x-show="isActionModalOpen"
         role="dialog"
-        class="fixed top-0 left-0 w-screen h-screen bg-black/50 flex items-center justify-center">
+        class="fixed top-0 left-0 w-screen h-screen bg-neutral bg-opacity-50 flex items-center justify-center">
         <div class="w-80 bg-white drop-shadow-md p-4 rounded-lg">
             <h1 class="text-2xl font-bold font-inter mb-2">Delete Record</h1>
             <p class="whitespace-normal font-inter text-sm mb-4">
                 Are you sure you want to delete <strong>{{$trialBalance->tb_name}}</strong>? This will remove the record and can't be undone.
             </p>
             <div class="w-full flex justify-between items-center">
-                <button class="text-white bg-neutral rounded-lg font-inter w-20 p-2" type="button" x-on:click="isActionModalOpen = false" wire:click="setTrialBalance">Cancel</button>
+                <button class="text-white bg-neutral rounded-lg font-inter w-20 p-2" type="button" x-on:click="isActionModalOpen = false" wire:click="setFSCollection">Cancel</button>
                 <button class="text-white bg-accentTwo rounded-lg font-inter w-20 p-2" type="button" x-on:click="isActionModalOpen = false" wire:click="delete">Delete</button>
             </div>
         </div>

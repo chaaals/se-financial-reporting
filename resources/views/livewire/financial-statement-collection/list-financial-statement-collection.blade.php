@@ -1,50 +1,4 @@
-    {{-- @if($fsCollections)
-        @foreach($fsCollections as $fsc)
-            <div>Collection name: <a href="/financial-statements/{{ $fsc->collection_id }}">{{ $fsc->collection_name }}</a></div>
-            <div>Status: {{ $fsc->collection_status }}</div>
-            <div>Date: {{ $fsc->date }}</div>
-            @if ($fsc->quarter)
-                <div>Quarter: {{ $fsc->quarter }}</div>
-            @endif
-            <div>Interim Period: {{ $fsc->interim_period }}</div>
-            <div>
-            @if ($fsc->approved)
-                Approved
-            @else
-                Not Approved
-            @endif
-            </div>
-            <div>
-            @php
-                $fsINIT = $this->getFSinit($fsc->collection_id);
-            @endphp
-            @if ($fsINIT->isNotEmpty())
-                <div>Financial Statements:
-                @foreach($fsINIT as $fs)
-                    {{ $fs->fs_type }}
-                @endforeach
-                </div>
-            @else
-                <div>No associated financial statements for this collection.</div>
-            @endif
-            </div>
-
-            <div>
-                <!-- delete -->
-                <button wire:click="confirmDelete('{{ $fsc->collection_id }}')">Delete</button>
-                <!-- confirm deletion -->
-                @if ($confirming === $fsc->collection_id)
-                    <button wire:click="deleteFinancialStatementCollection('{{ $fsc->collection_id }}')">Confirm Delete</button>
-                    <button wire:click="$set('confirming', null)">Cancel</button>
-                @endif
-            </div>
-        @endforeach
-
-    @else
-        <div>No available financial statement</div>
-    @endif --}}
-
-<section class="w-full p-4">
+<section x-data="{ isActionModalOpen: false }" class="w-full p-4">
     <section class="w-full flex items-center justify-between flex-col bg-white drop-shadow-md rounded-lg mb-4 p-2 md:flex-row 2xl:mb-8">
         <h1 class="text-primary text-header font-bold font-inter">Financial Statements</h1>
 
@@ -166,7 +120,10 @@
                                 </td>
                                 <td class="h-16 p-2">
                                     <div class="flex items-center justify-center">
-                                        <button class="h-full items-center">
+                                        <button 
+                                        x-on:click="isActionModalOpen = true"
+                                        wire:click="setFSCollection({{$index}})"
+                                        class="h-full items-center">
                                             <x-financial-reporting.assets.trash-icon />
                                         </button>
                                     </div>
@@ -197,4 +154,24 @@
             </div>
         </section>
     </section>
+
+    {{-- Modal --}}
+    @if($fsCollection)
+    <div
+        x-cloak
+        x-show="isActionModalOpen"
+        role="dialog"
+        class="fixed top-0 left-0 w-screen h-screen bg-neutral bg-opacity-50 flex items-center justify-center">
+        <div class="w-80 bg-white drop-shadow-md p-4 rounded-lg">
+            <h1 class="text-2xl font-bold font-inter mb-2">Delete Record</h1>
+            <p class="whitespace-normal font-inter text-sm mb-4">
+                Are you sure you want to delete <strong>{{$fsCollection->collection_name}}</strong>? This will remove the record and can't be undone.
+            </p>
+            <div class="w-full flex justify-between items-center">
+                <button class="text-white bg-neutral rounded-lg font-inter w-20 p-2" type="button" x-on:click="isActionModalOpen = false" wire:click="setFSCollection">Cancel</button>
+                <button class="text-white bg-accentTwo rounded-lg font-inter w-20 p-2" type="button" x-on:click="isActionModalOpen = false" wire:click="delete">Delete</button>
+            </div>
+        </div>
+    </div>
+    @endif
 </section>

@@ -13,6 +13,7 @@ class ListFinancialStatementCollection extends Component
 {
     use WithPagination;
     public $fsCollections;
+    public $fsCollection;
     public $confirming = null;
 
     public $hasMorePages;
@@ -49,28 +50,11 @@ class ListFinancialStatementCollection extends Component
 
     public function mount(){
         // TODO: Change to DB query builder and paginate
-        // $this->fsCollections = FinancialStatementCollection::all();
-        // $this->financialStatements = FinancialStatement::all();
         $this->filterStatus = auth()->user()->role === 'accounting' ? 'Draft' : 'For Approval';
     }
 
     public function getFSinit($fscID) {
         return FinancialStatement::where('collection_id', $fscID)->get();
-    }
-
-    public function confirmDelete($fscID)
-    {
-        $this->confirming = $fscID;
-    }
-
-    public function deleteFinancialStatementCollection($fscID)
-    {
-        // delete by ID
-        FinancialStatementCollection::find($fscID)->delete();
-        // refresh
-        // TODO: Change to DB query
-        $this->fsCollections = FinancialStatementCollection::all();
-        $this->reset('confirming');
     }
 
     public function preview(string $fscId){
@@ -108,6 +92,26 @@ class ListFinancialStatementCollection extends Component
         return $this->redirect('/financial-statements/add', navigate: true);
     }
 
+    public function delete(){
+        if(count($this->fsCollections) === 0){
+            return;
+        }
+
+        $collection_id = $this->fsCollection->collection_id;
+        DB::table('financial_statement_collections')->where("collection_id", "=", $collection_id)->delete();
+
+        $this->setFSCollection();
+    }
+
+    public function setFSCollection($itemIndex = null){
+        if($itemIndex === null) {
+            $this->fsCollection = null;
+            return;
+        }
+
+        $this->fsCollection = $this->fsCollections[$itemIndex];
+    }
+
     public function render()
     {
         $query = DB::table('financial_statement_collections')->select('collection_id','collection_name','date', 'interim_period', 'quarter', 'created_at', 'updated_at', 'collection_status');
@@ -142,6 +146,7 @@ class ListFinancialStatementCollection extends Component
         }
 
         $res = $query->where('collection_status', '=', $this->filterStatus)->paginate($this->rows);
+        $this->fsCollections = $res->items();
 
         $this->hasMorePages = $res->hasMorePages();
 

@@ -98,7 +98,12 @@ class ListTrialBalance extends Component
     }
 
     public function setTrialBalance($itemIndex = null){
-        $this->trialBalance = $itemIndex ? $this->trialBalances[$itemIndex] : $itemIndex;
+        if($itemIndex === null) {
+            $this->trialBalance = null;
+            return;
+        }
+
+        $this->trialBalance = $this->trialBalances[$itemIndex];
     }
 
     public function updatePage(){
