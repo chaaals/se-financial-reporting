@@ -168,7 +168,7 @@
                 Are you sure you want to delete <strong>{{$trialBalance->tb_name}}</strong>? This will remove the record and can't be undone.
             </p>
             <div class="w-full flex justify-between items-center">
-                <button class="text-white bg-neutral rounded-lg font-inter w-20 p-2" type="button" x-on:click="isActionModalOpen = false" wire:click="setFSCollection">Cancel</button>
+                <button class="text-white bg-neutral rounded-lg font-inter w-20 p-2" type="button" x-on:click="isActionModalOpen = false" wire:click="setTrialBalance">Cancel</button>
                 <button class="text-white bg-accentTwo rounded-lg font-inter w-20 p-2" type="button" x-on:click="isActionModalOpen = false" wire:click="delete">Delete</button>
             </div>
         </div>
