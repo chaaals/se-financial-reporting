@@ -40,7 +40,11 @@ class PreviewFinancialStatementCollection extends Component
     public function mount(){
         $fsc_id = Route::current()->parameter("collection_id");
         $this->fsCollection = FinancialStatementCollection::where('collection_id', $fsc_id)->get()->first();
-        $this->financialStatements = FinancialStatement::where('collection_id', $this->fsCollection->collection_id)->get();
+        $query = FinancialStatement::where('collection_id', $this->fsCollection->collection_id)->get();
+
+        foreach($query as $row){
+            $this->financialStatements[$row->fs_type] = $row;
+        }
 
         // default values
         $this->editedFSCName = $this->fsCollection->collection_name;

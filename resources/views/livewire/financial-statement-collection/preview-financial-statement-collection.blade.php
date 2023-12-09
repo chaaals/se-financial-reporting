@@ -1,6 +1,30 @@
-<section class="relative p-4">
-    <section class="w-full flex items-center justify-between flex-col bg-white drop-shadow-md rounded-lg mb-4 p-2 md:flex-row 2xl:mb-8">
-        <h1 class="text-primary text-header font-bold font-inter">{{ $fsCollection->collection_name }}</h1>
+<section
+    x-data="{ showSFPO: true, showSFPE: false, showSCF: false }"
+    class="relative p-4">
+    <section class="w-full flex items-center justify-between flex-col bg-white drop-shadow-md rounded-lg mb-4 p-2 gap-4 md:flex-row 2xl:mb-8">
+        <section clas="flex flex-col items-center justify-center md:flex-row">
+            <h1 class="text-primary text-header text-center font-bold font-inter md:text-left">{{ $fsCollection->collection_name }}</h1>
+            <div class="flex items-center justify-center gap-2 md:pl-4 md:justify-start">
+                <button
+                    x-on:click="showSFPO=true;showSFPE=false;showSCF=false;"
+                    class="w-20 p-1 rounded-lg md:w-28"
+                    :class="showSFPO ? 'bg-primary text-white' : 'bg-transparent text-neutralFour'">
+                    SFPO
+                </button>
+                <button
+                    x-on:click="showSFPO=false;showSFPE=true;showSCF=false;"
+                    class="w-20 p-1 rounded-lg md:w-28"
+                    :class="showSFPE ? 'bg-primary text-white' : 'bg-transparent text-neutralFour'">
+                    SFPE
+                </button>
+                <button
+                    x-on:click="showSFPO=false;showSFPE=false;showSCF=true;"
+                    class="w-20 p-1 rounded-lg md:w-28"
+                    :class="showSCF ? 'bg-primary text-white' : 'bg-transparent text-neutralFour'">
+                    SCF
+                </button>
+            </div>
+        </section>
 
         <section class="flex items-center gap-4">
             <livewire:financial-reporting.notes
@@ -18,7 +42,11 @@
 
     <section class="flex flex-col gap-4 md:flex-row">
         {{-- placeholder for previews --}}
-        <section class="w-full border-2 border-dashed border-primary text-center sm:h-136 2xl:h-160">Financial Statement Collection Preview</section>
+        <section class="w-full border-2 border-dashed border-primary text-center sm:h-136 2xl:h-160">
+        @foreach($financialStatements as $fsType=>$fs)
+            <p x-cloak x-show="show{{$fsType}}" class="text-sm whitespace-normal break-all w-80">{{ $fs->fs_data }}</p>
+        @endforeach
+        </section>
         
         <section class="w-full flex flex-col gap-4 justify-between bg-white rounded-lg p-4 md:w-72 md:h-136 2xl:h-160">
             <section>
