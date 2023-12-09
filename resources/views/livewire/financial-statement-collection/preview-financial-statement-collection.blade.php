@@ -1,5 +1,5 @@
 <section
-    x-data="{ showSFPO: true, showSFPE: false, showSCF: false }"
+    x-data="{ showSFPO: true, showSFPE: false, showSCF: false, isActionModalOpen: false }"
     class="relative p-4">
     <section class="w-full flex items-center justify-between flex-col bg-white drop-shadow-md rounded-lg mb-4 p-2 gap-4 md:flex-row 2xl:mb-8">
         <section clas="flex flex-col items-center justify-center md:flex-row">
@@ -97,6 +97,46 @@
             </section>
         </section>
     </section>
+
+    {{-- Modal --}}
+    <div
+        x-cloak
+        x-show="isActionModalOpen"
+        role="dialog"
+        class="fixed top-0 left-0 w-screen h-screen bg-black/50 flex items-center justify-center">
+        <div>
+            <form class="w-80 bg-white drop-shadow-md rounded-lg">
+                <h1>Do you want to update report status?</h1>
+
+                <div class="flex items-center gap-4">
+                    <p>{{ $fsCollection->collection_status }}</p>
+
+                    <span>to</span>
+                        {{-- TODO: Change in the future, sync with integ team for user roles --}}
+                        {{-- TODO: Modify p tags to input for wire:model --}}
+                        @if(auth()->user()->role === "accounting")
+                            @if($fsCollection->collection_status === "Draft")
+                                <p><strong>For Approval</strong></p>
+                            @else
+                                <p><strong>Draft</strong></p>
+                            @endif
+                        @else
+                            @if($fsCollection->collection_status === "Draft")
+                                <p><strong>For Approval</strong></p>
+                            @else
+                                <select>
+                                    <option>Approved</option>
+                                    <option>Change Requested</option>
+                                </select>
+                            @endif
+                        @endif
+                </div>
+
+                <button type="button" x-on:click="isActionModalOpen = false">Cancel</button>
+                <button type="submit">Update</button>
+            </form>
+        </div>
+    </div>
     {{-- @if ($fsCollection)
         <section>
             @if ($editMode)
