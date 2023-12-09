@@ -158,13 +158,5 @@
                 </button>
             </section>
         </form>
-        <!-- show confirmation -->
-        {{-- @if ($confirming)
-            <div>
-                <span>Add all financial statements?</span>
-                <button wire:click="addFS">Yes</button>
-                <button wire:click="cancelAddFS">No</button>
-            </div>
-        @endif --}}
     </section>
 </section>

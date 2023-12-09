@@ -83,11 +83,6 @@ class AddFinancialStatementCollection extends Component
         ]);
         $this->fscID = $fs_col->collection_id;
         $this->addFS();
-        // $this->confirming = true;
-
-        // reassign values for preview when confirming
-        // $this->tbID = $fs_col->tb_id;
-        // $this->tbName = DB::select("SELECT tb_name FROM trial_balances WHERE tb_id = ?", [$this->tbID])[0]->tb_name;
     }
     
     public function addFS()
