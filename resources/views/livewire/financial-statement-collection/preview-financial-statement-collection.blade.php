@@ -1,5 +1,75 @@
-<div>
-    @if ($fsCollection)
+<section class="relative p-4">
+    <section class="w-full flex items-center justify-between flex-col bg-white drop-shadow-md rounded-lg mb-4 p-2 md:flex-row 2xl:mb-8">
+        <h1 class="text-primary text-header font-bold font-inter">{{ $fsCollection->collection_name }}</h1>
+
+        <section class="flex items-center gap-4">
+            <livewire:financial-reporting.notes
+                :reportId="$fsCollection->collection_id"
+                :reportType="$reportType"
+                :reportName="$fsCollection->collection_name" />
+            
+            <button
+                class="bg-secondary text-white px-4 py-2 rounded-lg text-xs md:text-base"
+                wire:click="export">
+                Export Financial Statements
+            </button>
+        </section>
+    </section>
+
+    <section class="flex flex-col gap-4 md:flex-row">
+        {{-- placeholder for previews --}}
+        <section class="w-full border-2 border-dashed border-primary text-center sm:h-136 2xl:h-160">Financial Statement Collection Preview</section>
+        
+        <section class="w-full flex flex-col gap-4 justify-between bg-white rounded-lg p-4 md:w-72 md:h-136 2xl:h-160">
+            <section>
+                <div class="mb-0.5">
+                    <span class="text-xs font-inter text-slate-500">Financial Statement Collection Name</span>
+                    <p class="font-inter font-bold">{{ $fsCollection->collection_name }}</p>
+                </div>
+                <div class="mb-0.5">
+                    <span class="text-xs font-inter text-slate-500">Date</span>
+                    <p class="font-inter font-bold">{{ $fsCollection->date }}</p>
+                </div>
+                <div class="mb-0.5">
+                    <span class="text-xs font-inter text-slate-500">Period</span>
+                    <p class="font-inter font-bold">{{ $fsCollection->interim_period }}</p>
+                </div>
+
+                @if($fsCollection->quarter)
+                <div class="mb-0.5">
+                    <span class="text-xs font-inter text-slate-500">Quarter</span>
+                    <p class="font-inter font-bold">{{ $fsCollection->quarter }}</p>
+                </div>
+                @endif
+                <div class="mb-0.5">
+                    <span class="text-xs font-inter text-slate-500">Created At</span>
+                    <p class="font-inter font-bold">{{ $fsCollection->created_at }}</p>
+                </div>
+                <div class="mb-0.5">
+                    <span class="text-xs font-inter text-slate-500">Updated At</span>
+                    <p class="font-inter font-bold">{{ $fsCollection->updated_at }}</p>
+                </div>
+            </section>
+
+            <section x-data="{ isToolTipVisible: false }" class="flex items-center gap-2">
+                <button
+                    class="w-full text-center @if($statusColor === 'draft') {{'bg-draft'}} @elseif($statusColor === 'forapproval') {{'bg-forapproval'}} @elseif($statusColor === 'approved') {{'bg-approved'}} @elseif($statusColor === 'changerequested') {{'bg-changerequested'}} @endif rounded-lg text-white p-2" x-on:click="isActionModalOpen = true">
+                    {{ $fsCollection->collection_status }}
+                </button>
+                <div class="relative" x-on:mouseenter="isToolTipVisible = true" x-on:mouseleave="isToolTipVisible = false">
+                    <x-financial-reporting.assets.info />
+
+                    <div
+                        x-cloak
+                        x-show="isToolTipVisible"
+                        class="absolute -left-46 -top-24 rounded-t-lg rounded-bl-lg bg-black bg-opacity-75 w-48 p-2 text-sm after:content-[''] after:absolute after:top-full after:left-2/4 after:ml-22 after:border-4 after:border-solid after:border-t-black after:border-opacity-75 after:border-r-transparent after:border-b-transparent after:border-l-transparent">
+                        <p class="text-white">You can update the status of the report by clicking this button.</p>
+                    </div>
+                </div>
+            </section>
+        </section>
+    </section>
+    {{-- @if ($fsCollection)
         <section>
             @if ($editMode)
                 <div>
@@ -90,10 +160,10 @@
                 </div>
                 <div>
                     {{-- export --}}
-                    <button wire:click="export">Export</button>
-                </div>
+                    {{-- <button wire:click="export">Export</button>
+                </div> --}}
                 
-            @endif
-        </section>
-    @endif
-</div>
+            {{-- @endif
+        </section> --}}
+    {{-- @endif  --}}
+</section>

@@ -17,6 +17,7 @@ class PreviewFinancialStatementCollection extends Component
 {
     public FinancialStatementCollection $fsCollection;
     public $financialStatements = [];
+    public $reportType = "fsc";
     public $confirming = null;
     public $editMode = false;
     public $editedFSCName;
@@ -154,6 +155,8 @@ class PreviewFinancialStatementCollection extends Component
 
     public function render()
     {
-        return view('livewire.financial-statement-collection.preview-financial-statement-collection');
+        return view('livewire.financial-statement-collection.preview-financial-statement-collection',
+            ["statusColor" => strtolower(join("", explode(" ",$this->fsCollection->collection_status)))]
+        );
     }
 }
