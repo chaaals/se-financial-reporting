@@ -18,23 +18,24 @@ class PreviewFinancialStatementCollection extends Component
     public FinancialStatementCollection $fsCollection;
     public $financialStatements = [];
     public $reportType = "fsc";
-    public $confirming = null;
-    public $editMode = false;
-    public $editedFSCName;
-    public $editedDate;
-    public $editedInterimPeriod;
-    public $editedQuarter;
-    public $editedApproved;
-    public $editedFSCStatus;
-    public $previewFS = null;
+    public $reportStatusOptions = [];
+    public $selectedStatusOption;
+    // public $confirming = null;
+    // public $editMode = false;
+    // public $editedFSCName;
+    // public $editedDate;
+    // public $editedInterimPeriod;
+    // public $editedQuarter;
+    // public $editedApproved;
+    // public $editedFSCStatus;
 
     protected $rules = [
-        'editedFSCName' => 'nullable|max:255',
-        'editedDate' => 'required|date',
-        'editedInterimPeriod' => 'required|in:Quarterly,Annual',
-        'editedQuarter' => 'nullable|in:Q1,Q2,Q3,Q4',
-        'editedFSCStatus' => 'required|in:Draft,For Approval,Approved',
-        'editedApproved' => 'required|boolean',
+        // 'editedFSCName' => 'nullable|max:255',
+        // 'editedDate' => 'required|date',
+        // 'editedInterimPeriod' => 'required|in:Quarterly,Annual',
+        // 'editedQuarter' => 'nullable|in:Q1,Q2,Q3,Q4',
+        'selectedStatusOption' => 'required|in:Draft,For Approval,Approved,Change Requested',
+        // 'editedApproved' => 'required|boolean',
     ];
 
     public function mount(){
@@ -47,13 +48,12 @@ class PreviewFinancialStatementCollection extends Component
         }
 
         // default values
-        $this->editedFSCName = $this->fsCollection->collection_name;
-        $this->editedDate = $this->fsCollection->date;
-        $this->editedInterimPeriod = $this->fsCollection->interim_period;
-        $this->editedQuarter = $this->fsCollection->quarter;
-        $this->editedApproved = $this->fsCollection->approved;
-        $this->editedFSCStatus = $this->fsCollection->collection_status;
-        
+        // $this->editedFSCName = $this->fsCollection->collection_name;
+        // $this->editedDate = $this->fsCollection->date;
+        // $this->editedInterimPeriod = $this->fsCollection->interim_period;
+        // $this->editedQuarter = $this->fsCollection->quarter;
+        // $this->editedApproved = $this->fsCollection->approved;
+        // $this->editedFSCStatus = $this->fsCollection->collection_status;
     }
 
     public function export() {
@@ -99,11 +99,6 @@ class PreviewFinancialStatementCollection extends Component
             ->deleteFileAfterSend(true);
     }
 
-    public function confirmDelete($fscID)
-    {
-        $this->confirming = $fscID;
-    }
-
     public function deleteFinancialStatementCollection($fscID)
     {
         // delete by ID
@@ -112,53 +107,72 @@ class PreviewFinancialStatementCollection extends Component
         $this->redirect("/financial-statements");
     }
 
-    public function previewFSinit($fsID) {
-        $this->previewFS = $fsID;
-    }
-
-    public function toggleEditMode()
-    {
-        $this->editMode = !$this->editMode;
-    }
+    // public function toggleEditMode()
+    // {
+    //     $this->editMode = !$this->editMode;
+    // }
 
     public function updateFinancialStatementCollection()
     {
         $this->validate();
         // check if the report is already approved but changed to not approved
-        if ($this->fsCollection->approved) {
-            if (!$this->editedApproved) {
-                $this->editedFSCStatus = 'For Approval';
-            }
-        }
+        // if ($this->fsCollection->approved) {
+        //     if (!$this->editedApproved) {
+        //         $this->editedFSCStatus = 'For Approval';
+        //     }
+        // }
 
         // if not approved in the first place but changed to not approved
-        if ($this->editedApproved) {
-            $this->editedFSCStatus = 'Approved';
-        }
+        // if ($this->editedApproved) {
+        //     $this->editedFSCStatus = 'Approved';
+        // }
 
-        if ($this->editedInterimPeriod === "Annual") {
-            $this->editedQuarter = null;
-        } else {
-            $fs_month = date('m', strtotime($this->editedDate));
-            $quarter = ceil($fs_month / 3);
-            $this->editedQuarter = "Q$quarter";
-        }
+        // if ($this->editedInterimPeriod === "Annual") {
+        //     $this->editedQuarter = null;
+        // } else {
+        //     $fs_month = date('m', strtotime($this->editedDate));
+        //     $quarter = ceil($fs_month / 3);
+        //     $this->editedQuarter = "Q$quarter";
+        // }
         
         // update fields
-        $this->fsCollection->collection_name = $this->editedFSCName;
-        $this->fsCollection->date = $this->editedDate;
-        $this->fsCollection->interim_period = $this->editedInterimPeriod;
-        $this->fsCollection->quarter = $this->editedQuarter;
-        $this->fsCollection->approved = $this->editedApproved;
-        $this->fsCollection->collection_status = $this->editedFSCStatus;
+        // $this->fsCollection->collection_name = $this->editedFSCName;
+        // $this->fsCollection->date = $this->editedDate;
+        // $this->fsCollection->interim_period = $this->editedInterimPeriod;
+        // $this->fsCollection->quarter = $this->editedQuarter;
+        $this->fsCollection->approved = $this->selectedStatusOption === "Approved";
+        $this->fsCollection->collection_status = $this->selectedStatusOption;
         $this->fsCollection->save();
 
         // exit edit mode
-        $this->editMode = false;
+        // $this->editMode = false;
     }
 
     public function render()
     {
+        if(auth()->user()->role === "accounting"){
+            if(in_array($this->fsCollection->collection_status, ['Draft', 'Change Requested'])){
+                $this->selectedStatusOption = "For Approval";
+            } else {
+                $this->selectedStatusOption = "Draft";
+            }
+        }
+
+        if(auth()->user()->role === "ovpf"){
+            if($this->fsCollection->collection_status === "Draft") {
+                $this->selectedStatusOption = "For Approval";
+            } 
+            
+            if($this->fsCollection->collection_status === "Change Requested"){
+                $this->selectedStatusOption = "Approved";
+            }
+
+            if($this->fsCollection->collection_status === "For Approval") {
+                $this->reportStatusOptions = ["Approved", "Change Requested"];
+                $this->selectedStatusOption = "Approved";
+            }
+        }
+        
         return view('livewire.financial-statement-collection.preview-financial-statement-collection',
             ["statusColor" => strtolower(join("", explode(" ",$this->fsCollection->collection_status)))]
         );

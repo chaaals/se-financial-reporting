@@ -103,39 +103,48 @@
         x-cloak
         x-show="isActionModalOpen"
         role="dialog"
-        class="fixed top-0 left-0 w-screen h-screen bg-black/50 flex items-center justify-center">
+        class="fixed top-0 left-0 w-screen h-screen bg-neutral bg-opacity-50 flex items-center justify-center">
         <div class="w-80 bg-white drop-shadow-md p-4 rounded-lg">
             <h1 class="text-2xl font-bold font-inter mb-2">Change Report Status</h1>
 
             <div class="flex items-center flex-col gap-2">
-                <p>Are you sure you want to change the report status?</p>
-                
-                <div class="w-full flex items-center justify-center gap-2 mb-2">
-                    <p>From <strong>{{ $fsCollection->collection_status }}</strong></p>
-                    <span>to</span>
-                        {{-- TODO: Change in the future, sync with integ team for user roles --}}
-                        {{-- TODO: Modify p tags to input for wire:model --}}
-                        @if(auth()->user()->role === "accounting")
-                            @if($fsCollection->collection_status === "Draft")
-                                <p><strong>For Approval</strong></p>
-                            @else
-                                <p><strong>Draft</strong></p>
-                            @endif
+                @if($fsCollection->approved)
+                    <p class="mb-2">The report has already been approved! Updating status of approved reports is not permitted.</p>
+                @else
+                    <p>Are you sure you want to change the report status?</p>
+                    
+                    <div class="w-full flex items-center justify-center gap-2 mb-2">
+                        <p class="text-sm">From <strong>{{ $fsCollection->collection_status }}</strong></p>
+                        <span class="text-sm">to</span>
+                            {{-- TODO: Change in the future, sync with integ team for user roles --}}
+                            {{-- TODO: Modify p tags to input for wire:model --}}
+                        @if(count($reportStatusOptions) > 0)
+                        <select class="w-20 text-xs appearance-none rounded-lg border-neutral pr-8 md:w-24 md:text-sm" wire:model="selectedStatusOption">
+                            @foreach($reportStatusOptions as $option)
+                            <option value="{{$option}}">{{ $option }}</option>
+                            @endforeach
+                        </select>
                         @else
-                            @if($fsCollection->collection_status === "Draft")
-                                <p><strong>For Approval</strong></p>
-                            @else
-                                <select>
-                                    <option>Approved</option>
-                                    <option>Change Requested</option>
-                                </select>
-                            @endif
+                        <p class="text-sm"><strong>{{$selectedStatusOption}}</strong></p>
                         @endif
-                </div>
+                    </div>
+                @endif
             </div>
             <div class="w-full flex justify-between items-center">
-                <button class="text-white bg-neutral rounded-lg font-inter w-20 p-2" x-on:click="isActionModalOpen = false">No</button>
-                <button class="text-white bg-accentTwo rounded-lg font-inter w-20 p-2">Yes</button>
+                <button class="text-white bg-neutral rounded-lg font-inter w-20 p-2" x-on:click="isActionModalOpen = false">
+                    @if($fsCollection->approved)
+                        {{ "Close" }}
+                    @else
+                        {{ "No" }}
+                    @endif
+                </button>
+                @if(!$fsCollection->approved)
+                <button
+                    class="text-white bg-accentTwo rounded-lg font-inter w-20 p-2" wire:click="updateFinancialStatementCollection"
+                    x-on:click="isActionModalOpen = false">
+                        Yes
+                    </button>
+                @endif
             </div>
         </div>
     </div>

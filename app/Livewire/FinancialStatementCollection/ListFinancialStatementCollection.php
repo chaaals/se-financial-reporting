@@ -32,7 +32,7 @@ class ListFinancialStatementCollection extends Component
         ],
         "Status" => [
             "model" => "filterStatus",
-            "options" => ["Draft", "For Approval", "Approved"]
+            "options" => ["Draft", "Change Requested", "For Approval", "Approved"]
         ],
     ];
 
