@@ -104,13 +104,14 @@
         x-show="isActionModalOpen"
         role="dialog"
         class="fixed top-0 left-0 w-screen h-screen bg-black/50 flex items-center justify-center">
-        <div>
-            <form class="w-80 bg-white drop-shadow-md rounded-lg">
-                <h1>Do you want to update report status?</h1>
+        <div class="w-80 bg-white drop-shadow-md p-4 rounded-lg">
+            <h1 class="text-2xl font-bold font-inter mb-2">Change Report Status</h1>
 
-                <div class="flex items-center gap-4">
-                    <p>{{ $fsCollection->collection_status }}</p>
-
+            <div class="flex items-center flex-col gap-2">
+                <p>Are you sure you want to change the report status?</p>
+                
+                <div class="w-full flex items-center justify-center gap-2 mb-2">
+                    <p>From <strong>{{ $fsCollection->collection_status }}</strong></p>
                     <span>to</span>
                         {{-- TODO: Change in the future, sync with integ team for user roles --}}
                         {{-- TODO: Modify p tags to input for wire:model --}}
@@ -131,10 +132,11 @@
                             @endif
                         @endif
                 </div>
-
-                <button type="button" x-on:click="isActionModalOpen = false">Cancel</button>
-                <button type="submit">Update</button>
-            </form>
+            </div>
+            <div class="w-full flex justify-between items-center">
+                <button class="text-white bg-neutral rounded-lg font-inter w-20 p-2" x-on:click="isActionModalOpen = false">No</button>
+                <button class="text-white bg-accentTwo rounded-lg font-inter w-20 p-2">Yes</button>
+            </div>
         </div>
     </div>
     {{-- @if ($fsCollection)
