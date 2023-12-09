@@ -3,7 +3,7 @@
         <form wire:submit.prevent="add">
             <div class="flex flex-col items-start mb-4">
                 <label class="text-md font-bold" for='fsName'>Financial Statement Collection</label>
-                <input class="w-full rounded-lg focus:ring-0 md:w-96" id='fsName' type='text' wire:model='fsName' placeholder='Add financial statement collection name' @if($confirming) disabled @endif/>
+                <input class="w-full rounded-lg focus:ring-0 md:w-96" id='fsName' type='text' wire:model='fsName' placeholder='Add financial statement collection name' />
             </div>
 
             <div class="flex flex-col items-start">
@@ -24,7 +24,7 @@
                             value="Quarterly"
                             wire:model.live="interimPeriod"
                             x-on:click="quarterly_active = true"
-                            @if($confirming) disabled @endif />
+                             />
                         <label class="text-sm md:text-base" for="Quarterly">Quarterly</label>
                     </section>
                     <section>
@@ -35,7 +35,7 @@
                             value="Annual"
                             wire:model.live="interimPeriod"
                             x-on:click="quarterly_active = false"
-                            @if($confirming) disabled @endif />
+                             />
                         <label class="text-sm md:text-base" for="Annual">Annual</label>
                     </section>
                 </fieldset>

@@ -2,16 +2,10 @@
 
 namespace App\Livewire\FinancialStatementCollection;
 
-use App\Models\FinancialStatement;
-use App\Models\TrialBalance;
 use App\Models\FinancialStatementCollection;
-use App\Models\ReportTemplate;
-use Livewire\Attributes\Rule;
 use Livewire\Component;
 use Livewire\WithFileUploads;
-use PhpOffice\PhpSpreadsheet\IOFactory;
 use DB;
-use Storage;
 
 use Illuminate\Support\Facades\Log;
 
@@ -27,13 +21,9 @@ class AddFinancialStatementCollection extends Component
     public $quarter;
     public $tbID;
     public $tbName;
-    public $spreadsheet = [];
-    public $preview = [];
-    public $trialBalances = [];
     public $fscID;
     public $fsTypes = ["SFPO", "SFPE", "SCF"];
 
-    public $confirming = false;
     protected $listeners = ["setTrialBalance" => "setTrialBalance"];
 
     protected $rules = [
@@ -51,14 +41,6 @@ class AddFinancialStatementCollection extends Component
 
     public function mount()
     {
-        $results = DB::table('trial_balances')->get();
-        foreach ($results as $result) {
-            $trialBalance = new TrialBalance();
-            $trialBalance->tb_id = $result->tb_id;
-            $trialBalance->tb_name = $result->tb_name;
-            $this->trialBalances[] = $trialBalance;
-        }
-
         // default values so user does not need to interact with the form and just save
         $this->date = date('Y-m-d');
     }
