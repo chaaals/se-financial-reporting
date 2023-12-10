@@ -12,22 +12,24 @@ class PreviewTrialBalance extends Component
 {
     public TrialBalance $trial_balance;
     public $reportType = "tb";
-    public $confirming = null;
-    public $editMode = false;
-    public $editedReportName;
-    public $editedDate;
-    public $editedInterimPeriod;
-    public $editedQuarter;
-    public $editedApproved;
-    public $editedReportStatus;
+    public $reportStatusOptions = [];
+    public $selectedStatusOption;
+    // public $confirming = null;
+    // public $editMode = false;
+    // public $editedReportName;
+    // public $editedDate;
+    // public $editedInterimPeriod;
+    // public $editedQuarter;
+    // public $editedApproved;
+    // public $editedReportStatus;
 
     protected $rules = [
-        'editedReportName' => 'nullable|max:255',
-        'editedDate' => 'required|date',
-        'editedInterimPeriod' => 'required|in:Quarterly,Annual',
-        'editedQuarter' => 'nullable|in:Q1,Q2,Q3,Q4',
-        'editedReportStatus' => 'required|in:Draft,For Approval,Approved',
-        'editedApproved' => 'required|boolean',
+        // 'editedReportName' => 'nullable|max:255',
+        // 'editedDate' => 'required|date',
+        // 'editedInterimPeriod' => 'required|in:Quarterly,Annual',
+        // 'editedQuarter' => 'nullable|in:Q1,Q2,Q3,Q4',
+        'selectedStatusOption' => 'required|in:Draft,For Approval,Approved,Change Requested',
+        // 'editedApproved' => 'required|boolean',
     ];
 
     public function mount(){
@@ -39,12 +41,12 @@ class PreviewTrialBalance extends Component
         }
 
         // default values
-        $this->editedReportName = $this->trial_balance->report_name;
-        $this->editedDate = $this->trial_balance->date;
-        $this->editedInterimPeriod = $this->trial_balance->interim_period;
-        $this->editedQuarter = $this->trial_balance->quarter;
-        $this->editedApproved = $this->trial_balance->approved;
-        $this->editedReportStatus = $this->trial_balance->report_status;
+        // $this->editedReportName = $this->trial_balance->report_name;
+        // $this->editedDate = $this->trial_balance->date;
+        // $this->editedInterimPeriod = $this->trial_balance->interim_period;
+        // $this->editedQuarter = $this->trial_balance->quarter;
+        // $this->editedApproved = $this->trial_balance->approved;
+        // $this->editedReportStatus = $this->trial_balance->report_status;
     }
 
     public function export() {
@@ -75,40 +77,63 @@ class PreviewTrialBalance extends Component
     {
         $this->validate();
         // check if the report is already approved but changed to not approved
-        if ($this->trial_balance->approved) {
-            if (!$this->editedApproved) {
-                $this->editedReportStatus = 'For Approval';
-            }
-        }
+        // if ($this->trial_balance->approved) {
+        //     if (!$this->editedApproved) {
+        //         $this->editedReportStatus = 'For Approval';
+        //     }
+        // }
 
         // if not approved in the first place but changed to not approved
-        if ($this->editedApproved) {
-            $this->editedReportStatus = 'Approved';
-        }
+        // if ($this->editedApproved) {
+        //     $this->editedReportStatus = 'Approved';
+        // }
 
-        if ($this->editedInterimPeriod === "Annual") {
-            $this->editedQuarter = null;
-        } else {
-            $tb_month = date('m', strtotime($this->editedDate));
-            $quarter = ceil($tb_month / 3);
-            $this->editedQuarter = "Q$quarter";
-        }
+        // if ($this->editedInterimPeriod === "Annual") {
+        //     $this->editedQuarter = null;
+        // } else {
+        //     $tb_month = date('m', strtotime($this->editedDate));
+        //     $quarter = ceil($tb_month / 3);
+        //     $this->editedQuarter = "Q$quarter";
+        // }
         
         // update fields
-        $this->trial_balance->report_name = $this->editedReportName;
-        $this->trial_balance->date = $this->editedDate;
-        $this->trial_balance->interim_period = $this->editedInterimPeriod;
-        $this->trial_balance->quarter = $this->editedQuarter;
-        $this->trial_balance->approved = $this->editedApproved;
-        $this->trial_balance->report_status = $this->editedReportStatus;
+        // $this->trial_balance->report_name = $this->editedReportName;
+        // $this->trial_balance->date = $this->editedDate;
+        // $this->trial_balance->interim_period = $this->editedInterimPeriod;
+        // $this->trial_balance->quarter = $this->editedQuarter;
+        $this->trial_balance->approved = $this->selectedStatusOption === "Approved";
+        $this->trial_balance->tb_status = $this->selectedStatusOption;
         $this->trial_balance->save();
 
         // exit edit mode
-        $this->editMode = false;
+        // $this->editMode = false;
     }
 
     public function render()
     {
+        if(auth()->user()->role === "accounting"){
+            if(in_array($this->trial_balance->tb_status, ['Draft', 'Change Requested'])){
+                $this->selectedStatusOption = "For Approval";
+            } else {
+                $this->selectedStatusOption = "Draft";
+            }
+        }
+
+        if(auth()->user()->role === "ovpf"){
+            if($this->trial_balance->tb_status === "Draft") {
+                $this->selectedStatusOption = "For Approval";
+            } 
+            
+            if($this->trial_balance->tb_status === "Change Requested"){
+                $this->selectedStatusOption = "Approved";
+            }
+
+            if($this->trial_balance->tb_status === "For Approval") {
+                $this->reportStatusOptions = ["Approved", "Change Requested"];
+                $this->selectedStatusOption = "Approved";
+            }
+        }
+
         return view('livewire.trial-balance.preview-trial-balance',
             ["statusColor" => strtolower(join("", explode(" ",$this->trial_balance->tb_status)))]
         );
