@@ -7,6 +7,10 @@ use App\Models\TrialBalance;
 use Illuminate\Support\Facades\Route;
 use Livewire\Component;
 use Maatwebsite\Excel\Facades\Excel;
+use DB;
+use Storage;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class PreviewTrialBalance extends Component
 {
@@ -50,9 +54,68 @@ class PreviewTrialBalance extends Component
     }
 
     public function export() {
-        $export = new TrialBalanceExport(json_decode($this->trial_balance->tb_data));
+        if ($this->trial_balance->tb_type) {
+            $tbExportFormat = 'TB_'.strtoupper($this->trial_balance->tb_type);
+        } else {
+            $tbExportFormat = "TB_PRE";
+        }
+        $filePath = 'public/uploads/' . $tbExportFormat . '.xlsx';
+        $newFilePath = 'uploads/' . $tbExportFormat . '.xlsx';
+        Storage::copy($filePath, $newFilePath);
 
-        return Excel::download($export, 'TB_REPORT.xlsx');
+        $spreadsheet = IOFactory::load(storage_path('app/' . $newFilePath));
+
+        $tbDataResults = DB::select('SELECT tb_data FROM trial_balances WHERE tb_id = ?', [$this->trial_balance->tb_id]);
+        $jsonData = array_column($tbDataResults, 'tb_data')[0];
+        $jsonData = json_decode($jsonData, true);
+
+        $tbExportConfig = DB::select('SELECT template FROM report_templates WHERE template_name = ?', [$tbExportFormat]);
+        $jsonConfig = array_column($tbExportConfig, 'template')[0];
+        $jsonConfig = json_decode($jsonConfig, true);
+
+        // key : val == rowNumber : fsData
+        $exportConfig = [];
+        foreach ($jsonConfig as $key => $value) {
+            if (array_key_exists($key, $jsonData)) {
+                $exportConfig[$value] = $jsonData[$key];
+            }
+        }
+        
+        // write to excel
+        foreach ($exportConfig as $row => $value) {
+            $spreadsheet->getActiveSheet()->setCellValue('F' . $row, $value['debit']);
+            $spreadsheet->getActiveSheet()->setCellValue('H' . $row, $value['credit']);
+        }
+
+        // set date on excel
+        $tbYear = date('Y', strtotime($this->trial_balance->date));
+        $date = [
+            'Q1'=> "March 31, ".$tbYear,
+            'Q2'=> "June 31, ".$tbYear,
+            'Q3'=> "September 31, ".$tbYear,
+            'Q4'=> "December 31, ".$tbYear,
+        ];
+        $dateHeader = $spreadsheet->getActiveSheet()->getCell('A6')->getValue();
+        if ($this->trial_balance->interim_period === 'Quarterly') {
+            $newDateHeader = str_replace('<date>', $date[$this->trial_balance->quarter], $dateHeader);
+        } else if ($this->trial_balance->interim_period === 'Monthly') {
+            $tb_month = date('m', strtotime($this->trial_balance->date));
+            $quarter = ceil($tb_month / 3);
+            $quarter = "Q$quarter";
+            $newDateHeader = str_replace('<date>', $date[$quarter], $dateHeader);
+        } else {
+            $newDateHeader = 'For the Year Ended December 31, '.$tbYear;
+        }
+        $spreadsheet->getActiveSheet()->setCellValue('A6', $newDateHeader);
+
+        $writer = new Xlsx($spreadsheet);
+        $writer->save(storage_path('app/'.$newFilePath));
+        $headers = [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ];
+        $filename = $this->trial_balance->tb_name;
+        return response()->download(storage_path('app/'.$newFilePath), $filename.'.xlsx', $headers)
+            ->deleteFileAfterSend(true);
     }
 
     public function confirmDelete($tbId)
