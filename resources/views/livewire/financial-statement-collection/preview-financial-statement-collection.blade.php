@@ -53,8 +53,10 @@
                 <livewire:financial-reporting.financial-performance-template
                     :data="$fs->fs_data"
                 />
-                @else
-                <p class="text-sm whitespace-normal break-all w-80">{{ $fs->fs_data }}</p>
+                @elseif($fsType === "SCF")
+                <livewire:financial-reporting.cash-flow-template
+                    :data="$fs->fs_data"
+                />
                 @endif
             </div>
         @endforeach
