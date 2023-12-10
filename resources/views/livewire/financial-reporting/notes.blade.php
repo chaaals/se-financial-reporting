@@ -1,6 +1,7 @@
 <section
     class="relative w-10 h-10 flex items-center justify-center hidden md:block"
-    x-data="{ isCommentBoxVisible: false }">
+    x-data="{ isCommentBoxVisible: false }"
+    x-on:click.outside="isCommentBoxVisible = false">
     <section class="w-full h-full flex items-center justify-center font-inter">
         <button class="relative" x-on:click="isCommentBoxVisible = true">
             @if($numNotes > 0)

@@ -12,6 +12,8 @@ class ListTrialBalance extends Component
 {
     use WithPagination;
 
+    public $trialBalances = [];
+    public $trialBalance = null;
     public $hasMorePages;
     public $confirming = null;
     public $rows = 10;
@@ -45,27 +47,12 @@ class ListTrialBalance extends Component
         ],
         "Status" => [
             "model" => "filterStatus",
-            "options" => ["Draft", "For Approval", "Approved"]
+            "options" => ["Draft", "Change Requested" ,"For Approval", "Approved"]
         ],
     ];
 
     public function mount(){
         $this->filterStatus = auth()->user()->role === 'accounting' ? 'Draft' : 'For Approval';
-    }
-
-    public function confirmDelete($tbID)
-    {
-        $this->confirming = $tbID;
-    }
-
-    public function deleteTrialBalance($tbID)
-    {
-        // delete by ID
-        TrialBalance::find($tbID)->delete();
-        // refresh
-        // TODO: Change to DB query
-        $this->trial_balances = TrialBalance::all();
-        $this->reset('confirming');
     }
 
     public function previous(){
@@ -97,6 +84,26 @@ class ListTrialBalance extends Component
 
     public function create(){
         return $this->redirect('/trial-balances/add', navigate: true);
+    }
+
+    public function delete(){
+        if(count($this->trialBalances) === 0){
+            return;
+        }
+
+        $tb_id = $this->trialBalance->tb_id;
+        DB::table('trial_balances')->where("tb_id", "=", $tb_id)->delete();
+
+        $this->setTrialBalance();
+    }
+
+    public function setTrialBalance($itemIndex = null){
+        if($itemIndex === null) {
+            $this->trialBalance = null;
+            return;
+        }
+
+        $this->trialBalance = $this->trialBalances[$itemIndex];
     }
 
     public function updatePage(){
@@ -138,6 +145,7 @@ class ListTrialBalance extends Component
 
         $res = $query->where('tb_status', '=', $this->filterStatus)->paginate($this->rows);
 
+        $this->trialBalances = $res->items();
         $this->hasMorePages = $res->hasMorePages();
         
         return view('livewire.trial-balance.list-trial-balance', [
