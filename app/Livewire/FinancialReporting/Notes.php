@@ -31,7 +31,7 @@ class Notes extends Component
  
         DB::table("report_notes")->insert([
             "tb_id" => $this->reportType === "tb" ? $this->reportId : null,
-            "collection_id" => $this->reportType === "col" ? $this->reportId : null,
+            "collection_id" => $this->reportType === "fsc" ? $this->reportId : null,
             "content" => $this->note,
             "author" => "$firstName $lastName"
         ]);
