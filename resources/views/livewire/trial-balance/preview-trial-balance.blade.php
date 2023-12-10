@@ -100,7 +100,9 @@
 
     <section class="flex flex-col gap-4 md:flex-row">
         {{-- placeholder for previews --}}
-        <section class="w-full border-2 border-dashed border-primary text-center sm:h-136 2xl:h-160">Trial Balance Preview</section>
+        <section class="w-full border-2 border-dashed border-primary text-center sm:h-136 2xl:h-160">
+            <livewire:financial-reporting.trial-balance-template />
+        </section>
         
         <section class="w-full flex flex-col gap-4 justify-between bg-white rounded-lg p-4 md:w-72 md:h-136 2xl:h-160">
             <section>
