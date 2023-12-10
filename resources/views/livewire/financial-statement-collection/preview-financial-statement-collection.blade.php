@@ -42,9 +42,17 @@
 
     <section class="flex flex-col gap-4 md:flex-row">
         {{-- placeholder for previews --}}
-        <section class="w-full border-2 border-dashed border-primary text-center sm:h-136 2xl:h-160">
+        <section class="w-full text-center sm:h-136 2xl:h-160">
         @foreach($financialStatements as $fsType=>$fs)
-            <p x-cloak x-show="show{{$fsType}}" class="text-sm whitespace-normal break-all w-80">{{ $fs->fs_data }}</p>
+            <div class="h-full" x-cloak x-show="show{{$fsType}}">
+                @if($fsType === "SFPO")
+                <livewire:financial-reporting.financial-position-template
+                    :data="$fs->fs_data"
+                />
+                @else
+                <p class="text-sm whitespace-normal break-all w-80">{{ $fs->fs_data }}</p>
+                @endif
+            </div>
         @endforeach
         </section>
         
