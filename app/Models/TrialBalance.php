@@ -18,6 +18,7 @@ class TrialBalance extends Model
         'approved',
         'date',
         'interim_period',
+        'template_name',
     ];
 
     protected $casts = [
