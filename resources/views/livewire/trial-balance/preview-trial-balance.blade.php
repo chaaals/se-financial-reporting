@@ -91,7 +91,7 @@
                 :reportName="$trial_balance->tb_name" />
             
             <button
-                {{-- wire:click="create" --}}
+                wire:click="export"
                 class="bg-secondary text-white px-4 py-2 rounded-lg text-xs md:text-base">
                 Export Trial Balance
             </button>

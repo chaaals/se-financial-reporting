@@ -150,7 +150,7 @@
         </form>
     </div>
 
-    @if($preview)
+    {{-- @if($preview)
         <section class="grow" style="padding: 1rem;">
             <table>
                 <thead>
@@ -179,5 +179,5 @@
                 </tbody>
             </table>
         </section>
-    @endif
+    @endif --}}
 </div>

@@ -7,6 +7,8 @@ use App\Models\TrialBalance;
 use Livewire\Attributes\Rule;
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use DB;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class AddTrialBalance extends Component
 {
@@ -60,40 +62,51 @@ class AddTrialBalance extends Component
         }
 
         $this->validate();
-        if($this->spreadsheet){
+        if($this->importedSpreadsheet){
+            $tbData = $this->getTBData();
+
             TrialBalance::create([
                 "tb_name" => $this->tbName,
                 "tb_type" => $this->tbType ?? null,
                 "tb_status" => 'Draft',
-                "tb_data" => json_encode($this->spreadsheet),
+                "tb_data" => $tbData,
                 "interim_period" => $this->interimPeriod,
                 "quarter" => $this->quarter,
                 "approved" => false,
                 "date" => $this->date,
+                "template_name" => 'tb_pre'
             ]);
             $this->reset();
         }
         $this->redirect('/trial-balances');
     }
 
+    private function getTBData() {
+        $tbImportConfig = DB::select("SELECT template FROM report_templates WHERE template_name = 'tb_pre'");
+        $jsonConfig = array_column($tbImportConfig, 'template')[0];
+        $jsonConfig = json_decode($jsonConfig, true);
+        $tbData = $jsonConfig;
+        
+        $spreadsheet = IOFactory::load($this->importedSpreadsheet->getRealPath());
+        
+        foreach ($jsonConfig as $accountCode => $row) {
+            $debit = $spreadsheet->getActiveSheet()->getCell("F".$row)->getValue();
+            $credit = $spreadsheet->getActiveSheet()->getCell("H".$row)->getValue();
+            $tbData[$accountCode] = [
+                "debit" => $debit,
+                "credit" => $credit
+            ];
+        }
+        
+        return json_encode($tbData);
+    }
+
     public function cancel(){
         return $this->redirect('/trial-balances', navigate: true);
     }
 
-    public function previewSpreadsheet(){
-        $path = $this->importedSpreadsheet->getRealPath();
-        
-        $this->spreadsheet = (new TrialBalanceImport)->toArray($path)[0];
-        
-        $this->preview["headers"] = array_slice($this->spreadsheet,5,1);
-        $this->preview["data"] = array_slice($this->spreadsheet,6);
-    }
-
     public function render()
     {
-        if($this->importedSpreadsheet){
-            $this->previewSpreadsheet();
-        }
 
         return view('livewire.trial-balance.add-trial-balance');
     }

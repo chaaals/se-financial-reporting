@@ -74,7 +74,7 @@ class PreviewFinancialStatementCollection extends Component
             foreach ($combinedData[$i] as $row => $value) {
                 $spreadsheet->getSheet($i)->setCellValue($column . $row, $value);
             }
-            $editedYear = date('Y', strtotime($this->editedDate));
+            $editedYear = date('Y', strtotime($this->fsCollection->date));
             $date = [
                 'Q1'=> "March 31, ".$editedYear,
                 'Q2'=> "June 31, ".$editedYear,
@@ -82,8 +82,8 @@ class PreviewFinancialStatementCollection extends Component
                 'Q4'=> "December 31, ".$editedYear,
             ];
             $dateHeader = $spreadsheet->getActiveSheet()->getCell('A6')->getValue();
-            if ($this->editedInterimPeriod === 'Quarterly') {
-                $newDateHeader = str_replace('<date>', $date[$this->editedQuarter], $dateHeader);
+            if ($this->fsCollection->interim_period === 'Quarterly') {
+                $newDateHeader = str_replace('<date>', $date[$this->fsCollection->quarter], $dateHeader);
             } else {
                 $newDateHeader = 'For the Year Ended December 31, '.$editedYear;
             }
