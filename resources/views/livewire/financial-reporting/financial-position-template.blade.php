@@ -1,8 +1,8 @@
 <section class="h-full overflow-hidden overflow-y-scroll scrollbar rounded-t-lg">
     <table class="w-full">
         <thead>
-            <th class="text-white bg-primary">Account Titles</th>
-            <th class="text-white bg-primary">Amount</th>
+            <th class="text-sm p-2 text-white sticky top-0 bg-primary">Account Titles</th>
+            <th class="text-sm p-2 text-white sticky top-0 bg-primary">Amount</th>
         </thead>
         <tbody>
             <x-financial-reporting.account-class accountClass="Assets" />

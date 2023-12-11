@@ -10,7 +10,7 @@ class Sidebar extends Component
 
     public $styles;
     public function mount(){
-        $base = "flex items-center gap-2 mt-4 p-2 md:mt-6";
+        $base = "flex items-center text-sm gap-2 mt-4 p-2 md:mt-6";
 
         $this->styles = [
             "/" => $base,

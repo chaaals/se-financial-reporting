@@ -80,7 +80,7 @@
     @endif --}}
 
     {{-- header --}}
-    <section class="w-full flex items-center justify-between flex-col bg-white drop-shadow-md rounded-lg mb-4 p-2 md:flex-row 2xl:mb-8">
+    <section class="w-full flex items-center justify-between flex-col bg-white rounded-lg mb-4 p-2 md:flex-row 2xl:mb-8">
         <h1 class="text-primary text-header font-bold font-inter">{{ $trial_balance->tb_name }}</h1>
 
 

@@ -1,7 +1,7 @@
 <section
     x-data="{ showSFPO: true, showSFPE: false, showSCF: false, isActionModalOpen: false }"
     class="relative p-4">
-    <section class="w-full flex items-center justify-between flex-col bg-white drop-shadow-md rounded-lg mb-4 p-2 gap-4 md:flex-row 2xl:mb-8">
+    <section class="w-full flex items-center justify-between flex-col bg-white rounded-lg mb-4 p-2 gap-4 md:flex-row 2xl:mb-8">
         <section clas="flex flex-col items-center justify-center md:flex-row">
             <h1 class="text-primary text-header text-center font-bold font-inter md:text-left">{{ $fsCollection->collection_name }}</h1>
             <div class="flex items-center justify-center gap-2 md:pl-4 md:justify-start">

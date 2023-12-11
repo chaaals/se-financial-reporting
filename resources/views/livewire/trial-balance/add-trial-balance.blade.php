@@ -1,6 +1,6 @@
-<section class="flex w-full">
+<section class="flex w-full p-4 gap-4">
     <section
-        class="relative p-4"
+        class="relative"
         x-data="{ uploading: false, quarterly_active: false, import_active: false }"
         x-on:livewire-upload-start="uploading = true"
         x-on:livewire-upload-finish="uploading = false"
@@ -151,14 +151,15 @@
         </form>
     </section>
 
-    <section class="hidden grow text-center p-4 md:block sm:h-136 2xl:h-160">
-        <h1 class="text-2xl font-bold mb-2">Imported Spreadsheet Preview</h1>
+    <section class="hidden grow text-center md:block sm:h-136 2xl:h-160">
         @if($tbData)
         <livewire:financial-reporting.trial-balance-template
             :data="$tbData"
         />
         @else
-        <section class="w-full h-full border-2 border-dashed border-primary"></section>
+        <section class="w-full h-full flex items-center justify-center border-2 border-dashed border-primary">
+            <p>Trial Balance Preview</p>
+        </section>
         @endif
     </section>
 </section>
