@@ -119,16 +119,23 @@
                                     {{ $tb->tb_status }}
                                 </td>
                                 <td class="h-16 p-2">
-                                    @if($tb->tb_status === "Draft")
                                     <div class="flex items-center justify-center">
+                                    @if($tb->tb_status === "Draft")
                                         <button
                                             x-on:click="isActionModalOpen = true"
                                             wire:click="setTrialBalance({{$index}})"
                                             class="h-full items-center">
                                             <x-financial-reporting.assets.trash-icon />
                                         </button>
-                                    </div>
+                                    @elseif($tb->tb_status === 'Approved')
+                                        <button
+                                            {{-- TODO: add archive/soft delete functionality --}}
+                                            x-on:click="alert('Report archived')"
+                                            class="h-full items-center">
+                                            <x-financial-reporting.assets.archive />
+                                        </button
                                     @endif
+                                    </div>
                                 </td>
                             </tr>
                         @endforeach
