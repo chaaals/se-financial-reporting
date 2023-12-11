@@ -1,6 +1,6 @@
-<div class="flex w-full">
-    <div
-        class="relative p-4"
+<section class="flex w-full p-4 gap-4">
+    <section
+        class="relative"
         x-data="{ uploading: false, quarterly_active: false, import_active: false }"
         x-on:livewire-upload-start="uploading = true"
         x-on:livewire-upload-finish="uploading = false"
@@ -101,7 +101,8 @@
                             class="checked:bg-black checked:hover:bg-secondary focus:ring-0"
                             value="general_ledger"
                             wire:model="source"
-                            x-on:click="import_active = false" />
+                            x-on:click="import_active = false"
+                            wire:click="resetImport" />
                         <label class="text-sm md:text-base" for="import">From General Ledger</label>
                     </section>
                 </fieldset>
@@ -148,36 +149,17 @@
                 </button>
             </section>
         </form>
-    </div>
+    </section>
 
-    {{-- @if($preview)
-        <section class="grow" style="padding: 1rem;">
-            <table>
-                <thead>
-                    @foreach($preview["headers"] as $rows)
-                        <tr>
-                            @foreach($rows as $col_index=>$col)
-                                @if($col || !in_array($col_index, [1,2,3,6,8,9]))
-                                    <th style="border: 1px solid red; white-space: nowrap; min-width: 100px;">{{ $col }}</th>
-                                @endif
-                            @endforeach
-                        </tr>
-                    @endforeach
-                </thead>
-                <tbody>
-                    @foreach($preview["data"] as $rows)
-                        <tr>
-                            @foreach($rows as $col_index=>$col)
-                                @if(!in_array($col_index, [1,2,3,6,8,9]))
-                                    <td>
-                                        <pre>{{ $col }}</pre>
-                                    </td>
-                                @endif
-                            @endforeach
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
+    <section class="hidden grow text-center md:block sm:h-136 2xl:h-160">
+        @if($tbData)
+        <livewire:financial-reporting.trial-balance-template
+            :data="$tbData"
+        />
+        @else
+        <section class="w-full h-full flex items-center justify-center border-2 border-dashed border-primary">
+            <p>Trial Balance Preview</p>
         </section>
-    @endif --}}
-</div>
+        @endif
+    </section>
+</section>

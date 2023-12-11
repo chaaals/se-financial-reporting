@@ -1,7 +1,7 @@
 <section
     x-data="{ showSFPO: true, showSFPE: false, showSCF: false, isActionModalOpen: false }"
     class="relative p-4">
-    <section class="w-full flex items-center justify-between flex-col bg-white drop-shadow-md rounded-lg mb-4 p-2 gap-4 md:flex-row 2xl:mb-8">
+    <section class="w-full flex items-center justify-between flex-col bg-white rounded-lg mb-4 p-2 gap-4 md:flex-row 2xl:mb-8">
         <section clas="flex flex-col items-center justify-center md:flex-row">
             <h1 class="text-primary text-header text-center font-bold font-inter md:text-left">{{ $fsCollection->collection_name }}</h1>
             <div class="flex items-center justify-center gap-2 md:pl-4 md:justify-start">
@@ -42,9 +42,23 @@
 
     <section class="flex flex-col gap-4 md:flex-row">
         {{-- placeholder for previews --}}
-        <section class="w-full border-2 border-dashed border-primary text-center sm:h-136 2xl:h-160">
+        <section class="w-full text-center sm:h-136 2xl:h-160">
         @foreach($financialStatements as $fsType=>$fs)
-            <p x-cloak x-show="show{{$fsType}}" class="text-sm whitespace-normal break-all w-80">{{ $fs->fs_data }}</p>
+            <div class="h-full" x-cloak x-show="show{{$fsType}}">
+                @if($fsType === "SFPO")
+                <livewire:financial-reporting.financial-position-template
+                    :data="$fs->fs_data"
+                />
+                @elseif($fsType === "SFPE")
+                <livewire:financial-reporting.financial-performance-template
+                    :data="$fs->fs_data"
+                />
+                @elseif($fsType === "SCF")
+                <livewire:financial-reporting.cash-flow-template
+                    :data="$fs->fs_data"
+                />
+                @endif
+            </div>
         @endforeach
         </section>
         

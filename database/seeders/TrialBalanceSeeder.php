@@ -171,7 +171,7 @@ class TrialBalanceSeeder extends Seeder
             'tb_status' => 'Draft',
             'date' => date('Y-m-d'),
             'interim_period' => 'Annual',
-            'template_name' => 'tb'
+            'template_name' => 'tb_pre'
         ]);
     }
 }

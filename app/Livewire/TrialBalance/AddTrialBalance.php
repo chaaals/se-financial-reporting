@@ -16,6 +16,7 @@ class AddTrialBalance extends Component
 
     public $tbName;
     public $tbType;
+    public $tbData;
     public $date;
     public $interimPeriod;
     public $quarter;
@@ -62,14 +63,12 @@ class AddTrialBalance extends Component
         }
 
         $this->validate();
-        if($this->importedSpreadsheet){
-            $tbData = $this->getTBData();
-
+        if($this->importedSpreadsheet && $this->tbData){
             TrialBalance::create([
                 "tb_name" => $this->tbName,
                 "tb_type" => $this->tbType ?? null,
                 "tb_status" => 'Draft',
-                "tb_data" => $tbData,
+                "tb_data" => $this->tbData,
                 "interim_period" => $this->interimPeriod,
                 "quarter" => $this->quarter,
                 "approved" => false,
@@ -90,8 +89,8 @@ class AddTrialBalance extends Component
         $spreadsheet = IOFactory::load($this->importedSpreadsheet->getRealPath());
         
         foreach ($jsonConfig as $accountCode => $row) {
-            $debit = $spreadsheet->getActiveSheet()->getCell("F".$row)->getValue();
-            $credit = $spreadsheet->getActiveSheet()->getCell("H".$row)->getValue();
+            $debit = $spreadsheet->getActiveSheet()->getCell("F".$row)->getCalculatedValue();
+            $credit = $spreadsheet->getActiveSheet()->getCell("H".$row)->getCalculatedValue();
             $tbData[$accountCode] = [
                 "debit" => $debit,
                 "credit" => $credit
@@ -101,12 +100,20 @@ class AddTrialBalance extends Component
         return json_encode($tbData);
     }
 
+    public function resetImport(){
+        if($this->tbData && $this->importedSpreadsheet){
+            $this->reset(['tbData', 'importedSpreadsheet']);
+        }
+    }
     public function cancel(){
         return $this->redirect('/trial-balances', navigate: true);
     }
 
     public function render()
     {
+        if($this->importedSpreadsheet){
+            $this->tbData = $this->getTBData();
+        }
 
         return view('livewire.trial-balance.add-trial-balance');
     }

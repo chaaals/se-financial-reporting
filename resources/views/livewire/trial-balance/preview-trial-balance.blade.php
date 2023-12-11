@@ -80,7 +80,7 @@
     @endif --}}
 
     {{-- header --}}
-    <section class="w-full flex items-center justify-between flex-col bg-white drop-shadow-md rounded-lg mb-4 p-2 md:flex-row 2xl:mb-8">
+    <section class="w-full flex items-center justify-between flex-col bg-white rounded-lg mb-4 p-2 md:flex-row 2xl:mb-8">
         <h1 class="text-primary text-header font-bold font-inter">{{ $trial_balance->tb_name }}</h1>
 
 
@@ -100,7 +100,11 @@
 
     <section class="flex flex-col gap-4 md:flex-row">
         {{-- placeholder for previews --}}
-        <section class="w-full border-2 border-dashed border-primary text-center sm:h-136 2xl:h-160">Trial Balance Preview</section>
+        <section class="w-full text-center sm:h-136 2xl:h-160">
+            <livewire:financial-reporting.trial-balance-template
+                :data="$trial_balance->tb_data"
+            />
+        </section>
         
         <section class="w-full flex flex-col gap-4 justify-between bg-white rounded-lg p-4 md:w-72 md:h-136 2xl:h-160">
             <section>
