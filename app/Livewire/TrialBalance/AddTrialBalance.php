@@ -99,6 +99,7 @@ class AddTrialBalance extends Component
             ];
         }
         
+        session()->now("success", "Import successful!");
         return json_encode($tbData);
     }
 
