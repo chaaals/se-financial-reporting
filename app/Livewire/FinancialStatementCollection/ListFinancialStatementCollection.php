@@ -93,7 +93,7 @@ class ListFinancialStatementCollection extends Component
     }
 
     public function delete(){
-        if(count($this->fsCollections) === 0){
+        if(count($this->fsCollections) === 0 || in_array($this->trialBalance->tb_status, ['For Approval', 'Change Requested', 'Approved'])){
             return;
         }
 

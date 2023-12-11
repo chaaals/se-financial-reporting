@@ -119,6 +119,7 @@
                                     {{ $fsc->collection_status }}
                                 </td>
                                 <td class="h-16 p-2">
+                                    @if($tb->tb_status === "Draft")
                                     <div class="flex items-center justify-center">
                                         <button 
                                         x-on:click="isActionModalOpen = true"
@@ -127,6 +128,7 @@
                                             <x-financial-reporting.assets.trash-icon />
                                         </button>
                                     </div>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach

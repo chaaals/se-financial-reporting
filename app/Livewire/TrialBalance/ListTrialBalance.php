@@ -87,7 +87,7 @@ class ListTrialBalance extends Component
     }
 
     public function delete(){
-        if(count($this->trialBalances) === 0){
+        if(count($this->trialBalances) === 0 || in_array($this->trialBalance->tb_status, ['For Approval', 'Change Requested', 'Approved'])){
             return;
         }
 
