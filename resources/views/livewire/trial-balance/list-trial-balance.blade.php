@@ -183,4 +183,8 @@
         </div>
     </div>
     @endif
+
+    @if(session('success'))
+        <x-toast type="success">{{ session('success')}}</x-toast>
+    @endif
 </section>

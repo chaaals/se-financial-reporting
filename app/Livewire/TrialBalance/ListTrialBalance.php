@@ -92,9 +92,11 @@ class ListTrialBalance extends Component
         }
 
         $tb_id = $this->trialBalance->tb_id;
+        $tb_name = $this->trialBalance->tb_name;
         DB::table('trial_balances')->where("tb_id", "=", $tb_id)->delete();
 
         $this->setTrialBalance();
+        session()->now('success', "$tb_name has been deleted.");
     }
 
     public function setTrialBalance($itemIndex = null){
