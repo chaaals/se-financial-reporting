@@ -95,16 +95,10 @@ class PreviewFinancialStatementCollection extends Component
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         ];
         $filename = $this->fsCollection->collection_name;
+
+        session()->now("success", "Successfully exported Financial Statements");
         return response()->download(storage_path('app/'.$newFilePath), $filename.'.xlsx', $headers)
             ->deleteFileAfterSend(true);
-    }
-
-    public function deleteFinancialStatementCollection($fscID)
-    {
-        // delete by ID
-        FinancialStatementCollection::find($fscID)->delete();
-        $this->reset('confirming');
-        $this->redirect("/financial-statements");
     }
 
     // public function toggleEditMode()
@@ -144,6 +138,7 @@ class PreviewFinancialStatementCollection extends Component
         $this->fsCollection->collection_status = $this->selectedStatusOption;
         $this->fsCollection->save();
 
+        session()->now("success", "Financial Statement Collection has been updated.");
         // exit edit mode
         // $this->editMode = false;
     }

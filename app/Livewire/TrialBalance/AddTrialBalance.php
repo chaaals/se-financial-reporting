@@ -79,7 +79,7 @@ class AddTrialBalance extends Component
         }
 
         session()->flash("success", "Trial Balance has been added.");
-        $this->redirect('/trial-balances');
+        $this->redirect('/trial-balances', navigate: true);
     }
 
     private function getTBData() {

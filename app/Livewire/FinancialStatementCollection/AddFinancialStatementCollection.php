@@ -92,13 +92,8 @@ class AddFinancialStatementCollection extends Component
             "template_name" => "SCF",
         ]);
         $this->reset();
-        $this->redirect('/financial-statements');
-    }
-
-    public function cancelAddFS()
-    {
-        $this->reset();
-        return redirect('/financial-statements');
+        session()->flash("success", "Financial Statement Collection has been created.");
+        $this->redirect('/financial-statements', navigate: true);
     }
 
     public function getData($tbData, $fsType) {

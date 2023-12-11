@@ -93,14 +93,16 @@ class ListFinancialStatementCollection extends Component
     }
 
     public function delete(){
-        if(count($this->fsCollections) === 0 || in_array($this->trialBalance->tb_status, ['For Approval', 'Change Requested', 'Approved'])){
+        if(count($this->fsCollections) === 0 || in_array($this->fsCollection->collection_status, ['For Approval', 'Change Requested', 'Approved'])){
             return;
         }
 
         $collection_id = $this->fsCollection->collection_id;
+        $collection_name = $this->fsCollection->collection_name;
         DB::table('financial_statement_collections')->where("collection_id", "=", $collection_id)->delete();
 
         $this->setFSCollection();
+        session()->now('success', "$collection_name has been deleted.");
     }
 
     public function setFSCollection($itemIndex = null){
