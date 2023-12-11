@@ -114,6 +114,9 @@ class PreviewTrialBalance extends Component
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         ];
         $filename = $this->trial_balance->tb_name;
+
+        session()->now("success", "Successfully exported Trial Balance");
+
         return response()->download(storage_path('app/'.$newFilePath), $filename.'.xlsx', $headers)
             ->deleteFileAfterSend(true);
     }
@@ -168,6 +171,7 @@ class PreviewTrialBalance extends Component
         $this->trial_balance->tb_status = $this->selectedStatusOption;
         $this->trial_balance->save();
 
+        session()->now("success", "Trial Balance has been updated.");
         // exit edit mode
         // $this->editMode = false;
     }

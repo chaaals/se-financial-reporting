@@ -87,14 +87,16 @@ class ListTrialBalance extends Component
     }
 
     public function delete(){
-        if(count($this->trialBalances) === 0){
+        if(count($this->trialBalances) === 0 || in_array($this->trialBalance->tb_status, ['For Approval', 'Change Requested', 'Approved'])){
             return;
         }
 
         $tb_id = $this->trialBalance->tb_id;
+        $tb_name = $this->trialBalance->tb_name;
         DB::table('trial_balances')->where("tb_id", "=", $tb_id)->delete();
 
         $this->setTrialBalance();
+        session()->now('success', "$tb_name has been deleted.");
     }
 
     public function setTrialBalance($itemIndex = null){

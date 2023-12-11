@@ -22,15 +22,16 @@
     $typeInfo = $typeData[$type] ?? $typeData['success'];
 @endphp
 
-<div x-data="{ isOpen: true }" 
-     x-show="isOpen" 
+<div x-data="{ show: true }"
+     x-show="show"
+     x-init="setTimeout(() => show = false, 3000)"
      x-transition:enter="transition ease-out duration-300" 
      x-transition:enter-start="opacity-0 transform translate-y-4" 
      x-transition:enter-end="opacity-100 transform translate-y-0" 
      x-transition:leave="transition ease-in duration-300" 
      x-transition:leave-start="opacity-100 transform translate-y-0" 
      x-transition:leave-end="opacity-0 transform translate-y-4" 
-     class="{{ $typeInfo['class'] }} fixed right-2 p-2 rounded-md text-white font-bold flex justify-between" 
+     class="{{ $typeInfo['class'] }} fixed bottom-4 left-4 p-2 rounded-md text-white font-bold flex justify-between" 
      style="width: 300px;">
 
   <div class="flex gap-4 items-center justify-center">
@@ -38,12 +39,7 @@
 
     <div class="flex-col items-center gap-2">
       <h2 class='text-xl font-bold text-black'>{{ $typeInfo['title'] }}</h2>
-      <p class="font-extralight text-black">{{ $slot }}</p>
+      <p class="text-sm font-extralight text-black">{{ $slot }}</p>
     </div>
   </div>
-
-  <button @click="isOpen = false">
-    <x-financial-reporting.assets.x color="black" />
-  </button>
-
 </div>

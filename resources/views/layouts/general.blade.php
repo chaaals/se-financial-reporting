@@ -25,7 +25,7 @@
             </section>
             <section class="grow">{{ $slot }}</section>
         </main>
-
+        
         @livewireScripts
     </body>
 </html>

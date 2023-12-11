@@ -120,12 +120,21 @@
                                 </td>
                                 <td class="h-16 p-2">
                                     <div class="flex items-center justify-center">
+                                    @if($tb->tb_status === "Draft")
                                         <button
                                             x-on:click="isActionModalOpen = true"
                                             wire:click="setTrialBalance({{$index}})"
                                             class="h-full items-center">
                                             <x-financial-reporting.assets.trash-icon />
                                         </button>
+                                    @elseif($tb->tb_status === 'Approved')
+                                        <button
+                                            {{-- TODO: add archive/soft delete functionality --}}
+                                            x-on:click="alert('Report archived')"
+                                            class="h-full items-center">
+                                            <x-financial-reporting.assets.archive />
+                                        </button
+                                    @endif
                                     </div>
                                 </td>
                             </tr>
@@ -173,5 +182,9 @@
             </div>
         </div>
     </div>
+    @endif
+
+    @if(session('success'))
+        <x-toast type="success">{{ session('success')}}</x-toast>
     @endif
 </section>

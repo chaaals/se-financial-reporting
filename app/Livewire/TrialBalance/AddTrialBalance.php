@@ -77,7 +77,9 @@ class AddTrialBalance extends Component
             ]);
             $this->reset();
         }
-        $this->redirect('/trial-balances');
+
+        session()->flash("success", "Trial Balance has been added.");
+        $this->redirect('/trial-balances', navigate: true);
     }
 
     private function getTBData() {
@@ -97,6 +99,7 @@ class AddTrialBalance extends Component
             ];
         }
         
+        session()->now("success", "Import successful!");
         return json_encode($tbData);
     }
 
