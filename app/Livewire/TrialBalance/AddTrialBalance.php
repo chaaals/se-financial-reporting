@@ -89,8 +89,8 @@ class AddTrialBalance extends Component
         $spreadsheet = IOFactory::load($this->importedSpreadsheet->getRealPath());
         
         foreach ($jsonConfig as $accountCode => $row) {
-            $debit = $spreadsheet->getActiveSheet()->getCell("F".$row)->getValue();
-            $credit = $spreadsheet->getActiveSheet()->getCell("H".$row)->getValue();
+            $debit = $spreadsheet->getActiveSheet()->getCell("F".$row)->getCalculatedValue();
+            $credit = $spreadsheet->getActiveSheet()->getCell("H".$row)->getCalculatedValue();
             $tbData[$accountCode] = [
                 "debit" => $debit,
                 "credit" => $credit
