@@ -26,6 +26,10 @@
             <section class="grow">{{ $slot }}</section>
         </main>
 
+        @if(session('success'))
+            <x-toast type="success">{{ session('success')}}</x-toast>
+        @endif
+        
         @livewireScripts
     </body>
 </html>
