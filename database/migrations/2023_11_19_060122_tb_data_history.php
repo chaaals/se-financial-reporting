@@ -30,7 +30,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('trial_balances');
+        Schema::dropIfExists('tb_data_history');
     }
 };
 
