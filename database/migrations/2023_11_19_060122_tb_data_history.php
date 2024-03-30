@@ -19,7 +19,7 @@ return new class extends Migration
                 ->constrained(table: 'trial_balances', column: 'tb_id')
                 ->cascadeOnDelete();
             $table->longText('tb_data'); // json
-            $table->date('tb_date');
+            $table->date('date');
             $table->timestamp('created_at');
             $table->timestamp('updated_at');
         });
