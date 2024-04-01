@@ -4,6 +4,7 @@ namespace App\Livewire\TrialBalance;
 
 use App\Imports\TrialBalanceImport;
 use App\Models\TrialBalance;
+use App\Models\TrialBalanceHistory;
 use Livewire\Attributes\Rule;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -20,7 +21,10 @@ class AddTrialBalance extends Component
     public $date;
     public $interimPeriod;
     public $quarter;
-    
+
+    public $tbList;
+    public $updateExistingTbId;
+
     public $source;
     public $importedSpreadsheet;
 
@@ -42,9 +46,19 @@ class AddTrialBalance extends Component
 
         $formattedDate = date('M d, Y',strtotime($this->date));
         $this->tbName = "Trial Balance Report as of $formattedDate";
+        $this->listTb();
     }
 
-    public function add(){
+    public function listTb()
+    {
+        $res = DB::select("SELECT tb_name, tb_id FROM trial_balances");
+        $this->tbList = array_map(function ($item) {
+            return ['name' => $item->tb_name, 'id' => $item->tb_id];
+        }, $res);
+    }
+
+    public function add()
+    {
         $fr_month = date('m', strtotime($this->date));
 
         if ($this->interimPeriod === 'Quarterly') {
@@ -82,14 +96,33 @@ class AddTrialBalance extends Component
         $this->redirect('/trial-balances', navigate: true);
     }
 
-    private function getTBData() {
+    public function update()
+    {
+        $res = DB::select("SELECT tb_date, interim_period FROM trial_balances WHERE tb_id = $this->updateExistingTbId");
+        $this->date = $res[0]->tb_date;
+        $this->interimPeriod = $res[0]->interim_period;
+        $this->validate;
+        if ($this->importedSpreadsheet && $this->tbData) {
+            TrialBalanceHistory::create([
+                "tb_id" => $this->updateExistingTbId,
+                "tb_data" => $this->tbData,
+                "date" => $this->date,
+            ]);
+            $this->reset();
+        }
+        session()->flash("success", "Trial Balance has been updated.");
+        $this->redirect('/trial-balances', navigate: true);
+    }
+
+    private function getTBData()
+    {
         $tbImportConfig = DB::select("SELECT template FROM report_templates WHERE template_name = 'tb_pre'");
         $jsonConfig = array_column($tbImportConfig, 'template')[0];
         $jsonConfig = json_decode($jsonConfig, true);
         $tbData = $jsonConfig;
-        
+
         $spreadsheet = IOFactory::load($this->importedSpreadsheet->getRealPath());
-        
+
         foreach ($jsonConfig as $accountCode => $row) {
             $debit = $spreadsheet->getActiveSheet()->getCell("F".$row)->getCalculatedValue();
             $credit = $spreadsheet->getActiveSheet()->getCell("H".$row)->getCalculatedValue();
