@@ -101,7 +101,6 @@
                                     {{ $tb->tb_name }}
                                 </td>
                                 <td class="h-16 p-2 text-center whitespace-nowrap">
-                                    {{ date('M d, Y', strtotime($tb->date)) }}
                                 </td>
                                 <td class="h-16 p-2 hidden text-center whitespace-nowrap md:table-cell">
                                     {{ $tb->interim_period }}
