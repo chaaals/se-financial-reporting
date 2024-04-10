@@ -89,10 +89,32 @@
                 :reportId="$trial_balance->tb_id"
                 :reportType="$reportType"
                 :reportName="$trial_balance->tb_name" />
-            
-            <livewire:trial-balance.history
-                :data="$trial_balance_data"
-            />
+            @if(count($all_tb_data) > 1)
+            <section
+                class="relative w-10 h-10 flex items-center justify-center hidden md:block"
+                x-data="{ isHistoryVisible: false }"
+                x-on:click.outside="isHistoryVisible = false">
+                <section class="w-full h-full flex items-center justify-center">
+                    <button class="relative" x-on:click="isHistoryVisible = true">
+                        <x-financial-reporting.assets.history />
+                    </button>
+                </section>
+
+                <section
+                    x-cloak
+                    x-show="isHistoryVisible"
+                    class="absolute top-0 right-0 w-96 bg-white custom-dropshadow z-10 rounded-lg md:flex md:flex-col"
+                >
+                @foreach($all_tb_data as $i => $tb_data)
+                    <section class="w-full cursor-pointer p-2"
+                     x-on:click="isHistoryVisible = false"
+                     wire:click="setActiveTrialBalanceData({{$i}})">
+                        <div>Modified at {{ date('M d, Y', strtotime($tb_data["created_at"])) }}</div>
+                    </section>
+                @endforeach
+                </section>
+            </section>
+            @endif
             <button
                 wire:click="export"
                 class="bg-secondary text-white px-4 py-2 rounded-lg text-xs md:text-base">
@@ -105,7 +127,7 @@
         {{-- placeholder for previews --}}
         <section class="w-full text-center sm:h-136 2xl:h-160">
             <livewire:financial-reporting.trial-balance-template
-                :data="$trial_balance_data->tb_data"
+                :data="$trial_balance_data['tb_data']"
             />
         </section>
         
