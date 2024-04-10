@@ -40,6 +40,8 @@ class PreviewTrialBalance extends Component
         // 'editedApproved' => 'required|boolean',
     ];
 
+    protected $listeners = ["rebalance" => "refresh"];
+
     public function mount(){
         $tb_id = Route::current()->parameter("tb_id");
         $query = TrialBalance::with('tbData')->where('tb_id', $tb_id)->get();
@@ -78,9 +80,9 @@ class PreviewTrialBalance extends Component
 
         $spreadsheet = IOFactory::load(storage_path('app/' . $newFilePath));
 
-        $tbDataResults = DB::select('SELECT tb_data FROM trial_balances WHERE tb_id = ?', [$this->trial_balance->tb_id]);
-        $jsonData = array_column($tbDataResults, 'tb_data')[0];
-        $jsonData = json_decode($jsonData, true);
+        $activeTbData = $this->all_tb_data[$this->active_trial_balance_data]['tb_data'];
+        // $jsonData = array_column($activeTbData, 'tb_data')[0];
+        $jsonData = json_decode($activeTbData, true);
 
         $tbExportConfig = DB::select('SELECT template FROM report_templates WHERE template_name = ?', [$tbExportFormat]);
         $jsonConfig = array_column($tbExportConfig, 'template')[0];
@@ -154,12 +156,14 @@ class PreviewTrialBalance extends Component
 
     public function rebalance(){
         // TODO: Add logic that refetches GL
-        $rebalanced = $this->trial_balance_data->tb_data;
+        $rebalanced = $this->trial_balance_data["tb_data"];
         TrialBalanceHistory::create([
             "tb_id" => $this->trial_balance->tb_id,
             "tb_data" => $rebalanced,
             "date" => $this->trial_balance->tb_date
         ]);
+
+        session()->now("success", "Trial Balance has been rebalanced");
     }
 
     public function updateTrialBalance()
