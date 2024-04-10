@@ -6,6 +6,7 @@ use App\Exports\TrialBalanceExport;
 use App\Models\TrialBalance;
 use App\Models\TrialBalanceHistory;
 use Illuminate\Support\Facades\Route;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Maatwebsite\Excel\Facades\Excel;
 use DB;
@@ -22,6 +23,10 @@ class PreviewTrialBalance extends Component
     public $reportType = "tb";
     public $reportStatusOptions = [];
     public $selectedStatusOption;
+    public $debitTotals = [];
+    public $creditTotals = [];
+    public $debitGrandTotals = 0;
+    public $creditGrandTotals = 0;
     // public $confirming = null;
     // public $editMode = false;
     // public $editedReportName;
@@ -203,8 +208,22 @@ class PreviewTrialBalance extends Component
         // $this->editMode = false;
     }
 
+    #[On('add-value')]
+    public function addValue(string $type, $payload){
+        if($type == 'debit'){
+            array_push($this->debitTotals, $payload);
+        }
+        if($type == 'credit'){
+            array_push($this->creditTotals, $payload);
+        }
+    }
+
+
     public function render()
     {
+        $this->debitGrandTotals = array_sum($this->debitTotals);
+        $this->creditGrandTotals = array_sum($this->creditTotals);
+
         if(auth()->user()->role === "accounting"){
             if(in_array($this->trial_balance->tb_status, ['Draft', 'Change Requested'])){
                 $this->selectedStatusOption = "For Approval";
