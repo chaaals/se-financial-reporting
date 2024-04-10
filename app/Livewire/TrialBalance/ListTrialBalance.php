@@ -22,7 +22,7 @@ class ListTrialBalance extends Component
     public $sortBy;
     public $sortIndices = [
         0 => "tb_name",
-        1 => "date",
+        1 => "tb_date",
         2 => "interim_period",
         3 => "quarter",
         4 => "created_at",
@@ -114,7 +114,7 @@ class ListTrialBalance extends Component
     
     public function render()
     {
-        $query = DB::table('trial_balances')->select('tb_id','tb_name','date', 'interim_period', 'quarter', 'created_at', 'updated_at', 'tb_status');
+        $query = DB::table('trial_balances')->select('tb_id', 'tb_name', 'tb_date', 'interim_period', 'quarter', 'created_at', 'updated_at', 'tb_status');
 
         $isCorrectPeriodFilter = in_array($this->filterPeriod, ['Monthly', 'Annual', 'Quarterly']);
         $isCorrectStatusFilter = in_array($this->filterStatus, ['Draft', 'For Approval', 'Approved']);

@@ -1,24 +1,40 @@
 <section class="flex w-full p-4 gap-4">
-    <section
-        class="relative"
-        x-data="{ uploading: false, quarterly_active: false, import_active: false }"
-        x-on:livewire-upload-start="uploading = true"
-        x-on:livewire-upload-finish="uploading = false"
-        x-on:livewire-upload-error="uploading = false"
-    >
+    <section class="relative" x-data="{ uploading: false, quarterly_active: false, import_active: false, update_existing: false }" x-on:livewire-upload-start="uploading = true" x-on:livewire-upload-finish="uploading = false" x-on:livewire-upload-error="uploading = false">
         <form wire:submit.prevent="add">
             <div class="flex flex-col items-start mb-4">
                 <label class="text-md font-bold" for='trialBalanceName'>Trial Balance Name</label>
                 <input class="w-full rounded-lg focus:ring-0 md:w-96" id='trialBalanceName' type='text' wire:model='tbName' placeholder='Add trial balance name' />
             </div>
 
-            <div class="flex flex-col items-start mb-4">
+            <div class="mb-4">
+                <label class="text-md font-bold" for="update_tb">Update Existing TB?</label>
+
+                <fieldset id="update_tb" class="flex items-center gap-4 pl-4 md:pl-8">
+                    <section>
+                        <input type="checkbox" id="update_tb_checkbox" class="checked:bg-black checked:hover:bg-secondary focus:ring-0" wire:model="updateExistingTb" wire:click="tbList" x-on:click="update_existing = !update_existing" />
+                        <label class="text-sm md:text-base" for="update_tb_checkbox">Yes</label>
+                    </section>
+                </fieldset>
+            </div>
+
+            <div x-cloak x-show="update_existing">
+                <div class="mb-4">
+                    <label class="text-md font-bold" for="tb_list">Select TB</label>
+                    <select id="tb_list" wire:model="updateExistingTbId">
+                        @foreach($tbList as $tb)
+                        <option value="{{ $tb['id'] }}">{{ $tb['name'] }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+
+            <div class="flex flex-col items-start mb-4" x-cloak x-show="!update_existing">
                 <label class="text-md font-bold" for='trialBalancePeriod'>Date</label>
                 <input class="w-full rounded-lg focus:ring-0 md:w-96" id='trialBalancePeriod' type='date' wire:model='date' />
                 <div>@error('date')<span>{{ $message }}</span>@enderror</div>
             </div>
 
-            <div class="mb-4">
+            <div class="mb-4" x-show="!update_existing">
                 <label class="text-md font-bold" for="interim_period">Period</label>
 
                 <fieldset id="interim_period" class="flex items-center gap-4 pl-4 md:pl-8">
@@ -57,7 +73,7 @@
                 <div>@error('interimPeriod')<span>{{ $message }}</span>@enderror</div>
             </div>
 
-            <div x-cloak x-show="quarterly_active" class="mb-4">
+            <div x-cloak x-show="quarterly_active && !update_existing" class="mb-4">
                 <label class="text-md font-bold" for="quarter">Quarter</label>
 
                 <fieldset id="quarter" class="flex items-center gap-4 pl-4 md:pl-8">

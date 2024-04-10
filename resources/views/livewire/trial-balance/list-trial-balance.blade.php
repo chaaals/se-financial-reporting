@@ -5,7 +5,7 @@
         <section class="flex items-center flex-col gap-4 md:flex-row">
             <section class="flex items-center gap-4">
             @foreach($filterOptions as $key=>$filter)
-               <select 
+               <select
                     class="w-20 text-xs appearance-none rounded-lg border-neutral pr-8 md:w-24 md:text-sm"
                     @if (in_array($key, ['Quarter']) && !in_array($filterPeriod, ['Quarterly']))
                         disabled
@@ -24,7 +24,7 @@
                     <x-financial-reporting.assets.refresh />
                 </button>
             </section>
-            
+
             <section class="flex items-center gap-4">
                 <section class="flex items-center p-2 rounded-lg border-2 border-neutral gap-2">
                     <x-financial-reporting.assets.search />
@@ -95,13 +95,13 @@
                     @if($trial_balances)
                         @foreach($trial_balances as $index=>$tb)
                             <tr class={{ $index%2 == 0 ? 'bg-accentOne' : 'bg-white' }}>
-                                <td 
+                                <td
                                     class="h-16 p-2 text-center whitespace-wrap cursor-pointer hover:text-secondary"
                                     wire:click="preview('{{ $tb->tb_id }}')">
                                     {{ $tb->tb_name }}
                                 </td>
                                 <td class="h-16 p-2 text-center whitespace-nowrap">
-                                    {{ date('M d, Y', strtotime($tb->date)) }}
+                                    {{ date('M d, Y', strtotime($tb->tb_date)) }}
                                 </td>
                                 <td class="h-16 p-2 hidden text-center whitespace-nowrap md:table-cell">
                                     {{ $tb->interim_period }}
