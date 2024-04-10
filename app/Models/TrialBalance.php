@@ -37,4 +37,8 @@ class TrialBalance extends Model
             $model->setAttribute($model->getKeyName(), Uuid::uuid4());
         });
     }
+
+    public function tbData(){
+        return $this->hasMany(TrialBalanceHistory::class, 'tb_id');
+    }
 }

@@ -20,4 +20,8 @@ class TrialBalanceHistory extends Model
     protected $casts = [
         'tb_data_id' => 'string',
     ];
+
+    public function trialBalance(){
+        return $this->belongsTo(TrialBalance::class);
+    }
 }
