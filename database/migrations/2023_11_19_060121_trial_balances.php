@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('trial_balances', function (Blueprint $table) {
             $table->uuid('tb_id')
-                ->default(DB::raw('(UUID())'))
                 ->primary();
             $table->enum('tb_type', ['pre','post'])->nullable();
 

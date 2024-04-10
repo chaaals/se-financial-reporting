@@ -2,13 +2,17 @@
 
 namespace App\Models;
 
+use Ramsey\Uuid\Uuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class TrialBalance extends Model
 {
-    protected $primaryKey = 'tb_id';
     use HasFactory;
+    protected $primaryKey = 'tb_id';
+    protected $keyType = 'string';
+    public $incrementing = false;
+
     protected $fillable = [
         'tb_type',
         'tb_data',
@@ -16,7 +20,7 @@ class TrialBalance extends Model
         'tb_status',
         'quarter',
         'approved',
-        'date',
+        'tb_date',
         'interim_period',
         'template_name',
     ];
@@ -25,4 +29,12 @@ class TrialBalance extends Model
         'tb_id' => 'string',
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function (Model $model) {
+            $model->setAttribute($model->getKeyName(), Uuid::uuid4());
+        });
+    }
 }

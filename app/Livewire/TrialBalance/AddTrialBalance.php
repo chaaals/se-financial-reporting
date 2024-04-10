@@ -18,7 +18,7 @@ class AddTrialBalance extends Component
     public $tbName;
     public $tbType;
     public $tbData;
-    public $date;
+    public $tbDate;
     public $interimPeriod;
     public $quarter;
 
@@ -32,7 +32,7 @@ class AddTrialBalance extends Component
     public $preview = [];
     protected $rules = [
         "tbName" => "nullable|max:255",
-        "date" => "required|date",
+        "tbDate" => "required|date",
         "tbType" => "nullable|in:pre,post",
         "importedSpreadsheet" => "required|file|mimes:xlsx,xls,ods",
         'interimPeriod' => 'required|in:Monthly,Quarterly,Annual',
@@ -42,9 +42,9 @@ class AddTrialBalance extends Component
     public function mount()
     {
         // default values so user does not need to interact with the form and just save
-        $this->date = date('Y-m-d');
+        $this->tbDate = date('Y-m-d');
 
-        $formattedDate = date('M d, Y',strtotime($this->date));
+        $formattedDate = date('M d, Y',strtotime($this->tbDate));
         $this->tbName = "Trial Balance Report as of $formattedDate";
         $this->listTb();
     }
@@ -59,7 +59,7 @@ class AddTrialBalance extends Component
 
     public function add()
     {
-        $fr_month = date('m', strtotime($this->date));
+        $fr_month = date('m', strtotime($this->tbDate));
 
         if ($this->interimPeriod === 'Quarterly') {
             $this->rules['quarter'] = 'required|in:Q1,Q2,Q3,Q4';
@@ -78,16 +78,21 @@ class AddTrialBalance extends Component
 
         $this->validate();
         if($this->importedSpreadsheet && $this->tbData){
-            TrialBalance::create([
+            $tb = TrialBalance::create([
                 "tb_name" => $this->tbName,
                 "tb_type" => $this->tbType ?? null,
                 "tb_status" => 'Draft',
-                "tb_data" => $this->tbData,
                 "interim_period" => $this->interimPeriod,
                 "quarter" => $this->quarter,
                 "approved" => false,
-                "date" => $this->date,
+                "tb_date" => $this->tbDate,
                 "template_name" => 'tb_pre'
+            ]);
+
+            TrialBalanceHistory::create([
+                "tb_id" => $tb->tb_id,
+                "tb_data" => $this->tbData,
+                "date" => $this->tbDate
             ]);
             $this->reset();
         }
@@ -99,14 +104,14 @@ class AddTrialBalance extends Component
     public function update()
     {
         $res = DB::select("SELECT tb_date, interim_period FROM trial_balances WHERE tb_id = $this->updateExistingTbId");
-        $this->date = $res[0]->tb_date;
+        $this->tbDate = $res[0]->tb_date;
         $this->interimPeriod = $res[0]->interim_period;
         $this->validate;
         if ($this->importedSpreadsheet && $this->tbData) {
             TrialBalanceHistory::create([
                 "tb_id" => $this->updateExistingTbId,
                 "tb_data" => $this->tbData,
-                "date" => $this->date,
+                "date" => $this->tbDate,
             ]);
             $this->reset();
         }

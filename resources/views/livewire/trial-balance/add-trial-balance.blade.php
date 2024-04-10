@@ -30,8 +30,8 @@
 
             <div class="flex flex-col items-start mb-4" x-cloak x-show="!update_existing">
                 <label class="text-md font-bold" for='trialBalancePeriod'>Date</label>
-                <input class="w-full rounded-lg focus:ring-0 md:w-96" id='trialBalancePeriod' type='date' wire:model='date' />
-                <div>@error('date')<span>{{ $message }}</span>@enderror</div>
+                <input class="w-full rounded-lg focus:ring-0 md:w-96" id='trialBalancePeriod' type='date' wire:model='tbDate' />
+                <div>@error('tbDate')<span>{{ $message }}</span>@enderror</div>
             </div>
 
             <div class="mb-4" x-show="!update_existing">
