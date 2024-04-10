@@ -90,7 +90,9 @@
                 :reportType="$reportType"
                 :reportName="$trial_balance->tb_name" />
             
-            <livewire:trial-balance.history />
+            <livewire:trial-balance.history
+                :data="$trial_balance_data"
+            />
             <button
                 wire:click="export"
                 class="bg-secondary text-white px-4 py-2 rounded-lg text-xs md:text-base">
@@ -115,7 +117,7 @@
                 </div>
                 <div class="mb-0.5">
                     <span class="text-xs font-inter text-slate-500">Date</span>
-                    <p class="font-inter font-bold">{{ $trial_balance->date }}</p>
+                    <p class="font-inter font-bold">{{ $trial_balance->tb_date }}</p>
                 </div>
                 <div class="mb-0.5">
                     <span class="text-xs font-inter text-slate-500">Period</span>
@@ -132,27 +134,45 @@
                     <span class="text-xs font-inter text-slate-500">Created At</span>
                     <p class="font-inter font-bold">{{ $trial_balance->created_at }}</p>
                 </div>
-                <div class="mb-0.5">
+                <div class="mb-2 border-b-2 border-slate-300">
                     <span class="text-xs font-inter text-slate-500">Updated At</span>
                     <p class="font-inter font-bold">{{ $trial_balance->updated_at }}</p>
                 </div>
+                <div class="mb-0.5">
+                    <div class="flex w-full justify-between items-center mb-0.5">
+                        <span class="text-xs font-inter text-slate-500">Grand Totals</span>
+                    </div>
+                    <p class="font-inter font-bold">Debit &colon;</p>
+                    <p class="font-inter font-bold">Credit &colon;</p>
+                </div>
             </section>
 
-            <section x-data="{ isToolTipVisible: false }" class="flex items-center gap-2">
-                <button
-                    class="w-full text-center @if($statusColor === 'draft') {{'bg-draft'}} @elseif($statusColor === 'forapproval') {{'bg-forapproval'}} @elseif($statusColor === 'approved') {{'bg-approved'}} @elseif($statusColor === 'changerequested') {{'bg-changerequested'}} @endif rounded-lg text-white p-2" x-on:click="isActionModalOpen = true">
-                    {{ $trial_balance->tb_status }}
-                </button>
-                <div class="relative" x-on:mouseenter="isToolTipVisible = true" x-on:mouseleave="isToolTipVisible = false">
-                    <x-financial-reporting.assets.info />
+            <section class="w-full">
+            </section>
 
-                    <div
-                        x-cloak
-                        x-show="isToolTipVisible"
-                        class="absolute -left-46 -top-24 rounded-t-lg rounded-bl-lg bg-black bg-opacity-75 w-48 p-2 text-sm after:content-[''] after:absolute after:top-full after:left-2/4 after:ml-22 after:border-4 after:border-solid after:border-t-black after:border-opacity-75 after:border-r-transparent after:border-b-transparent after:border-l-transparent">
-                        <p class="text-white">You can update the status of the report by clicking this button.</p>
+            <section class="w-full flex gap-2 flex-col gap-2">
+                <section x-data="{ isToolTipVisible: false }" class="flex items-center gap-2">
+                    <div class="w-full flex flex-col gap-2">
+                        <button
+                            class="w-full text-center @if($statusColor === 'draft') {{'bg-draft'}} @elseif($statusColor === 'forapproval') {{'bg-forapproval'}} @elseif($statusColor === 'approved') {{'bg-approved'}} @elseif($statusColor === 'changerequested') {{'bg-changerequested'}} @endif rounded-lg text-white p-2" x-on:click="isActionModalOpen = true">
+                            {{ $trial_balance->tb_status }}
+                        </button>
+                        {{-- TODO: Disable if already balanced --}}
+                        <button class="w-full text-center rounded-lg text-white p-2 bg-primary" wire:click='rebalance'>Rebalance</button>
                     </div>
-                </div>
+                    {{-- <div class="relative" x-on:mouseenter="isToolTipVisible = true" x-on:mouseleave="isToolTipVisible = false">
+                        <x-financial-reporting.assets.info />
+
+                        <div
+                            x-cloak
+                            x-show="isToolTipVisible"
+                            class="absolute -left-46 -top-24 rounded-t-lg rounded-bl-lg bg-black bg-opacity-75 w-48 p-2 text-sm after:content-[''] after:absolute after:top-full after:left-2/4 after:ml-22 after:border-4 after:border-solid after:border-t-black after:border-opacity-75 after:border-r-transparent after:border-b-transparent after:border-l-transparent">
+                            <p class="text-white font-bold mb-2">What is this?</p>
+                            <p class="text-white mb-2">You can update the status of the report by click [STATUS] button.</p>
+                            <p class="text-white mb-2">You can rebalance the report by click the Rebalance button.</p>
+                        </div>
+                    </div> --}}
+                </section>
             </section>
         </section>
     </section>
