@@ -4,6 +4,7 @@ namespace App\Livewire\TrialBalance;
 
 use App\Exports\TrialBalanceExport;
 use App\Models\TrialBalance;
+use App\Models\TrialBalanceHistory;
 use Illuminate\Support\Facades\Route;
 use Livewire\Component;
 use Maatwebsite\Excel\Facades\Excel;
@@ -15,6 +16,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 class PreviewTrialBalance extends Component
 {
     public TrialBalance $trial_balance;
+    public $trial_balance_data;
     public $reportType = "tb";
     public $reportStatusOptions = [];
     public $selectedStatusOption;
@@ -38,11 +40,14 @@ class PreviewTrialBalance extends Component
 
     public function mount(){
         $tb_id = Route::current()->parameter("tb_id");
-        $query = TrialBalance::where('tb_id', $tb_id)->get();
+        $query = TrialBalance::with('tbData')->where('tb_id', $tb_id)->get();
+        // $tb_data_query = TrialBalanceHistory::where('tb_id', $tb_id)->get();
 
         foreach($query as $tb){
             $this->trial_balance= $tb;
         }
+
+        $this->trial_balance_data = $this->trial_balance->getRelation('tbData')[0];
 
         // default values
         // $this->editedReportName = $this->trial_balance->report_name;

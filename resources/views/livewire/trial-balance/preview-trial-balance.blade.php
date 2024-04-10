@@ -103,7 +103,7 @@
         {{-- placeholder for previews --}}
         <section class="w-full text-center sm:h-136 2xl:h-160">
             <livewire:financial-reporting.trial-balance-template
-                :data="$trial_balance->tb_data"
+                :data="$trial_balance_data->tb_data"
             />
         </section>
         
