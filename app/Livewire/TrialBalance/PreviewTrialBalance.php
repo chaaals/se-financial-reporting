@@ -144,6 +144,16 @@ class PreviewTrialBalance extends Component
         $this->editMode = !$this->editMode;
     }
 
+    public function rebalance(){
+        // TODO: Add logic that refetches GL
+        $rebalanced = $this->trial_balance_data->tb_data;
+        TrialBalanceHistory::create([
+            "tb_id" => $this->trial_balance->tb_id,
+            "tb_data" => $rebalanced,
+            "date" => $this->trial_balance->tb_date
+        ]);
+    }
+
     public function updateTrialBalance()
     {
         $this->validate();

@@ -11,7 +11,7 @@
     <section
         x-cloak
         x-show="isHistoryVisible"
-        class="absolute top-0 right-0 w-96 h-128 bg-white custom-dropshadow z-10 rounded-lg md:flex md:flex-col"
+        class="absolute top-0 right-0 w-96 bg-white custom-dropshadow z-10 rounded-lg md:flex md:flex-col"
     >
     
     </section>
