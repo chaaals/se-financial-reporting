@@ -16,7 +16,9 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 class PreviewTrialBalance extends Component
 {
     public TrialBalance $trial_balance;
+    public $all_tb_data;
     public $trial_balance_data;
+    public $active_trial_balance_data = 0;
     public $reportType = "tb";
     public $reportStatusOptions = [];
     public $selectedStatusOption;
@@ -47,7 +49,8 @@ class PreviewTrialBalance extends Component
             $this->trial_balance= $tb;
         }
 
-        $this->trial_balance_data = $this->trial_balance->getRelation('tbData')[0];
+        $this->all_tb_data = $this->trial_balance->getRelation('tbData')->toArray();
+        $this->trial_balance_data = $this->all_tb_data[$this->active_trial_balance_data];
 
         // default values
         // $this->editedReportName = $this->trial_balance->report_name;
@@ -56,6 +59,11 @@ class PreviewTrialBalance extends Component
         // $this->editedQuarter = $this->trial_balance->quarter;
         // $this->editedApproved = $this->trial_balance->approved;
         // $this->editedReportStatus = $this->trial_balance->report_status;
+    }
+
+    public function setActiveTrialBalanceData(int $index){
+        $this->active_trial_balance_data = $index;
+        $this->trial_balance_data = $this->all_tb_data[$index];
     }
 
     public function export() {
@@ -217,7 +225,9 @@ class PreviewTrialBalance extends Component
         }
 
         return view('livewire.trial-balance.preview-trial-balance',
-            ["statusColor" => strtolower(join("", explode(" ",$this->trial_balance->tb_status)))]
+            ["statusColor" => strtolower(join("", explode(" ",$this->trial_balance->tb_status))),
+            "numModifications" => count($this->all_tb_data)
+            ]
         );
     }
 }
