@@ -105,6 +105,9 @@
                     x-show="isHistoryVisible"
                     class="absolute top-0 right-0 w-96 bg-white custom-dropshadow z-10 rounded-lg md:flex md:flex-col"
                 >
+                    <section class="p-2">
+                        <h3 class="text-lg font-bold">Version History</h3>
+                    </section>
                 @foreach($all_tb_data as $i => $tb_data)
                     <section class="w-full cursor-pointer p-2"
                      x-on:click="isHistoryVisible = false"
