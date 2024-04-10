@@ -90,6 +90,7 @@
                 :reportType="$reportType"
                 :reportName="$trial_balance->tb_name" />
             
+            <livewire:trial-balance.history />
             <button
                 wire:click="export"
                 class="bg-secondary text-white px-4 py-2 rounded-lg text-xs md:text-base">

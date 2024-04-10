@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tb_data_history', function (Blueprint $table) {
+        Schema::create('trial_balance_histories', function (Blueprint $table) {
             $table->uuid('tb_data_id')
                 ->default(DB::raw('(UUID())'))
                 ->primary();
