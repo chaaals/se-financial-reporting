@@ -167,8 +167,8 @@
                     <div class="flex w-full justify-between items-center mb-0.5">
                         <span class="text-xs font-inter text-slate-500">Grand Totals</span>
                     </div>
-                    <p class="font-inter font-bold">Debit &colon;</p>
-                    <p class="font-inter font-bold">Credit &colon;</p>
+                    <p class="font-inter font-bold">Debit &colon; Php {{ $debitGrandTotals }}</p>
+                    <p class="font-inter font-bold">Credit &colon; Php {{ $creditGrandTotals }}</p>
                 </div>
             </section>
 

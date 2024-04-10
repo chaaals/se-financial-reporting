@@ -229,8 +229,42 @@ class TrialBalanceTemplate extends Component
     public function mount(string $data){
         $this->data = json_decode($data, true);
     }
+
     public function render()
     {
-        return view('livewire.financial-reporting.trial-balance-template');
+        $getTotalDebit = function (string $parent, $items, bool $verbose) {
+            $debit = 0;
+    
+            foreach($items as $item){
+                foreach($this->accountTitles[$parent][$item] as $code=>$title){
+                    if($this->data[$code]['debit']){
+                        $debit += $this->data[$code]['debit'];
+                    }
+                }            
+            }
+            // array_push($this->debitTotals, $debit);
+            $this->dispatch('add-value', type: 'debit', payload: $debit);
+            if($verbose){
+                return $debit;
+            }
+        };
+        $getTotalCredit = function (string $parent, $items, bool $verbose){
+            $credit = 0;
+    
+            foreach($items as $item){
+                foreach($this->accountTitles[$parent][$item] as $code=>$title){
+                    if($this->data[$code]['credit']){
+                        $credit += $this->data[$code]['credit'];
+                    }
+                }
+            }
+            // array_push($this->debitTotals, $credit);
+            $this->dispatch('add-value', type: 'credit', payload: $credit);
+            if($verbose){
+                return $credit;
+            }
+        };
+        
+        return view('livewire.financial-reporting.trial-balance-template', compact(['getTotalDebit', 'getTotalCredit']));
     }
 }
