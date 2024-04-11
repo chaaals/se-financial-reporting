@@ -31,7 +31,7 @@ class SuggestionSearch extends Component
                                         "tb.tb_id as tb_id",
                                         "tb.tb_name as tb_name",
                                         "tb.interim_period as interim_period",
-                                        "tb.date as date")
+                                        "tb.tb_date as date")
                                     ->whereNotExists(function($query){
                                         $query->select(DB::raw(1))
                                               ->from("financial_statement_collections as fsc")
