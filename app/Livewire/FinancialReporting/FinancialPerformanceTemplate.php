@@ -7,6 +7,9 @@ use Livewire\Component;
 class FinancialPerformanceTemplate extends Component
 {
     public $data;
+    public $revenue;
+    public $currOperatingExpense;
+
     public $accountTitles = [
         "revenue" => [
             "14" => "Service Income",
@@ -33,8 +36,39 @@ class FinancialPerformanceTemplate extends Component
     }
     public function render()
     {
+        $getTotalAmount = function (string $parent, $items, bool $verbose) {
+            $amount = 0;
+
+            if(count($items) > 0){
+                foreach($items as $item){
+                    foreach($this->accountTitles[$parent][$item] as $cell=>$title){
+                        if($this->data[$cell]){
+                            $amount += $this->data[$cell];
+                        }
+                    }            
+                }
+            } else {
+                foreach($items as $cell=>$title){
+                    if($this->data[$cell]){
+                        $amount += $this->data[$cell];
+                    }
+                }
+            }
+
+            if($parent == 'revenue'){
+                $this->revenue = $amount;
+            }
+
+            if($parent == 'currOperatingExpense'){
+                $this->currOperatingExpense = $amount;
+            }
+
+            if($verbose){
+                return $amount;
+            }
+        };
         return view('livewire.financial-reporting.financial-performance-template',
-            ["data" => $this->data, "accountTitles" => $this->accountTitles]
+            ["data" => $this->data, "accountTitles" => $this->accountTitles, "getTotalAmount" => $getTotalAmount, "surplus" => $this->revenue - $this->currOperatingExpense]
         );
     }
 }

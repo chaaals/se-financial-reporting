@@ -7,6 +7,9 @@ use Livewire\Component;
 class FinancialPositionTemplate extends Component
 {
     public $data;
+    public $liabilities = [];
+    public $equity = [];
+
     public $accountTitles = [
         "assets" => [
             "current" => [
@@ -50,8 +53,40 @@ class FinancialPositionTemplate extends Component
     }
     public function render()
     {
+        $getTotalAmount = function (string $parent, $items, bool $verbose) {
+            $amount = 0;
+
+            if(count($items) > 0){
+                foreach($items as $item){
+                    foreach($this->accountTitles[$parent][$item] as $cell=>$title){
+                        if($this->data[$cell]){
+                            $amount += $this->data[$cell];
+                        }
+                    }            
+                }
+            } else {
+                foreach($items as $cell=>$title){
+                    if($this->data[$cell]){
+                        $amount += $this->data[$cell];
+                    }
+                }
+            }
+            
+            if($parent == 'equity'){
+                array_push($this->equity, $amount);
+            }
+            
+            if($parent == 'liabilities'){
+                array_push($this->liabilities, $amount);
+            }
+
+            if($verbose){
+                return $amount;
+            }
+        };
+
         return view('livewire.financial-reporting.financial-position-template',
-            ["data" => $this->data, "accountTitles" => $this->accountTitles]
+            ["data" => $this->data, "accountTitles" => $this->accountTitles, "getTotalAmount" => $getTotalAmount, "liabilities" => $this->liabilities, "equity" => $this->equity]
         );
     }
 }

@@ -10,19 +10,22 @@
             <x-financial-reporting.account-sub-class accountSubClass="Cash Inflows" />
             <x-financial-reporting.account-title-items :accountTitles="$accountTitles['cashInflows']" :data="$data" />
 
-            <tr>
+            <tr class="bg-slate-200">
                 <td class="text-left font-bold pl-4">Total Cash Inflows</td>
+                <td>{{ $getTotalAmount('cashInflows', [], true) }}</td>
             </tr>
 
             <x-financial-reporting.account-sub-class accountSubClass="Cash Outflows" />
             <x-financial-reporting.account-title-items :accountTitles="$accountTitles['cashOutflows']" :data="$data" />
 
-            <tr>
+            <tr class="bg-slate-200">
                 <td class="text-left font-bold pl-4">Total Cash Outflows</td>
+                <td>{{ $getTotalAmount('cashOutflows', [], true) }}</td>
             </tr>
 
-            <tr>
+            <tr class="bg-slate-200">
                 <td class="text-left font-bold">Net Cash Flows from Operating Activities</td>
+                <td>{{ $netCash }}</td>
             </tr>
 
             <x-financial-reporting.account-class accountClass="Cash Flows from Investing Activities" />
@@ -30,14 +33,16 @@
             <x-financial-reporting.account-sub-class accountSubClass="Cash Outflow" />
             <x-financial-reporting.account-title-items :accountTitles="$accountTitles['cashOutflow']" :data="$data" />
 
-            <tr>
+            <tr class="bg-slate-200">
                 <td class="text-left font-bold">Net Cash Flows from Investing Activities</td>
+                 <td>{{ $getTotalAmount('cashOutflow', [], true) }}</td>
             </tr>
 
             <x-financial-reporting.account-title-items :accountTitles="$accountTitles['others']" :data="$data" />
 
-            <tr>
+            <tr class="bg-slate-200">
                 <td class="text-left font-bold">Cash Balance at the End of the Quarter</td>
+                <td>{{ $getCashBalanceEOQ() }}</td>
             </tr>
         </tbody>
     </table>

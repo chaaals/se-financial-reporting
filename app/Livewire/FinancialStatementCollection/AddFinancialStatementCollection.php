@@ -3,6 +3,7 @@
 namespace App\Livewire\FinancialStatementCollection;
 
 use App\Models\FinancialStatementCollection;
+use App\Models\TrialBalance;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use DB;
@@ -69,7 +70,13 @@ class AddFinancialStatementCollection extends Component
     
     public function addFS()
     {
-        $tbData = DB::select('SELECT tb_data from trial_balances WHERE tb_id = ?', [$this->tbID])[0];
+        if(!$this->tbID){
+            return;
+        }
+
+        $tb = TrialBalance::with('latestTbData')->where('tb_id',$this->tbID )->get()[0];
+        $tbData = $tb->getRelation('latestTbData');
+        // $tbData = DB::select('SELECT tb_data from trial_balances WHERE tb_id = ?', [$this->tbID])[0];
         $sfpoData = $this->getData($tbData, "sfpo_tb");
         DB::table('financial_statements')->insert([
             "fs_type" => "SFPO",
