@@ -39,7 +39,7 @@ class TrialBalance extends Model
     }
 
     public function tbData(){
-        return $this->hasMany(TrialBalanceHistory::class, 'tb_id');
+        return $this->hasMany(TrialBalanceHistory::class, 'tb_id')->orderBy('created_at', 'desc');
     }
 
     public function latestTbData(){

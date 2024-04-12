@@ -56,7 +56,10 @@ class PreviewTrialBalance extends Component
             $this->trial_balance= $tb;
         }
 
-        $this->all_tb_data = $this->trial_balance->getRelation('tbData')->toArray();
+        // $this->trial_balance->orderByDesc()
+
+        $this->all_tb_data = $this->trial_balance->getRelation('tbData');
+
         $this->trial_balance_data = $this->all_tb_data[$this->active_trial_balance_data];
 
         // default values
@@ -71,6 +74,12 @@ class PreviewTrialBalance extends Component
     public function setActiveTrialBalanceData(int $index){
         $this->active_trial_balance_data = $index;
         $this->trial_balance_data = $this->all_tb_data[$index];
+
+        $this->debitTotals = [];
+        $this->creditTotals = [];
+        $this->debitGrandTotals = 0;
+        $this->creditGrandTotals = 0;
+
     }
 
     public function export() {
@@ -161,7 +170,18 @@ class PreviewTrialBalance extends Component
 
     public function rebalance(){
         // TODO: Add logic that refetches GL
-        $rebalanced = $this->trial_balance_data["tb_data"];
+        $tbData = $this->trial_balance_data["tb_data"];
+        $rebalanced = json_decode($tbData, true);
+
+        foreach($rebalanced as $code=>$value){
+            if (rand(0,1) < 0.25){
+                $rebalanced[$code]['debit'] = rand(1, 500);
+                $rebalanced[$code]['credit'] = rand(1, 500);
+            }
+        }
+    
+        $rebalanced = json_encode($rebalanced);
+
         TrialBalanceHistory::create([
             "tb_id" => $this->trial_balance->tb_id,
             "tb_data" => $rebalanced,
@@ -169,6 +189,20 @@ class PreviewTrialBalance extends Component
         ]);
 
         session()->now("success", "Trial Balance has been rebalanced");
+        $this->refetch();
+    }
+
+    public function refetch(){
+        $query = TrialBalance::with('tbData')->orderBy('created_at', 'desc')->where('tb_id', $this->trial_balance->tb_id)->get();
+        // $tb_data_query = TrialBalanceHistory::where('tb_id', $tb_id)->get();
+
+        foreach($query as $tb){
+            $this->trial_balance= $tb;
+        }
+
+        $this->all_tb_data = $this->trial_balance->getRelation('tbData')->toArray();
+        $this->active_trial_balance_data = 0;
+        $this->trial_balance_data = $this->all_tb_data[0];
     }
 
     public function updateTrialBalance()
@@ -212,18 +246,17 @@ class PreviewTrialBalance extends Component
     public function addValue(string $type, $payload){
         if($type == 'debit'){
             array_push($this->debitTotals, $payload);
+            // $this->debitGrandTotals += $payload;
         }
         if($type == 'credit'){
             array_push($this->creditTotals, $payload);
+            // $this->creditGrandTotals += $payload;
         }
     }
 
 
     public function render()
     {
-        $this->debitGrandTotals = array_sum($this->debitTotals);
-        $this->creditGrandTotals = array_sum($this->creditTotals);
-
         if(auth()->user()->role === "accounting"){
             if(in_array($this->trial_balance->tb_status, ['Draft', 'Change Requested'])){
                 $this->selectedStatusOption = "For Approval";
