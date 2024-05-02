@@ -39,12 +39,24 @@ return new class extends Migration
                 'template' => '{"sample": "content"}',
             ],
             [
+                'template_name' => 'sfpo_totals',
+                'template' => '{"Current Assets":"24","Non-Current Receivables":"29","Property, Plant and Equipment":"38","Non-Current Assets":"40","Assets":"42","Current Liabilities":"50","Non-Current Liabilities":"54","Liabilities":"56","Equity":"64","Liabilities and Equity":"67"}'
+            ],
+            [
                 'template_name' => 'sfpe',
                 'template' => '{"sample": "content"}',
             ],
             [
+                'template_name' => 'sfpe_totals',
+                'template' => '{"Revenue":"18","Current Operating Expenses":"28","Surplus for the Period":"30","Surplus (Deficit) for the period":"32","Surplus (Deficit) for the Period":"41"}'
+            ],
+            [
                 'template_name' => 'scf',
                 'template' => '{"sample": "content"}',
+            ],
+            [
+                'template_name' => 'scf_totals',
+                'template' => '{"Cash Inflows":"17","Cash Outflows":"22","Net Cash Flows from Operating Activities":"25","Net Cash Flows from Investing Activities":"31","Cash Balance at the End of the Quarter":"37"}'
             ],
             [
                 'template_name' => 'sfpo_vals',
