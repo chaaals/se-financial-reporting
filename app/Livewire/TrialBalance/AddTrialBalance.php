@@ -5,6 +5,7 @@ namespace App\Livewire\TrialBalance;
 use App\Imports\TrialBalanceImport;
 use App\Models\TrialBalance;
 use App\Models\TrialBalanceHistory;
+use App\Models\TrialBalanceTotals;
 use Livewire\Attributes\Rule;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -98,6 +99,11 @@ class AddTrialBalance extends Component
                 "date" => $this->tbDate
             ]);
             $this->reset();
+
+            TrialBalanceTotals::create([
+                "tb_id" => $tb->tb_id,
+                "totals_data" => $this->tbDataTotals,
+            ]);
         }
 
         session()->flash("success", "Trial Balance has been added.");
@@ -123,6 +129,10 @@ class AddTrialBalance extends Component
         $tb->debit_grand_totals = $this->tbDataTotals['GRAND TOTALS']['debit'];
         $tb->credit_grand_totals = $this->tbDataTotals['GRAND TOTALS']['credit'];
         $tb->save();
+        // update trial balance's totals
+        $tbTotals = TrialBalanceTotals::find($this->updateExistingTbId);
+        $tbTotals->totals_data = $this->tbDataTotals;
+        $tbTotals->save();
 
         session()->flash("success", "Trial Balance has been updated.");
         $this->redirect('/trial-balances', navigate: true);
