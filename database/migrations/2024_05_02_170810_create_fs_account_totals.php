@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('fs_account_totals', function (Blueprint $table) {
             $table->id('totals_id');
-            $table->foreignUuid('fs_id')
-                ->references('fs_id')
-                ->on('financial_statements');
+            $table->foreignId('fs_id')
+                ->constrained(table: 'financial_statements', column: 'fs_id')
+                ->cascadeOnDelete();
             $table->jsonb('totals_data');
             $table->timestamps();
         });
