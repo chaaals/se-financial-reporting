@@ -87,7 +87,9 @@ class AddTrialBalance extends Component
                 "quarter" => $this->quarter,
                 "approved" => false,
                 "tb_date" => $this->tbDate,
-                "template_name" => 'tb_pre'
+                "template_name" => 'tb_pre',
+                "debit_grand_totals" => $this->tbDataTotals['GRAND TOTALS']['debit'],
+                "credit_grand_totals" => $this->tbDataTotals['GRAND TOTALS']['credit'],
             ]);
 
             TrialBalanceHistory::create([
@@ -116,6 +118,12 @@ class AddTrialBalance extends Component
             ]);
             $this->reset();
         }
+        // update the trial balance's credit and debit grand totals
+        $tb = TrialBalance::find($this->updateExistingTbId);
+        $tb->debit_grand_totals = $this->tbDataTotals['GRAND TOTALS']['debit'];
+        $tb->credit_grand_totals = $this->tbDataTotals['GRAND TOTALS']['credit'];
+        $tb->save();
+
         session()->flash("success", "Trial Balance has been updated.");
         $this->redirect('/trial-balances', navigate: true);
     }
