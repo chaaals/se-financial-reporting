@@ -48,15 +48,15 @@ return new class extends Migration
             ],
             [
                 'template_name' => 'sfpo_totals',
-                'template' => '{"Current Assets":"24","Non-Current Receivables":"29","Property, Plant and Equipment":"38","Non-Current Assets":"40","Assets":"42","Current Liabilities":"50","Non-Current Liabilities":"54","Liabilities":"56","Equity":"64","Liabilities and Equity":"67"}'
+                'template' => '{"Current Assets":["17","18","19","20","21","23"],"Non-Current Receivables":["28"],"Property, Plant and Equipment":["32","33","34","35","36","37"],"Non-Current Assets":["28","32","33","34","35","36","37"],"Assets":["17","18","19","20","21","23","28","32","33","34","35","36","37"],"Current Liabilities":["46","47","48","49"],"Non-Current Liabilities":["53"],"Liabilities":["46","47","48","49","53"],"Equity":["61","62","63","64"],"Liabilities and Equity":["46","47","48","49","53","61","62","63","64"]}'
             ],
             [
                 'template_name' => 'sfpe_totals',
-                'template' => '{"Revenue":"18","Current Operating Expenses":"28","Surplus for the Period":"30","Surplus (Deficit) for the period":"32","Surplus (Deficit) for the Period":"41"}'
+                'template' => '{"Revenue":["14","15","16","17"],"Current Operating Expenses":["22","23","24","25","26","27"],"Surplus for the Period":["14","15","16","17","22","23","24","25","26","27"],"Surplus (Deficit) for the period":["14","15","16","17","22","23","24","25","26","27"],"Surplus (Deficit) for the Period":["14","15","16","17","22","23","24","25","26","27","35"]}'
             ],
             [
                 'template_name' => 'scf_totals',
-                'template' => '{"Cash Inflows":"17","Cash Outflows":"22","Net Cash Flows from Operating Activities":"25","Net Cash Flows from Investing Activities":"31","Cash Balance at the End of the Quarter":"37"}'
+                'template' => '{"Cash Inflows":["13","15","16"],"Cash Outflows":["20","21"],"Net Cash Flows from Operating Activities":["13","15","16","20","21"],"Net Cash Flows from Investing Activities":["30"]"Cash Balance at the End of the Quarter":["34","35"]}'
             ],
             [
                 'template_name' => 'sfpo_vals',
