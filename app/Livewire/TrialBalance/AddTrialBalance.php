@@ -9,7 +9,7 @@ use App\Models\TrialBalanceTotals;
 use Livewire\Attributes\Rule;
 use Livewire\Component;
 use Livewire\WithFileUploads;
-use DB;
+use Illuminate\Support\Facades\DB;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class AddTrialBalance extends Component

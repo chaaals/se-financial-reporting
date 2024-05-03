@@ -6,7 +6,7 @@ use App\Models\FinancialStatementCollection;
 use App\Models\TrialBalance;
 use Livewire\Component;
 use Livewire\WithFileUploads;
-use DB;
+use Illuminate\Support\Facades\DB;
 
 use Illuminate\Support\Facades\Log;
 
