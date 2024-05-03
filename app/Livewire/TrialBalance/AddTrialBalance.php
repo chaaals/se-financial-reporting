@@ -159,7 +159,7 @@ class AddTrialBalance extends Component
         $totalsConfig = array_column($tbTotalsConfig, 'template')[0];
         $totalsConfig = json_decode($totalsConfig, true);
         $tbDataTotals = $totalsConfig;
-        foreach ($jsonConfig as $title => $row) {
+        foreach ($totalsConfig as $title => $row) {
             $debit = $spreadsheet->getActiveSheet()->getCell("F" . $row)->getCalculatedValue();
             $credit = $spreadsheet->getActiveSheet()->getCell("H" . $row)->getCalculatedValue();
             $tbData[$title] = [
