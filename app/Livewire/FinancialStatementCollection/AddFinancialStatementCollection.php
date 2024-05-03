@@ -6,7 +6,7 @@ use App\Models\FinancialStatementCollection;
 use App\Models\TrialBalance;
 use Livewire\Component;
 use Livewire\WithFileUploads;
-use DB;
+use Illuminate\Support\Facades\DB;
 
 use Illuminate\Support\Facades\Log;
 
@@ -46,7 +46,8 @@ class AddFinancialStatementCollection extends Component
         $this->date = date('Y-m-d');
     }
 
-    public function add(){
+    public function add()
+    {
         $this->validate();
 
         if ($this->interimPeriod === 'Quarterly') {
@@ -54,7 +55,7 @@ class AddFinancialStatementCollection extends Component
         } else {
             $this->fsName = !$this->fsName ? "Annual Financial Statements " . date('Y') : $this->fsName;
         }
-    
+
         $fs_col = FinancialStatementCollection::create([
             "collection_name" => $this->fsName,
             "collection_status" => 'Draft',
@@ -67,43 +68,59 @@ class AddFinancialStatementCollection extends Component
         $this->fscID = $fs_col->collection_id;
         $this->addFS();
     }
-    
+
     public function addFS()
     {
-        if(!$this->tbID){
+        if (!$this->tbID) {
             return;
         }
 
-        $tb = TrialBalance::with('latestTbData')->where('tb_id',$this->tbID )->get()[0];
+        $tb = TrialBalance::with('latestTbData')->where('tb_id', $this->tbID)->get()[0];
         $tbData = $tb->getRelation('latestTbData');
         // $tbData = DB::select('SELECT tb_data from trial_balances WHERE tb_id = ?', [$this->tbID])[0];
-        $sfpoData = $this->getData($tbData, "sfpo_tb");
+        [$sfpoData, $sfpoTotals] = $this->getData($tbData, "sfpo_tb");
         DB::table('financial_statements')->insert([
             "fs_type" => "SFPO",
             "fs_data" => $sfpoData,
             "collection_id" => $this->fscID,
             "template_name" => "sfpo",
         ]);
-        $sfpeData = $this->getData($tbData, "sfpe_tb");
+        DB::table('fs_account_totals')->insert([
+            "fs_id" => $this->fscID,
+            "totals_data" => $sfpoTotals,
+        ]);
+
+        [$sfpeData, $sfpeTotals] = $this->getData($tbData, "sfpe_tb");
         DB::table('financial_statements')->insert([
             "fs_type" => "SFPE",
             "fs_data" => $sfpeData,
             "collection_id" => $this->fscID,
             "template_name" => "SFPE",
         ]);
-        $scfData = $this->getData($tbData, "scf_tb");
+        DB::table('fs_account_totals')->insert([
+            "fs_id" => $this->fscID,
+            "totals_data" => $sfpeTotals,
+        ]);
+
+        [$scfData, $scfTotals] = $this->getData($tbData, "scf_tb");
         DB::table('financial_statements')->insert([
             "fs_type" => "SCF",
             "fs_data" => $scfData,
             "collection_id" => $this->fscID,
             "template_name" => "SCF",
         ]);
+        DB::table('fs_account_totals')->insert([
+            "fs_id" => $this->fscID,
+            "totals_data" => $scfTotals,
+        ]);
+
         $this->reset();
         session()->flash("success", "Financial Statement Collection has been created.");
         $this->redirect('/financial-statements', navigate: true);
     }
 
-    public function getData($tbData, $fsType) {
+    public function getData($tbData, $fsType)
+    {
         $fsConfig = DB::select('SELECT template FROM report_templates WHERE template_name = ?', [$fsType]);
         if ($fsConfig) {
             $fsConfig = $fsConfig[0];
@@ -115,7 +132,7 @@ class AddFinancialStatementCollection extends Component
 
         foreach ($configArray as $rowNumber => $accountNumbers) {
             $sum = 0;
-        
+
             foreach ($accountNumbers as $accountCode) {
                 if (is_array($accountCode)) {
                     $accountSum = 0;
@@ -139,28 +156,46 @@ class AddFinancialStatementCollection extends Component
             }
             $results[$rowNumber] = $sum;
         }
-        return json_encode($results);
+
+        $totalsConfig = DB::select('SELECT totals FROM report_templates WHERE template_name = ?', [$fsType . "_totals"]);
+        if ($totalsConfig) {
+            $totalsConfig = $totalsConfig[0];
+        }
+        $totalsArray = json_decode($totalsConfig->totals, true);
+        $totalsResults = [];
+        foreach ($totalsArray as $title => $rows) {
+            $sum = 0;
+            foreach ($rows as $row) {
+                if (array_key_exists($row, $results)) {
+                    $sum += $results[$row];
+                }
+            }
+            $totalsResults[$title] = $sum;
+        }
+        return [json_encode($results), json_encode($totalsResults)];
     }
 
-    publIc function setTrialBalance(string $tbID, string $tbName){
+    public function setTrialBalance(string $tbID, string $tbName)
+    {
         $this->tbID = $tbID;
         $this->tbName = $tbName;
     }
 
-    public function cancel(){
+    public function cancel()
+    {
         return $this->redirect('/financial-statements', navigate: true);
     }
 
     public function render()
     {
-        if($this->date && $this->interimPeriod === 'Quarterly') {
+        if ($this->date && $this->interimPeriod === 'Quarterly') {
             $fr_month = date('m', strtotime($this->date));
             $this->rules['quarter'] = 'required|in:Q1,Q2,Q3,Q4';
             $quarter = ceil($fr_month / 3);
             $this->quarter = "Q$quarter";
         }
 
-        if($this->interimPeriod === "Annual"){
+        if ($this->interimPeriod === "Annual") {
             $this->quarter = null;
         }
 

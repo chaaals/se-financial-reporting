@@ -5,10 +5,11 @@ namespace App\Livewire\TrialBalance;
 use App\Imports\TrialBalanceImport;
 use App\Models\TrialBalance;
 use App\Models\TrialBalanceHistory;
+use App\Models\TrialBalanceTotals;
 use Livewire\Attributes\Rule;
 use Livewire\Component;
 use Livewire\WithFileUploads;
-use DB;
+use Illuminate\Support\Facades\DB;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class AddTrialBalance extends Component
@@ -18,6 +19,7 @@ class AddTrialBalance extends Component
     public $tbName;
     public $tbType;
     public $tbData;
+    public $tbDataTotals;
     public $tbDate;
     public $interimPeriod;
     public $quarter;
@@ -44,7 +46,7 @@ class AddTrialBalance extends Component
         // default values so user does not need to interact with the form and just save
         $this->tbDate = date('Y-m-d');
 
-        $formattedDate = date('M d, Y',strtotime($this->tbDate));
+        $formattedDate = date('M d, Y', strtotime($this->tbDate));
         $this->tbName = "Trial Balance Report as of $formattedDate";
         $this->listTb();
     }
@@ -77,7 +79,7 @@ class AddTrialBalance extends Component
         }
 
         $this->validate();
-        if($this->importedSpreadsheet && $this->tbData){
+        if ($this->importedSpreadsheet && $this->tbData) {
             $tb = TrialBalance::create([
                 "tb_name" => $this->tbName,
                 "tb_type" => $this->tbType ?? null,
@@ -86,7 +88,9 @@ class AddTrialBalance extends Component
                 "quarter" => $this->quarter,
                 "approved" => false,
                 "tb_date" => $this->tbDate,
-                "template_name" => 'tb_pre'
+                "template_name" => 'tb_pre',
+                "debit_grand_totals" => $this->tbDataTotals['GRAND TOTALS']['debit'],
+                "credit_grand_totals" => $this->tbDataTotals['GRAND TOTALS']['credit'],
             ]);
 
             TrialBalanceHistory::create([
@@ -95,6 +99,11 @@ class AddTrialBalance extends Component
                 "date" => $this->tbDate
             ]);
             $this->reset();
+
+            TrialBalanceTotals::create([
+                "tb_id" => $tb->tb_id,
+                "totals_data" => $this->tbDataTotals,
+            ]);
         }
 
         session()->flash("success", "Trial Balance has been added.");
@@ -115,45 +124,70 @@ class AddTrialBalance extends Component
             ]);
             $this->reset();
         }
+        // update the trial balance's credit and debit grand totals
+        $tb = TrialBalance::find($this->updateExistingTbId);
+        $tb->debit_grand_totals = $this->tbDataTotals['GRAND TOTALS']['debit'];
+        $tb->credit_grand_totals = $this->tbDataTotals['GRAND TOTALS']['credit'];
+        $tb->save();
+        // update trial balance's totals
+        $tbTotals = TrialBalanceTotals::find($this->updateExistingTbId);
+        $tbTotals->totals_data = $this->tbDataTotals;
+        $tbTotals->save();
+
         session()->flash("success", "Trial Balance has been updated.");
         $this->redirect('/trial-balances', navigate: true);
     }
 
     private function getTBData()
     {
+        $spreadsheet = IOFactory::load($this->importedSpreadsheet->getRealPath());
+
         $tbImportConfig = DB::select("SELECT template FROM report_templates WHERE template_name = 'tb_pre'");
         $jsonConfig = array_column($tbImportConfig, 'template')[0];
         $jsonConfig = json_decode($jsonConfig, true);
         $tbData = $jsonConfig;
-
-        $spreadsheet = IOFactory::load($this->importedSpreadsheet->getRealPath());
-
         foreach ($jsonConfig as $accountCode => $row) {
-            $debit = $spreadsheet->getActiveSheet()->getCell("F".$row)->getCalculatedValue();
-            $credit = $spreadsheet->getActiveSheet()->getCell("H".$row)->getCalculatedValue();
+            $debit = $spreadsheet->getActiveSheet()->getCell("F" . $row)->getCalculatedValue();
+            $credit = $spreadsheet->getActiveSheet()->getCell("H" . $row)->getCalculatedValue();
             $tbData[$accountCode] = [
                 "debit" => $debit,
                 "credit" => $credit
             ];
         }
-        
+
+        $tbTotalsConfig = DB::select("SELECT template FROM report_templates WHERE template_name = 'tb_pre_totals'");
+        $totalsConfig = array_column($tbTotalsConfig, 'template')[0];
+        $totalsConfig = json_decode($totalsConfig, true);
+        $tbDataTotals = $totalsConfig;
+        foreach ($totalsConfig as $title => $row) {
+            $debit = $spreadsheet->getActiveSheet()->getCell("F" . $row)->getCalculatedValue();
+            $credit = $spreadsheet->getActiveSheet()->getCell("H" . $row)->getCalculatedValue();
+            $tbData[$title] = [
+                "debit" => $debit,
+                "credit" => $credit
+            ];
+        }
+
+        $this->tbData = json_encode($tbData);
+        $this->tbDataTotals = json_encode($tbDataTotals);
         session()->now("success", "Import successful!");
-        return json_encode($tbData);
     }
 
-    public function resetImport(){
-        if($this->tbData && $this->importedSpreadsheet){
+    public function resetImport()
+    {
+        if ($this->tbData && $this->importedSpreadsheet) {
             $this->reset(['tbData', 'importedSpreadsheet']);
         }
     }
-    public function cancel(){
+    public function cancel()
+    {
         return $this->redirect('/trial-balances', navigate: true);
     }
 
     public function render()
     {
-        if($this->importedSpreadsheet){
-            $this->tbData = $this->getTBData();
+        if ($this->importedSpreadsheet) {
+            $this->getTBData();
         }
 
         return view('livewire.trial-balance.add-trial-balance');
