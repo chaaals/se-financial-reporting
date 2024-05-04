@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('financial_statement_account_totals', function (Blueprint $table) {
+        Schema::create('fs_account_totals', function (Blueprint $table) {
             $table->id('totals_id');
             $table->foreignId('fs_id')
                 ->constrained(table: 'financial_statements', column: 'fs_id')
