@@ -20,6 +20,8 @@ class AddTrialBalance extends Component
     public $tbType;
     public $tbData;
     public $tbDataTotals;
+    public $debitGrandTotals;
+    public $creditGrandTotals;
     public $isTbBalanced;
     public $tbDate;
     public $interimPeriod;
@@ -90,8 +92,8 @@ class AddTrialBalance extends Component
                 "approved" => false,
                 "tb_date" => $this->tbDate,
                 "template_name" => 'tb_pre',
-                "debit_grand_totals" => $this->tbDataTotals['GRAND TOTALS']['debit'],
-                "credit_grand_totals" => $this->tbDataTotals['GRAND TOTALS']['credit'],
+                "debit_grand_totals" => $this->debitGrandTotals,
+                "credit_grand_totals" => $this->creditGrandTotals,
             ]);
 
             TrialBalanceHistory::create([
@@ -99,15 +101,20 @@ class AddTrialBalance extends Component
                 "tb_data" => $this->tbData,
                 "date" => $this->tbDate
             ]);
-            $this->reset();
-
+            
             TrialBalanceTotals::create([
                 "tb_id" => $tb->tb_id,
                 "totals_data" => $this->tbDataTotals,
             ]);
         }
-
-        session()->flash("success", "Trial Balance has been added.");
+        
+        if ($this->isTbBalanced){
+            session()->flash("success", "Trial Balance has been added.");
+        } else {
+            session()->flash("success", "Trial Balance has been added. Unbalanced Trial Balance accounts has been sent to General Ledger.");
+        }
+        
+        $this->reset();
         $this->redirect('/trial-balances', navigate: true);
     }
 
@@ -169,7 +176,10 @@ class AddTrialBalance extends Component
             ];
         }
 
-        $this->isTbBalanced = ($tbDataTotals['GRAND TOTALS']['debit'] + $tbDataTotals['GRAND TOTALS']['credit']) == 0;
+        $this->debitGrandTotals = $tbDataTotals['GRAND TOTALS']['debit'];
+        $this->creditGrandTotals = $tbDataTotals['GRAND TOTALS']['credit'];
+        $this->isTbBalanced = ($this->debitGrandTotals + $this->creditGrandTotals) == 0;
+
         $this->tbData = json_encode($tbData);
         $this->tbDataTotals = json_encode($tbDataTotals);
         session()->now("success", "Import successful!");
