@@ -20,6 +20,7 @@ class AddTrialBalance extends Component
     public $tbType;
     public $tbData;
     public $tbDataTotals;
+    public $isTbBalanced;
     public $tbDate;
     public $interimPeriod;
     public $quarter;
@@ -162,12 +163,13 @@ class AddTrialBalance extends Component
         foreach ($totalsConfig as $title => $row) {
             $debit = $spreadsheet->getActiveSheet()->getCell("F" . $row)->getCalculatedValue();
             $credit = $spreadsheet->getActiveSheet()->getCell("H" . $row)->getCalculatedValue();
-            $tbData[$title] = [
+            $tbDataTotals[$title] = [
                 "debit" => $debit,
                 "credit" => $credit
             ];
         }
 
+        $this->isTbBalanced = ($tbDataTotals['GRAND TOTALS']['debit'] + $tbDataTotals['GRAND TOTALS']['credit']) == 0;
         $this->tbData = json_encode($tbData);
         $this->tbDataTotals = json_encode($tbDataTotals);
         session()->now("success", "Import successful!");

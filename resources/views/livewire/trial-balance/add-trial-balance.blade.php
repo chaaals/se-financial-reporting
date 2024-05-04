@@ -168,6 +168,9 @@
     </section>
 
     <section class="hidden grow text-center md:block sm:h-136 2xl:h-160">
+        @if($tbData && !$isTbBalanced)
+        <div>TB IS NOT BALANCED</div>
+        @endif
         @if($tbData)
         <livewire:financial-reporting.trial-balance-template
             :data="$tbData"
