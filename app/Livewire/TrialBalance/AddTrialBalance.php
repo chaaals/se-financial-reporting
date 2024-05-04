@@ -182,6 +182,7 @@ class AddTrialBalance extends Component
 
         $this->tbData = json_encode($tbData);
         $this->tbDataTotals = json_encode($tbDataTotals);
+
         session()->now("success", "Import successful!");
     }
 
