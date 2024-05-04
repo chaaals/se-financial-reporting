@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tb_account_totals', function (Blueprint $table) {
+        Schema::create('trial_balance_totals', function (Blueprint $table) {
             $table->id('totals_id');
             $table->foreignUuid('tb_id')
                 ->constrained(table: 'trial_balances', column: 'tb_id')

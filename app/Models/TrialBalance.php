@@ -21,6 +21,8 @@ class TrialBalance extends Model
         'quarter',
         'approved',
         'tb_date',
+        'debit_grand_totals',
+        'credit_grand_totals',
         'interim_period',
         'template_name',
     ];
@@ -44,5 +46,9 @@ class TrialBalance extends Model
 
     public function latestTbData(){
         return $this->hasOne(TrialBalanceHistory::class, 'tb_id')->latestOfMany('created_at');
+    }
+
+    public function latestTbDataTotals(){
+        return $this->hasOne(TrialBalanceTotals::class, 'tb_id');
     }
 }
