@@ -31,6 +31,9 @@ class SuggestionSearch extends Component
                                         "tb.tb_id as tb_id",
                                         "tb.tb_name as tb_name",
                                         "tb.interim_period as interim_period",
+                                        "tb.tb_status as tb_status",
+                                        "tb.debit_grand_totals as debit_grand_totals",
+                                        "tb.credit_grand_totals as credit_grand_totals",
                                         "tb.tb_date as date")
                                     ->whereNotExists(function($query){
                                         $query->select(DB::raw(1))
@@ -38,9 +41,12 @@ class SuggestionSearch extends Component
                                               ->whereColumn('tb.tb_id', 'fsc.tb_id');
                                     })
                                     ->where("interim_period", "=", $this->interimPeriod)
+                                    ->where("approved", "=", true)
                                     ->where("tb_name", "like", "%$this->searchInput%")
                                     ->limit(10)
                                     ->get();
+            
+            $this->suggestions = $this->suggestions->filter(function ($item){ return ($item->debit_grand_totals + $item->credit_grand_totals) == 0; })->values();
         }
 
         return view('livewire.financial-reporting.suggestion-search',[
