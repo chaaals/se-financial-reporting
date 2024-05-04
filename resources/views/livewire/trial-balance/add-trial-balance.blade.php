@@ -168,9 +168,6 @@
     </section>
 
     <section class="hidden grow text-center md:block sm:h-136 2xl:h-160">
-        @if($tbData && !$isTbBalanced)
-        <div>TB IS NOT BALANCED</div>
-        @endif
         @if($tbData)
         <livewire:financial-reporting.trial-balance-template
             :data="$tbData"
@@ -178,6 +175,12 @@
         @else
         <section class="w-full h-full flex items-center justify-center border-2 border-dashed border-primary">
             <p>Trial Balance Preview</p>
+        </section>
+        @endif
+
+        @if($tbData && !$isTbBalanced)
+        <section class="w-full flex p-4 mt-4 items-start border-2 border-dashed border-secondary rounded-lg">
+            <p class="text-secondary text-left">WARNING: The generated Trial Balance report is unbalanced. Adding this report will send a notification to the General Ledger module for resolution.</p>
         </section>
         @endif
     </section>
