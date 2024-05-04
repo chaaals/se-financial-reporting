@@ -154,7 +154,7 @@ class PreviewTrialBalance extends Component
             Mail::to($reciever)->send(new FinancialReportEmail(storage_path('app/'.$newFilePath), $filename));
             $sessionMessage = "Successfully exported and sent Trial Balance.";
         } else {
-            $sessionMessage = "Successfully exported Trial Balance";
+            $sessionMessage = "Successfully exported Trial Balance.";
         }
         
         session()->now("success", $sessionMessage);

@@ -35,7 +35,11 @@
             <button
                 class="bg-secondary text-white px-4 py-2 rounded-lg text-xs md:text-base"
                 wire:click="export">
+                @if(auth()->user()->role === "accounting")
+                Export and Send Financial Statements
+                @else
                 Export Financial Statements
+                @endif
             </button>
         </section>
     </section>
