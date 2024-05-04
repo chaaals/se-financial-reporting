@@ -73,8 +73,16 @@ class TrialBalanceTemplate extends Component
             "furnitureFixturesAndBooks" => [
                 "1 07 07 010" => "Furniture and Fixtures",
                 "1 07 07 011" => "Accumulated Depreciation - Furniture and Fixture",
+                "1 07 07 020" => "Books",
+                "1 07 07 021" => "Accumulated Depreciation - Books",
+            ],
+            "otherPPE" => [
+                "1 07 99 090" => "Disaster Response & Rescue Equipt",
+                "1 07 99 990" => "Other Property, Plant and Equipment",
+                "1 07 99 991" => "Acc Depreciation - Property, Plant and Equipment",
             ],
             "constructionInProgress" => [
+                "1 07 10 020" => "Infrastructure Assets",
                 "1 07 10 030" => "Buildings and Other Structures"
             ]
         ],
