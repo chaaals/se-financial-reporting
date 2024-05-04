@@ -3,8 +3,10 @@
 namespace App\Livewire\TrialBalance;
 
 use App\Exports\TrialBalanceExport;
+use App\Mail\FinancialReportEmail;
 use App\Models\TrialBalance;
 use App\Models\TrialBalanceHistory;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -27,6 +29,7 @@ class PreviewTrialBalance extends Component
     public $creditTotals = [];
     public $debitGrandTotals = 0;
     public $creditGrandTotals = 0;
+    public $isBalanced;
     // public $confirming = null;
     // public $editMode = false;
     // public $editedReportName;
@@ -61,6 +64,7 @@ class PreviewTrialBalance extends Component
         $this->all_tb_data = $this->trial_balance->getRelation('tbData');
 
         $this->trial_balance_data = $this->all_tb_data[$this->active_trial_balance_data];
+        $this->isBalanced = ($this->trial_balance->debit_grand_totals + $this->trial_balance->credit_grand_totals) == 0; 
 
         // default values
         // $this->editedReportName = $this->trial_balance->report_name;
@@ -143,9 +147,17 @@ class PreviewTrialBalance extends Component
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         ];
         $filename = $this->trial_balance->tb_name;
-
-        session()->now("success", "Successfully exported Trial Balance");
-
+        
+        $sessionMessage = "";
+        if($this->isBalanced && $this->trial_balance->approved && auth()->user()->role === "accounting"){
+            $reciever = 'cmlching2021@plm.edu.ph';
+            Mail::to($reciever)->send(new FinancialReportEmail(storage_path('app/'.$newFilePath), $filename));
+            $sessionMessage = "Successfully exported and sent Trial Balance.";
+        } else {
+            $sessionMessage = "Successfully exported Trial Balance";
+        }
+        
+        session()->now("success", $sessionMessage);
         return response()->download(storage_path('app/'.$newFilePath), $filename.'.xlsx', $headers)
             ->deleteFileAfterSend(true);
     }
@@ -275,8 +287,12 @@ class PreviewTrialBalance extends Component
             }
 
             if($this->trial_balance->tb_status === "For Approval") {
-                $this->reportStatusOptions = ["Approved", "Change Requested"];
-                $this->selectedStatusOption = "Approved";
+                if($this->isBalanced){
+                    $this->reportStatusOptions = ["Approved", "Change Requested"];
+                    $this->selectedStatusOption = "Approved";
+                } else {
+                    $this->selectedStatusOption = "Change Requested";
+                }
             }
         }
 

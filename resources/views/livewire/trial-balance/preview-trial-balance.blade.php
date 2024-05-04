@@ -121,7 +121,11 @@
             <button
                 wire:click="export"
                 class="bg-secondary text-white px-4 py-2 rounded-lg text-xs md:text-base">
+                @if($isBalanced && auth()->user()->role === "accounting" && $trial_balance->approved)
+                Export and Send Trial Balance
+                @else
                 Export Trial Balance
+                @endif
             </button>
         </section>
     </section>
@@ -168,8 +172,8 @@
                     <div class="flex w-full justify-between items-center mb-0.5">
                         <span class="text-xs font-inter text-slate-500">Grand Totals</span>
                     </div>
-                    <p class="font-inter font-bold">Debit &colon; Php {{ $debitGrandTotals }}</p>
-                    <p class="font-inter font-bold">Credit &colon; Php {{ $creditGrandTotals }}</p>
+                    <p class="font-inter font-bold">Debit &colon; Php {{ $trial_balance->debit_grand_totals }}</p>
+                    <p class="font-inter font-bold">Credit &colon; Php {{ $trial_balance->credit_grand_totals }}</p>
                 </div>
             </section>
 
@@ -184,7 +188,15 @@
                             {{ $trial_balance->tb_status }}
                         </button>
                         {{-- TODO: Disable if already balanced --}}
-                        <button class="w-full text-center rounded-lg text-white p-2 bg-primary" wire:click='rebalance'>Rebalance</button>
+                        @if(!$isBalanced && !$trial_balance->approved && auth()->user()->role === "accounting")
+                        <button 
+                            class="w-full text-center rounded-lg text-white p-2 bg-primary"
+                            wire:click='rebalance'
+                            @if($isBalanced) disabled @endif
+                        >
+                            Rebalance
+                        </button>
+                        @endif
                     </div>
                     {{-- <div class="relative" x-on:mouseenter="isToolTipVisible = true" x-on:mouseleave="isToolTipVisible = false">
                         <x-financial-reporting.assets.info />
