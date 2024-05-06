@@ -2,6 +2,7 @@
 
 namespace App\Livewire\FinancialStatementCollection;
 
+use App\Models\FinancialStatement;
 use App\Models\FinancialStatementCollection;
 use App\Models\TrialBalance;
 use Livewire\Component;
@@ -79,38 +80,38 @@ class AddFinancialStatementCollection extends Component
         $tbData = $tb->getRelation('latestTbData');
         // $tbData = DB::select('SELECT tb_data from trial_balances WHERE tb_id = ?', [$this->tbID])[0];
         [$sfpoData, $sfpoTotals] = $this->getData($tbData, "sfpo_tb");
-        DB::table('financial_statements')->insert([
+        $sfpoEntry = FinancialStatement::create([
             "fs_type" => "SFPO",
             "fs_data" => $sfpoData,
             "collection_id" => $this->fscID,
             "template_name" => "sfpo",
         ]);
         DB::table('fs_account_totals')->insert([
-            "fs_id" => $this->fscID,
+            "fs_id" => $sfpoEntry->fs_id,
             "totals_data" => $sfpoTotals,
         ]);
 
         [$sfpeData, $sfpeTotals] = $this->getData($tbData, "sfpe_tb");
-        DB::table('financial_statements')->insert([
+        $sfpeEntry = FinancialStatement::create([
             "fs_type" => "SFPE",
             "fs_data" => $sfpeData,
             "collection_id" => $this->fscID,
-            "template_name" => "SFPE",
+            "template_name" => "sfpe",
         ]);
         DB::table('fs_account_totals')->insert([
-            "fs_id" => $this->fscID,
+            "fs_id" => $sfpeEntry->fs_id,
             "totals_data" => $sfpeTotals,
         ]);
 
         [$scfData, $scfTotals] = $this->getData($tbData, "scf_tb");
-        DB::table('financial_statements')->insert([
+        $scfEntry = FinancialStatement::create([
             "fs_type" => "SCF",
             "fs_data" => $scfData,
             "collection_id" => $this->fscID,
-            "template_name" => "SCF",
+            "template_name" => "scf",
         ]);
         DB::table('fs_account_totals')->insert([
-            "fs_id" => $this->fscID,
+            "fs_id" => $scfEntry->fs_id,
             "totals_data" => $scfTotals,
         ]);
 
@@ -157,7 +158,7 @@ class AddFinancialStatementCollection extends Component
             $results[$rowNumber] = $sum;
         }
 
-        $totalsConfig = DB::select('SELECT totals FROM report_templates WHERE template_name = ?', [$fsType . "_totals"]);
+        $totalsConfig = DB::select('SELECT template FROM report_templates WHERE template_name = ?', [$fsType . "_totals"]);
         if ($totalsConfig) {
             $totalsConfig = $totalsConfig[0];
         }
