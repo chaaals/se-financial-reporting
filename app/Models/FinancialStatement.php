@@ -15,4 +15,8 @@ class FinancialStatement extends Model
         'fs_data',
         'template_name',
     ];
+
+    protected $casts = [
+        'fs_id' => 'string',
+    ];
 }
