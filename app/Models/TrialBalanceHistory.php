@@ -4,9 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class TrialBalanceHistory extends Model
 {
+    use SoftDeletes;
+
     protected $primaryKey = 'tb_data_id';
     use HasFactory;
     protected $fillable = [
@@ -21,7 +24,8 @@ class TrialBalanceHistory extends Model
         'tb_data_id' => 'string',
     ];
 
-    public function trialBalance(){
+    public function trialBalance()
+    {
         return $this->belongsTo(TrialBalance::class);
     }
 }
