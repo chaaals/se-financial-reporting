@@ -14,17 +14,19 @@ class FinancialReportEmail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $attachmentPath;
+    public $subject;
     public $content;
-    public $fileName;
+    public $filename;
+    public $attachmentPath;
     /**
      * Create a new message instance.
      */
-    public function __construct($attachmentPath, $filename)
+    public function __construct($subject, $content, $filename, $attachmentPath)
     {
+        $this->subject = $subject;
+        $this->content = $content;
+        $this->filename = $filename;
         $this->attachmentPath = $attachmentPath;
-        $this->fileName = $filename;
-        $this->content = "This is the approved $filename report.";
     }
 
     /**
@@ -33,7 +35,7 @@ class FinancialReportEmail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: $this->fileName,
+            subject: $this->subject,
         );
     }
 
@@ -55,7 +57,7 @@ class FinancialReportEmail extends Mailable
     public function attachments(): array
     {
         return [
-            Attachment::fromPath($this->attachmentPath)
+            Attachment::fromPath($this->attachmentPath)->as($this->filename.'.xlsx')->withMime('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'),
         ];
     }
 }
