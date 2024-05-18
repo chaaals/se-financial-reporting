@@ -2,8 +2,10 @@
 
 namespace App\Livewire\FinancialStatementCollection;
 
+use App\Mail\FinancialReportEmail;
 use App\Models\FinancialStatementCollection;
 use App\Models\FinancialStatement;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use Livewire\Component;
 use Maatwebsite\Excel\Facades\Excel;
@@ -18,6 +20,8 @@ class PreviewFinancialStatementCollection extends Component
     public FinancialStatementCollection $fsCollection;
     public $financialStatements = [];
     public $reportType = "fsc";
+    public $filePath;
+    public $exportableFilePath;
     public $reportStatusOptions = [];
     public $selectedStatusOption;
     // public $confirming = null;
@@ -28,13 +32,21 @@ class PreviewFinancialStatementCollection extends Component
     // public $editedQuarter;
     // public $editedApproved;
     // public $editedFSCStatus;
-
+    public $isWriting = false;
+    public $receiver = '';
+    public $message = '';
+    public $subject = '';
+    protected $attachment;
+    public $filename;
     protected $rules = [
         // 'editedFSCName' => 'nullable|max:255',
         // 'editedDate' => 'required|date',
         // 'editedInterimPeriod' => 'required|in:Quarterly,Annual',
         // 'editedQuarter' => 'nullable|in:Q1,Q2,Q3,Q4',
         'selectedStatusOption' => 'required|in:Draft,For Approval,Approved,Change Requested',
+        'subject' => 'required',
+        'receiver' => 'required|email',
+        'message' => 'required',
         // 'editedApproved' => 'required|boolean',
     ];
 
@@ -46,6 +58,8 @@ class PreviewFinancialStatementCollection extends Component
         foreach($query as $row){
             $this->financialStatements[$row->fs_type] = $row;
         }
+        $this->filePath = 'public/uploads/FS.xlsx';
+        $this->exportableFilePath = 'uploads/FS.xlsx';
 
         // default values
         // $this->editedFSCName = $this->fsCollection->collection_name;
@@ -56,12 +70,17 @@ class PreviewFinancialStatementCollection extends Component
         // $this->editedFSCStatus = $this->fsCollection->collection_status;
     }
 
-    public function export() {
-        $filePath = 'public/uploads/FS.xlsx';
-        $newFilePath = 'uploads/FS.xlsx';
-        Storage::copy($filePath, $newFilePath);
+    public function writeReport(){
+        if($this->attachment or $this->isWriting){
+            return;
+        }
+        $this->isWriting = true;
+        $this->filename = $this->fsCollection->collection_name;
 
-        $spreadsheet = IOFactory::load(storage_path('app/' . $newFilePath));
+
+        Storage::copy($this->filePath, $this->exportableFilePath);
+
+        $spreadsheet = IOFactory::load(storage_path('app/' . $this->exportableFilePath));
 
         // sfpo, sfpe, scf in order
         $fsDataResults = DB::select('SELECT fs_data FROM financial_statements WHERE collection_id = ?', [$this->fsCollection->collection_id]);
@@ -89,17 +108,85 @@ class PreviewFinancialStatementCollection extends Component
             }
             $spreadsheet->getSheet($i)->setCellValue('A6', $newDateHeader);
         }
-        $writer = new Xlsx($spreadsheet);
-        $writer->save(storage_path('app/'.$newFilePath));
-        $headers = [
-            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        ];
-        $filename = $this->fsCollection->collection_name;
-
-        session()->now("success", "Successfully exported Financial Statements");
-        return response()->download(storage_path('app/'.$newFilePath), $filename.'.xlsx', $headers)
-            ->deleteFileAfterSend(true);
+        $this->attachment = new Xlsx($spreadsheet);
+        $this->attachment->save(storage_path('app/'.$this->exportableFilePath));
+        $this->isWriting = false;
     }
+
+    public function mailReport(){
+        if(!$this->attachment){
+            $this->writeReport();
+        }
+
+        $this->validate();
+
+        Mail::to($this->receiver)->send(new FinancialReportEmail($this->subject, $this->message, $this->filename, storage_path('app/'.$this->exportableFilePath)));
+
+        session()->now("success", "Successfully mailed $this->filename");
+
+        $this->reset('subject', 'receiver', 'message');
+    }
+
+    public function export(){
+        if(!$this->attachment){
+            $this->writeReport();
+        }
+
+        $headers = ['Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',];
+
+        $this->attachment = null;
+        session()->now("success", "Successfully exported Financial Statements");
+
+        return response()->download(storage_path('app/'.$this->exportableFilePath), $this->filename.'.xlsx', $headers)->deleteFileAfterSend(true);
+    }
+
+    // public function export() {
+    //     if($this->attachment or $this->isWriting){
+    //         return;
+    //     }
+    //     $filePath = 'public/uploads/FS.xlsx';
+    //     $newFilePath = 'uploads/FS.xlsx';
+    //     Storage::copy($filePath, $newFilePath);
+
+    //     $spreadsheet = IOFactory::load(storage_path('app/' . $newFilePath));
+
+    //     // sfpo, sfpe, scf in order
+    //     $fsDataResults = DB::select('SELECT fs_data FROM financial_statements WHERE collection_id = ?', [$this->fsCollection->collection_id]);
+    //     $jsonData = array_column($fsDataResults, 'fs_data');
+    //     // key : val == rowNumber : fsData
+    //     $combinedData = array_map('json_decode', $jsonData, array_fill(0, count($jsonData), true));
+
+    //     for ($i=0 ; $i<3 ; $i++) {
+    //         $column = ($i === 2) ? 'E' : 'F'; 
+    //         foreach ($combinedData[$i] as $row => $value) {
+    //             $spreadsheet->getSheet($i)->setCellValue($column . $row, $value);
+    //         }
+    //         $editedYear = date('Y', strtotime($this->fsCollection->date));
+    //         $date = [
+    //             'Q1'=> "March 31, ".$editedYear,
+    //             'Q2'=> "June 31, ".$editedYear,
+    //             'Q3'=> "September 31, ".$editedYear,
+    //             'Q4'=> "December 31, ".$editedYear,
+    //         ];
+    //         $dateHeader = $spreadsheet->getActiveSheet()->getCell('A6')->getValue();
+    //         if ($this->fsCollection->interim_period === 'Quarterly') {
+    //             $newDateHeader = str_replace('<date>', $date[$this->fsCollection->quarter], $dateHeader);
+    //         } else {
+    //             $newDateHeader = 'For the Year Ended December 31, '.$editedYear;
+    //         }
+    //         $spreadsheet->getSheet($i)->setCellValue('A6', $newDateHeader);
+    //     }
+    //     $writer = new Xlsx($spreadsheet);
+    //     $writer->save(storage_path('app/'.$newFilePath));
+    //     $headers = [
+    //         'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    //     ];
+    //     $filename = $this->fsCollection->collection_name;
+
+    //     session()->now("success", "Successfully exported Financial Statements");
+    //     return response()->download(storage_path('app/'.$newFilePath), $filename.'.xlsx', $headers)
+    //         ->deleteFileAfterSend(true);
+    // }
 
     // public function toggleEditMode()
     // {
@@ -108,7 +195,7 @@ class PreviewFinancialStatementCollection extends Component
 
     public function updateFinancialStatementCollection()
     {
-        $this->validate();
+        $this->validateOnly('selectedStatusOption');
         // check if the report is already approved but changed to not approved
         // if ($this->fsCollection->approved) {
         //     if (!$this->editedApproved) {

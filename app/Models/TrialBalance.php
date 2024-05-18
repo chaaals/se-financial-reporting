@@ -24,6 +24,8 @@ class TrialBalance extends Model
         'quarter',
         'approved',
         'tb_date',
+        'debit_grand_totals',
+        'credit_grand_totals',
         'interim_period',
         'template_name',
     ];

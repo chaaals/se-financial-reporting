@@ -11,6 +11,7 @@ class FinancialStatement extends Model
     use SoftDeletes;
 
     protected $primaryKey = 'fs_id';
+    public $timestamps = false;
     use HasFactory;
     protected $fillable = [
         'collection_id',
