@@ -36,10 +36,10 @@
                         <h3 class="text-lg font-bold">Version History</h3>
                     </section>
                 @foreach($all_tb_data as $i => $tb_data)
-                    <section class="w-full cursor-pointer p-2"
+                    <section class="w-full cursor-pointer p-2 hover:text-secondary"
                      x-on:click="isHistoryVisible = false"
                      wire:click="setActiveTrialBalanceData({{$i}})">
-                        <div>Modified at {{ date('M d, Y', strtotime($tb_data["created_at"])) }}</div>
+                        <div>@if($i <= 0)<strong>Latest</strong>@else<strong>v{{count($all_tb_data) - $i}}</strong>@endif &middot; {{ date('M d, Y H:i A', strtotime($tb_data["created_at"])) }}</div>
                     </section>
                 @endforeach
                 </section>
