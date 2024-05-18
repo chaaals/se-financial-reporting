@@ -313,7 +313,8 @@ class PreviewTrialBalance extends Component
 
     public function updateTrialBalance()
     {
-        $this->validate();
+        // dd('works');
+        $this->validateOnly('selectedStatusOption');
         // check if the report is already approved but changed to not approved
         // if ($this->trial_balance->approved) {
         //     if (!$this->editedApproved) {

@@ -1,5 +1,5 @@
 <section
-    x-data="{ showSFPO: true, showSFPE: false, showSCF: false, isActionModalOpen: false }"
+    x-data="{ showSFPO: true, showSFPE: false, showSCF: false, isActionModalOpen: false, isMailFormOpen: false }"
     class="relative p-4">
     <section class="w-full flex items-center justify-between flex-col bg-white rounded-lg mb-4 p-2 gap-4 md:flex-row 2xl:mb-8">
         <section clas="flex flex-col items-center justify-center md:flex-row">
@@ -31,15 +31,21 @@
                 :reportId="$fsCollection->collection_id"
                 :reportType="$reportType"
                 :reportName="$fsCollection->collection_name" />
-            
+            @if($fsCollection->approved && auth()->user()->role === "accounting")
+            <section class="w-10 h-10 flex items-center justify-center">
+                <button
+                class="relative"
+                wire:click="writeReport"
+                x-on:click="isMailFormOpen = true"
+                >
+                    <x-financial-reporting.assets.mail />
+                </button>
+            </section>
+            @endif
             <button
                 class="bg-secondary text-white px-4 py-2 rounded-lg text-xs md:text-base"
                 wire:click="export">
-                @if(auth()->user()->role === "accounting")
-                Export and Send Financial Statements
-                @else
                 Export Financial Statements
-                @endif
             </button>
         </section>
     </section>
@@ -163,6 +169,74 @@
                         Yes
                     </button>
                 @endif
+            </div>
+        </div>
+    </div>
+
+      <div
+        x-cloak
+        x-show="isMailFormOpen"
+        role="dialog"
+        class="fixed top-0 left-0 w-screen h-screen bg-neutral bg-opacity-50 flex items-center justify-center">
+        <div class="w-1/3 bg-white drop-shadow-md p-4 rounded-lg">
+            <h1 class="text-2xl font-bold font-inter mb-2">Report Email Details</h1>
+
+            <div class="flex flex-col gap-2">
+                <form wire:submit.prevent='mailReport'>
+                    <div class="flex flex-col items-start mb-4">
+                    <label class="text-md font-bold" for='trialBalanceName'>Subject</label>
+                    <input class="w-full rounded-lg focus:ring-0" id='trialBalanceName' type='text' wire:model='subject' placeholder='Enter subject' />
+                    <div>@error('subject')<span class="text-red">{{ $message }}@enderror</span></div>
+                    </div>
+
+                    <div class="mb-4">
+                    <label class="text-md font-bold" for='trialBalanceName'>To:</label>
+                    <input class="w-full rounded-lg focus:ring-0" id='trialBalanceName' type='email' wire:model.live='receiver' placeholder='Enter recipient' />
+                    <div>@error('receiver')<span class="text-red">{{ $message }}@enderror</span></div>
+                    </div>
+
+                    {{-- <div class="mb-4">
+                    <label class="text-md font-bold" for='trialBalanceName'>Cc:</label>
+                    <input class="w-full rounded-lg focus:ring-0" id='trialBalanceName' type='email' placeholder='Enter recipient' />
+                    </div> --}}
+
+                    <div class="mb-4">
+                    <label class="text-md font-bold" for='trialBalanceName'>Body</label>
+                    <textarea class="w-full p-2 rounded-lg focus:ring-0" id='trialBalanceName' wire:model='message' placeholder='Write a message' ></textarea>
+                    <div>@error('message')<span class="text-red">{{ $message }}@enderror</span></div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="text-md font-bold" for='trialBalanceName'>Attachment</label>
+                        @if($filename && !$isWriting)
+                        <p>{{ $filename }}</p>
+                        @else
+                        <div class="w-full flex items-center justify-center">
+                            <div class="relative w-4 h-4">
+                                <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" x-cloak>
+                                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-gray-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        @endif
+                    </div>
+                    <section class="w-full flex items-center justify-between gap-4">
+                        <button
+                            class="w-1/2 bg-accentOne px-4 py-2 rounded-lg"
+                            type="button"
+                            x-on:click="isMailFormOpen = false"
+                        >
+                        Close
+                        </button>
+                        <button
+                        class="w-full bg-primary text-white px-4 py-2 rounded-lg disabled:bg-opacity-50" type="submit"
+                        @if(!$filename) disabled @endif
+                        >Send Report</button>
+                    </section>
+                </form>
             </div>
         </div>
     </div>

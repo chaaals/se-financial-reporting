@@ -47,6 +47,10 @@ return new class extends Migration
                 'template' => '{"sample": "content"}',
             ],
             [
+                'template_name' => 'sfpo_vals',
+                'template' => '[17,18,19,20,21,23,27,28,32,33,34,35,36,37,46,47,48,49,53,61,62,63,64]',
+            ],
+            [
                 'template_name' => 'sfpe_vals',
                 'template' => '[14,15,16,17,22,23,24,25,26,27,35,36]',
             ],
@@ -67,20 +71,16 @@ return new class extends Migration
                 'template' => '{"13":["4 02 01 040","4 02 01 980","4 02 01 990","4 02 02 010","4 02 02 020","4 02 02 050","4 02 02 220","4 02 02 990"],"15":["4 02 02 220"],"16":["ckdj"],"20":["ckdj"],"21":["5 01 01 010","5 01 01 020","5 01 02 010","5 01 02 020","5 01 02 030","5 01 02 040","5 01 02 050","5 01 02 060","5 01 02 080","5 01 02 100","5 01 02 110","5 01 02 120","5 01 02 130","5 01 02 140","5 01 02 150","5 01 02 990","5 01 03 010","5 01 03 020","5 01 03 030","5 01 03 040","5 01 04 030","5 01 04 990"],"29":["1 07 04 020","1 07 04 021","1 07 04 990","1 07 04 991","1 07 05 010","1 07 05 011","1 07 05 020","1 07 05 021","1 07 05 030","1 07 05 031","1 07 05 070","1 07 05 071","1 07 05 090","1 07 05 091","1 07 05 100","1 07 05 101","1 07 05 110","1 07 05 111","1 07 05 130","1 07 05 131","1 07 05 140","1 07 05 141","1 07 05 990","1 07 05 991","1 07 06 010","1 07 06 011","1 07 07 010","1 07 07 011","1 07 07 020","1 07 07 021","1 07 05 091","1 07 99 090","1 07 99 990","1 07 99 991","1 07 10 020","1 07 10 030"],"33":["ckdj"],"34":["ckdj"],"35":["ckdj"]}',
             ],
             [
-                'template_name' => 'sfpo_totals',
+                'template_name' => 'sfpo_tb_totals',
                 'template' => '{"Current Assets":["17","18","19","20","21","23"],"Non-Current Receivables":["28"],"Property, Plant and Equipment":["32","33","34","35","36","37"],"Non-Current Assets":["28","32","33","34","35","36","37"],"Assets":["17","18","19","20","21","23","28","32","33","34","35","36","37"],"Current Liabilities":["46","47","48","49"],"Non-Current Liabilities":["53"],"Liabilities":["46","47","48","49","53"],"Equity":["61","62","63","64"],"Liabilities and Equity":["46","47","48","49","53","61","62","63","64"]}'
             ],
             [
-                'template_name' => 'sfpe_totals',
+                'template_name' => 'sfpe_tb_totals',
                 'template' => '{"Revenue":["14","15","16","17"],"Current Operating Expenses":["22","23","24","25","26","27"],"Surplus for the Period":["14","15","16","17","22","23","24","25","26","27"],"Surplus (Deficit) for the period":["14","15","16","17","22","23","24","25","26","27"],"Surplus (Deficit) for the Period":["14","15","16","17","22","23","24","25","26","27","35"]}'
             ],
             [
-                'template_name' => 'scf_totals',
-                'template' => '{"Cash Inflows":["13","15","16"],"Cash Outflows":["20","21"],"Net Cash Flows from Operating Activities":["13","15","16","20","21"],"Net Cash Flows from Investing Activities":["30"]"Cash Balance at the End of the Quarter":["34","35"]}'
-            ],
-            [
-                'template_name' => 'sfpo_vals',
-                'template' => '[17,18,19,20,21,23,27,28,32,33,34,35,36,37,46,47,48,49,53,61,62,63,64]',
+                'template_name' => 'scf_tb_totals',
+                'template' => '{"Cash Inflows":["13","15","16"],"Cash Outflows":["20","21"],"Net Cash Flows from Operating Activities":["13","15","16","20","21"],"Net Cash Flows from Investing Activities":["30"],"Cash Balance at the End of the Quarter":["34","35"]}'
             ],
         ]);
     }
