@@ -107,7 +107,7 @@ class ListFinancialStatementCollection extends Component
         FinancialStatementCollection::where('collection_id', '=', $collection_id)->delete();
 
         $this->setFSCollection();
-        session()->now('success', "$collection_name has been deleted.");
+        session()->now('success', "$collection_name has been archived.");
     }
 
     public function setFSCollection($itemIndex = null){
