@@ -251,10 +251,10 @@ class TrialBalanceTemplate extends Component
                 }            
             }
             // array_push($this->debitTotals, $debit);
-            $this->dispatch('add-value', type: 'debit', payload: $debit);
-            if($verbose){
-                return $debit;
-            }
+            // $this->dispatch('add-value', type: 'debit', payload: $debit);
+            // if($verbose){
+            //     return $debit;
+            // }
         };
         $getTotalCredit = function (string $parent, $items, bool $verbose){
             $credit = 0;
@@ -267,10 +267,10 @@ class TrialBalanceTemplate extends Component
                 }
             }
             // array_push($this->debitTotals, $credit);
-            $this->dispatch('add-value', type: 'credit', payload: $credit);
-            if($verbose){
-                return $credit;
-            }
+            // $this->dispatch('add-value', type: 'credit', payload: $credit);
+            // if($verbose){
+            //     return $credit;
+            // }
         };
         
         return view('livewire.financial-reporting.trial-balance-template', compact(['getTotalDebit', 'getTotalCredit']));
