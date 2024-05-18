@@ -80,7 +80,7 @@ return new class extends Migration
             ],
             [
                 'template_name' => 'scf_tb_totals',
-                'template' => '{"Cash Inflows":["13","15","16"],"Cash Outflows":["20","21"],"Net Cash Flows from Operating Activities":["13","15","16","20","21"],"Net Cash Flows from Investing Activities":["30"]"Cash Balance at the End of the Quarter":["34","35"]}'
+                'template' => '{"Cash Inflows":["13","15","16"],"Cash Outflows":["20","21"],"Net Cash Flows from Operating Activities":["13","15","16","20","21"],"Net Cash Flows from Investing Activities":["30"],"Cash Balance at the End of the Quarter":["34","35"]}'
             ],
         ]);
     }

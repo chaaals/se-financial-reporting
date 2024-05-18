@@ -162,8 +162,12 @@ class AddFinancialStatementCollection extends Component
         if ($totalsConfig) {
             $totalsConfig = $totalsConfig[0];
         }
-        $totalsArray = json_decode($totalsConfig->totals, true);
+        
+        $totalsArray = json_decode($totalsConfig->template, true);
         $totalsResults = [];
+        if(!$totalsArray){
+            dd($totalsConfig->template);
+        }
         foreach ($totalsArray as $title => $rows) {
             $sum = 0;
             foreach ($rows as $row) {
