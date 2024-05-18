@@ -5,10 +5,13 @@ namespace App\Models;
 use Ramsey\Uuid\Uuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class TrialBalance extends Model
 {
     use HasFactory;
+    use SoftDeletes;
+
     protected $primaryKey = 'tb_id';
     protected $keyType = 'string';
     public $incrementing = false;
@@ -38,17 +41,25 @@ class TrialBalance extends Model
         static::creating(function (Model $model) {
             $model->setAttribute($model->getKeyName(), Uuid::uuid4());
         });
+
+        static::deleting(function ($model) {
+            $model->tbData()->delete();
+            $model->tbTotals()->delete();
+        });
     }
 
-    public function tbData(){
+    public function tbData()
+    {
         return $this->hasMany(TrialBalanceHistory::class, 'tb_id')->orderBy('created_at', 'desc');
     }
 
-    public function latestTbData(){
+    public function latestTbData()
+    {
         return $this->hasOne(TrialBalanceHistory::class, 'tb_id')->latestOfMany('created_at');
     }
 
-    public function latestTbDataTotals(){
+    public function tbTotals()
+    {
         return $this->hasOne(TrialBalanceTotals::class, 'tb_id');
     }
 }

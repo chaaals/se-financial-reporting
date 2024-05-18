@@ -35,6 +35,7 @@ class ListTrialBalance extends Component
     public $filterPeriod;
     public $filterQuarter;
     public $filterStatus;
+    public $filterReportFlag = "Active";
     
     public $filterOptions = [
         "Period" => [
@@ -49,7 +50,12 @@ class ListTrialBalance extends Component
             "model" => "filterStatus",
             "options" => ["Draft", "Change Requested" ,"For Approval", "Approved"]
         ],
+        "Flag" => [
+            "model" => "filterReportFlag",
+            "options" => ["Active", "Archived"]
+        ]
     ];
+    public $isArchived = false;
 
     public function mount(){
         $this->filterStatus = auth()->user()->role === 'accounting' ? 'Draft' : 'For Approval';
@@ -86,17 +92,18 @@ class ListTrialBalance extends Component
         return $this->redirect('/trial-balances/add', navigate: true);
     }
 
-    public function delete(){
-        if(count($this->trialBalances) === 0 || in_array($this->trialBalance->tb_status, ['For Approval', 'Change Requested', 'Approved'])){
+    public function archive(){
+        if(count($this->trialBalances) === 0 || in_array($this->trialBalance->tb_status, ['Draft','For Approval', 'Change Requested'])){
             return;
         }
 
         $tb_id = $this->trialBalance->tb_id;
         $tb_name = $this->trialBalance->tb_name;
-        DB::table('trial_balances')->where("tb_id", "=", $tb_id)->delete();
+        // DB::table('trial_balances')->where("tb_id", "=", $tb_id)->delete();
+        TrialBalance::where('tb_id', '=', $tb_id)->delete();
 
         $this->setTrialBalance();
-        session()->now('success', "$tb_name has been deleted.");
+        session()->now('success', "$tb_name has been archived.");
     }
 
     public function setTrialBalance($itemIndex = null){
@@ -114,7 +121,12 @@ class ListTrialBalance extends Component
     
     public function render()
     {
-        $query = DB::table('trial_balances')->select('tb_id', 'tb_name', 'tb_date', 'interim_period', 'quarter', 'created_at', 'updated_at', 'tb_status');
+        $query = null;
+        if(in_array($this->filterReportFlag, ['Active'])){
+            $query = TrialBalance::select('tb_id', 'tb_name', 'tb_date', 'interim_period', 'quarter', 'created_at', 'updated_at', 'tb_status', 'deleted_at');
+        } else {
+            $query = TrialBalance::onlyTrashed()->select('tb_id', 'tb_name', 'tb_date', 'interim_period', 'quarter', 'created_at', 'updated_at', 'tb_status', 'deleted_at');
+        }
 
         $isCorrectPeriodFilter = in_array($this->filterPeriod, ['Monthly', 'Annual', 'Quarterly']);
         $isCorrectStatusFilter = in_array($this->filterStatus, ['Draft', 'For Approval', 'Approved']);
@@ -145,7 +157,12 @@ class ListTrialBalance extends Component
             }
         }
 
-        $res = $query->where('tb_status', '=', $this->filterStatus)->paginate($this->rows);
+        $res = null;
+        if(in_array($this->filterReportFlag, ['Active'])){
+            $res = $query->where('tb_status', '=', $this->filterStatus)->paginate($this->rows);
+        } else {
+            $res = $query->paginate($this->rows);
+        }
 
         $this->trialBalances = $res->items();
         $this->hasMorePages = $res->hasMorePages();

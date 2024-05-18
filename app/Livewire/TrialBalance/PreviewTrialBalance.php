@@ -57,7 +57,8 @@ class PreviewTrialBalance extends Component
 
     public function mount(){
         $tb_id = Route::current()->parameter("tb_id");
-        $query = TrialBalance::with('tbData')->where('tb_id', $tb_id)->get();
+        // $query = TrialBalance::with('tbData')->where('tb_id', $tb_id)->get();
+        $query = TrialBalance::withTrashed()->with('tbData')->where('tb_id', $tb_id)->get();
         // $tb_data_query = TrialBalanceHistory::where('tb_id', $tb_id)->get();
 
         foreach($query as $tb){
@@ -351,7 +352,11 @@ class PreviewTrialBalance extends Component
 
 
     public function render()
-    {        
+    {   
+        // if($this->trial_balance->trashed()){
+        //     dd('Report is archived');
+        // }
+
         if(auth()->user()->role === "accounting"){
             if(in_array($this->trial_balance->tb_status, ['Draft', 'Change Requested'])){
                 $this->selectedStatusOption = "For Approval";

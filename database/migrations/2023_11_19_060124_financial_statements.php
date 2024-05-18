@@ -19,6 +19,7 @@ return new class extends Migration
             $table->enum('fs_type', ['SFPO', 'SFPE', 'SCF']);
             $table->longText('fs_data'); // json
             $table->string('template_name');
+            $table->softDeletes();
 
             $table->foreign('template_name')
                 ->references('template_name')

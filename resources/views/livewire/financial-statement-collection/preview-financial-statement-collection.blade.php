@@ -3,7 +3,13 @@
     class="relative p-4">
     <section class="w-full flex items-center justify-between flex-col bg-white rounded-lg mb-4 p-2 gap-4 md:flex-row 2xl:mb-8">
         <section clas="flex flex-col items-center justify-center md:flex-row">
-            <h1 class="text-primary text-header text-center font-bold font-inter md:text-left">{{ $fsCollection->collection_name }}</h1>
+            <h1 class="text-primary text-header text-center font-bold font-inter md:text-left">
+            @if($fsCollection->deleted_at)
+            &lpar;Archived&rpar; {{ $fsCollection->collection_name }}
+            @else
+            {{ $fsCollection->collection_name }}
+            @endif
+            </h1>
             <div class="flex items-center justify-center gap-2 md:pl-4 md:justify-start">
                 <button
                     x-on:click="showSFPO=true;showSFPE=false;showSCF=false;"
@@ -105,7 +111,9 @@
 
             <section x-data="{ isToolTipVisible: false }" class="flex items-center gap-2">
                 <button
-                    class="w-full text-center @if($statusColor === 'draft') {{'bg-draft'}} @elseif($statusColor === 'forapproval') {{'bg-forapproval'}} @elseif($statusColor === 'approved') {{'bg-approved'}} @elseif($statusColor === 'changerequested') {{'bg-changerequested'}} @endif rounded-lg text-white p-2" x-on:click="isActionModalOpen = true">
+                    class="w-full text-center @if($statusColor === 'draft') {{'bg-draft'}} @elseif($statusColor === 'forapproval') {{'bg-forapproval'}} @elseif($statusColor === 'approved') {{'bg-approved'}} @elseif($statusColor === 'changerequested') {{'bg-changerequested'}} @endif rounded-lg text-white p-2" x-on:click="isActionModalOpen = true"
+                    @if($fsCollection->deleted_at) disabled @endif
+                    >
                     {{ $fsCollection->collection_status }}
                 </button>
                 <div class="relative" x-on:mouseenter="isToolTipVisible = true" x-on:mouseleave="isToolTipVisible = false">

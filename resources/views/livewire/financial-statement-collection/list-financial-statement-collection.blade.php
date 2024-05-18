@@ -98,7 +98,11 @@
                                 <td
                                     class="h-16 p-2 text-center whitespace-wrap cursor-pointer hover:text-secondary"
                                     wire:click="preview('{{$fsc->collection_id}}')">
+                                    @if($filterReportFlag == 'Active')
                                     {{ $fsc->collection_name }}
+                                    @else
+                                    &lpar;Archived&rpar; {{ $fsc->collection_name }}
+                                    @endif
                                 </td>
                                 <td class="h-16 p-2 text-center whitespace-nowrap">
                                     {{ date('M d, Y', strtotime($fsc->date)) }}
@@ -120,17 +124,10 @@
                                 </td>
                                 <td class="h-16 p-2">
                                     <div class="flex items-center justify-center">
-                                    @if($fsc->collection_status === "Draft")
-                                        <button 
-                                        x-on:click="isActionModalOpen = true"
-                                        wire:click="setFSCollection({{$index}})"
-                                        class="h-full items-center">
-                                            <x-financial-reporting.assets.trash-icon />
-                                        </button>
-                                    @elseif($fsc->collection_status === "Approved")
+                                    @if($fsc->collection_status === "Approved" && !$fsc->deleted_at)
                                         <button
-                                            {{-- TODO: add archive/soft delete functionality --}}
-                                            x-on:click="alert('Report archived')"
+                                            x-on:click="isActionModalOpen = true"
+                                            wire:click="setFSCollection({{$index}})"
                                             class="h-full items-center">
                                             <x-financial-reporting.assets.archive />
                                         </button
@@ -172,13 +169,13 @@
         role="dialog"
         class="fixed top-0 left-0 w-screen h-screen bg-neutral bg-opacity-50 flex items-center justify-center">
         <div class="w-80 bg-white drop-shadow-md p-4 rounded-lg">
-            <h1 class="text-2xl font-bold font-inter mb-2">Delete Record</h1>
+            <h1 class="text-2xl font-bold font-inter mb-2">Archive Record</h1>
             <p class="whitespace-normal font-inter text-sm mb-4">
-                Are you sure you want to delete <strong>{{$fsCollection->collection_name}}</strong>? This will remove the record and can't be undone.
+                Are you sure you want to archive <strong>{{$fsCollection->collection_name}}</strong>?
             </p>
             <div class="w-full flex justify-between items-center">
                 <button class="text-white bg-neutral rounded-lg font-inter w-20 p-2" type="button" x-on:click="isActionModalOpen = false" wire:click="setFSCollection">Cancel</button>
-                <button class="text-white bg-accentTwo rounded-lg font-inter w-20 p-2" type="button" x-on:click="isActionModalOpen = false" wire:click="delete">Delete</button>
+                <button class="text-white bg-accentTwo rounded-lg font-inter w-20 p-2" type="button" x-on:click="isActionModalOpen = false" wire:click="archive">Archive</button>
             </div>
         </div>
     </div>

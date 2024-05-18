@@ -3,8 +3,13 @@
     class="w-full p-4"
     >
     <section class="w-full flex items-center justify-between flex-col bg-white rounded-lg mb-4 p-2 md:flex-row 2xl:mb-8">
-        <h1 class="text-primary text-header font-bold font-inter">{{ $trial_balance->tb_name }}</h1>
-
+        <h1 class="text-primary text-header font-bold font-inter">
+        @if($trial_balance->deleted_at)
+        &lpar;Archived&rpar; {{ $trial_balance->tb_name }}
+        @else
+        {{ $trial_balance->tb_name }}
+        @endif
+        </h1>
 
         <section class="flex items-center gap-4">
             <livewire:financial-reporting.notes
@@ -113,7 +118,9 @@
                 <section x-data="{ isToolTipVisible: false }" class="flex items-center gap-2">
                     <div class="w-full flex flex-col gap-2">
                         <button
-                            class="w-full text-center @if($statusColor === 'draft') {{'bg-draft'}} @elseif($statusColor === 'forapproval') {{'bg-forapproval'}} @elseif($statusColor === 'approved') {{'bg-approved'}} @elseif($statusColor === 'changerequested') {{'bg-changerequested'}} @endif rounded-lg text-white p-2" x-on:click="isActionModalOpen = true">
+                            class="w-full text-center @if($statusColor === 'draft') {{'bg-draft'}} @elseif($statusColor === 'forapproval') {{'bg-forapproval'}} @elseif($statusColor === 'approved') {{'bg-approved'}} @elseif($statusColor === 'changerequested') {{'bg-changerequested'}} @endif rounded-lg text-white p-2" x-on:click="isActionModalOpen = true"
+                            @if($trial_balance->deleted_at) disabled @endif
+                            >
                             {{ $trial_balance->tb_status }}
                         </button>
                         {{-- TODO: Disable if already balanced --}}
@@ -121,7 +128,7 @@
                         <button 
                             class="w-full text-center rounded-lg text-white p-2 bg-primary"
                             wire:click='rebalance'
-                            @if($isBalanced) disabled @endif
+                            @if($isBalanced || $trial_balance->deleted_at) disabled @endif
                         >
                             Rebalance
                         </button>

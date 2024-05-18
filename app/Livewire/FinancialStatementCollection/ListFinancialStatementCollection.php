@@ -21,6 +21,7 @@ class ListFinancialStatementCollection extends Component
     public $filterPeriod;
     public $filterQuarter;
     public $filterStatus;
+    public $filterReportFlag = "Active";
     public $filterOptions = [
         "Period" => [
             "model" => "filterPeriod",
@@ -34,6 +35,10 @@ class ListFinancialStatementCollection extends Component
             "model" => "filterStatus",
             "options" => ["Draft", "Change Requested", "For Approval", "Approved"]
         ],
+        "Flag" => [
+            "model" => "filterReportFlag",
+            "options" => ["Active", "Archived"]
+        ]
     ];
 
     public $sortBy;
@@ -92,17 +97,17 @@ class ListFinancialStatementCollection extends Component
         return $this->redirect('/financial-statements/add', navigate: true);
     }
 
-    public function delete(){
-        if(count($this->fsCollections) === 0 || in_array($this->fsCollection->collection_status, ['For Approval', 'Change Requested', 'Approved'])){
+    public function archive(){
+        if(count($this->fsCollections) === 0 || in_array($this->fsCollection->collection_status, ['Draft', 'For Approval', 'Change Requested'])){
             return;
         }
 
         $collection_id = $this->fsCollection->collection_id;
         $collection_name = $this->fsCollection->collection_name;
-        DB::table('financial_statement_collections')->where("collection_id", "=", $collection_id)->delete();
+        FinancialStatementCollection::where('collection_id', '=', $collection_id)->delete();
 
         $this->setFSCollection();
-        session()->now('success', "$collection_name has been deleted.");
+        session()->now('success', "$collection_name has been archived.");
     }
 
     public function setFSCollection($itemIndex = null){
@@ -116,7 +121,13 @@ class ListFinancialStatementCollection extends Component
 
     public function render()
     {
-        $query = DB::table('financial_statement_collections')->select('collection_id','collection_name','date', 'interim_period', 'quarter', 'created_at', 'updated_at', 'collection_status');
+        $query = null;
+        if(in_array($this->filterReportFlag, ['Active'])){
+            $query = FinancialStatementCollection::select('collection_id','collection_name','date', 'interim_period', 'quarter', 'created_at', 'updated_at', 'collection_status', 'deleted_at');
+        } else {
+            $query = FinancialStatementCollection::onlyTrashed()->select('collection_id','collection_name','date', 'interim_period', 'quarter', 'created_at', 'updated_at', 'collection_status', 'deleted_at');
+        }
+
 
         $isCorrectPeriodFilter = in_array($this->filterPeriod, ['Monthly', 'Annual', 'Quarterly']);
         $isCorrectStatusFilter = in_array($this->filterStatus, ['Draft', 'For Approval', 'Approved']);
@@ -147,7 +158,12 @@ class ListFinancialStatementCollection extends Component
             }
         }
 
-        $res = $query->where('collection_status', '=', $this->filterStatus)->paginate($this->rows);
+        $res = null;
+        if(in_array($this->filterReportFlag, ['Active'])){
+            $res = $query->where('collection_status', '=', $this->filterStatus)->paginate($this->rows);
+        } else {
+            $res = $query->paginate($this->rows);
+        }
         $this->fsCollections = $res->items();
 
         $this->hasMorePages = $res->hasMorePages();

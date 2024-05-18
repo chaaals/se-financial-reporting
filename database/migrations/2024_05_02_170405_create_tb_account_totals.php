@@ -17,6 +17,7 @@ return new class extends Migration
                 ->constrained(table: 'trial_balances', column: 'tb_id')
                 ->cascadeOnDelete();
             $table->jsonb('totals_data');
+            $table->softDeletes();
             $table->timestamps();
         });
     }
