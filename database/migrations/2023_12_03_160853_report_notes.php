@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('content');
             $table->string('author');
             $table->timestamp('created_at')->default(\DB::raw('CURRENT_TIMESTAMP'));
+            $table->softDeletes();
         });
     }
 

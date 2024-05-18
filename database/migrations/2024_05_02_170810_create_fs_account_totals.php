@@ -17,6 +17,7 @@ return new class extends Migration
                 ->constrained(table: 'financial_statements', column: 'fs_id')
                 ->cascadeOnDelete();
             $table->jsonb('totals_data');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

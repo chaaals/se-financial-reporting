@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('template_name')->default('tb');
             $table->integer('debit_grand_totals');
             $table->integer('credit_grand_totals');
+            $table->softDeletes();
             $table->timestamp('created_at');
             $table->timestamp('updated_at');
 

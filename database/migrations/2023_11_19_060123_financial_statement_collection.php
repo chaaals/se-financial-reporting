@@ -24,6 +24,7 @@ return new class extends Migration
             $table->foreignUuid('tb_id')
                 ->constrained(table: 'trial_balances', column: 'tb_id')
                 ->cascadeOnDelete();
+            $table->softDeletes();
             $table->timestamp('created_at');
             $table->timestamp('updated_at');
         });
