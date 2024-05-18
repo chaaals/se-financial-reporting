@@ -36,12 +36,15 @@
                     class="hover:bg-active hover:bg-opacity-50 cursor-pointer p-4" wire:click="setSelectedInput({{$index}})"
                     x-on:click="showSuggestions = false">
                     <h3 class="text-base font-inter font-bold">{{ $item->tb_name }}</h3>
-                    <div class="flex items-center gap-2">
+                    <div class="flex items-center gap-3">
                         <p class="text-sm text-neutral font-inter font-light">
                             {{ $item->interim_period }}
                         </p>
                         <p class="text-sm text-neutral font-inter font-light">
                             {{ date('M d, Y', strtotime($item->date)) }}
+                        </p>
+                        <p class="text-sm text-neutral font-inter font-light">
+                            {{ $item->tb_status }}
                         </p>
                     </div>
                 </li>

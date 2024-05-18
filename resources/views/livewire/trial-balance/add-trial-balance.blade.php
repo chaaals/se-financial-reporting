@@ -177,6 +177,12 @@
             <p>Trial Balance Preview</p>
         </section>
         @endif
+
+        @if($tbData && !$isTbBalanced)
+        <section class="w-full flex p-4 mt-4 items-start border-2 border-dashed border-secondary rounded-lg">
+            <p class="text-secondary text-left">WARNING: The generated Trial Balance report is unbalanced. Adding this report will send a notification to the General Ledger module for resolution.</p>
+        </section>
+        @endif
     </section>
 
     @if(session('success'))

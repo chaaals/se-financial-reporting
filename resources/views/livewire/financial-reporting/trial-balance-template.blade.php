@@ -90,6 +90,9 @@
             <x-financial-reporting.account-title accountTitle="Furniture,Fixtures and Books" />
             <x-financial-reporting.account-title-items :accountTitles="$accountTitles['assets']['furnitureFixturesAndBooks']" :data="$data" />
 
+            <x-financial-reporting.account-title accountTitle="Other Property, Plant and Equipment" />
+            <x-financial-reporting.account-title-items :accountTitles="$accountTitles['assets']['otherPPE']" :data="$data" />
+
             <x-financial-reporting.account-title accountTitle="Construction in Progress" />
             <x-financial-reporting.account-title-items :accountTitles="$accountTitles['assets']['constructionInProgress']" :data="$data" />
 

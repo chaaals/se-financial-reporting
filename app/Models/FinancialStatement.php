@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class FinancialStatement extends Model
 {
     protected $primaryKey = 'fs_id';
+    public $timestamps = false;
     use HasFactory;
     protected $fillable = [
         'collection_id',
