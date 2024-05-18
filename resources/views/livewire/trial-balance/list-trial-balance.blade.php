@@ -124,7 +124,7 @@
                                 </td>
                                 <td class="h-16 p-2">
                                     <div class="flex items-center justify-center">
-                                    @if($tb->tb_status === 'Approved')
+                                    @if($tb->tb_status === 'Approved' && !$tb->deleted_at)
                                         <button
                                             x-on:click="isActionModalOpen = true"
                                             wire:click="setTrialBalance({{$index}})"

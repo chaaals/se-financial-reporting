@@ -93,7 +93,7 @@ class ListTrialBalance extends Component
     }
 
     public function archive(){
-        if(count($this->trialBalances) === 0 || in_array($this->trialBalance->tb_status, ['For Approval', 'Change Requested', 'Approved'])){
+        if(count($this->trialBalances) === 0 || in_array($this->trialBalance->tb_status, ['Draft','For Approval', 'Change Requested'])){
             return;
         }
 
@@ -123,9 +123,9 @@ class ListTrialBalance extends Component
     {
         $query = null;
         if(in_array($this->filterReportFlag, ['Active'])){
-            $query = TrialBalance::select('tb_id', 'tb_name', 'tb_date', 'interim_period', 'quarter', 'created_at', 'updated_at', 'tb_status');
+            $query = TrialBalance::select('tb_id', 'tb_name', 'tb_date', 'interim_period', 'quarter', 'created_at', 'updated_at', 'tb_status', 'deleted_at');
         } else {
-            $query = TrialBalance::onlyTrashed()->select('tb_id', 'tb_name', 'tb_date', 'interim_period', 'quarter', 'created_at', 'updated_at', 'tb_status');
+            $query = TrialBalance::onlyTrashed()->select('tb_id', 'tb_name', 'tb_date', 'interim_period', 'quarter', 'created_at', 'updated_at', 'tb_status', 'deleted_at');
         }
 
         $isCorrectPeriodFilter = in_array($this->filterPeriod, ['Monthly', 'Annual', 'Quarterly']);
