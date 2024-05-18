@@ -158,7 +158,12 @@ class ListFinancialStatementCollection extends Component
             }
         }
 
-        $res = $query->where('collection_status', '=', $this->filterStatus)->paginate($this->rows);
+        $res = null;
+        if(in_array($this->filterReportFlag, ['Active'])){
+            $res = $query->where('collection_status', '=', $this->filterStatus)->paginate($this->rows);
+        } else {
+            $res = $query->paginate($this->rows);
+        }
         $this->fsCollections = $res->items();
 
         $this->hasMorePages = $res->hasMorePages();

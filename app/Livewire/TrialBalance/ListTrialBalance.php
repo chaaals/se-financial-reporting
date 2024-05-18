@@ -157,7 +157,12 @@ class ListTrialBalance extends Component
             }
         }
 
-        $res = $query->where('tb_status', '=', $this->filterStatus)->paginate($this->rows);
+        $res = null;
+        if(in_array($this->filterReportFlag, ['Active'])){
+            $res = $query->where('tb_status', '=', $this->filterStatus)->paginate($this->rows);
+        } else {
+            $res = $query->paginate($this->rows);
+        }
 
         $this->trialBalances = $res->items();
         $this->hasMorePages = $res->hasMorePages();
