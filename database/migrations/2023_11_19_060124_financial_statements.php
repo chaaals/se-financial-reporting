@@ -18,6 +18,7 @@ return new class extends Migration
                 ->cascadeOnDelete();
             $table->enum('fs_type', ['SFPO', 'SFPE', 'SCF']);
             $table->longText('fs_data'); // json
+            $table->longText('totals_data'); // json
             $table->string('template_name');
             $table->softDeletes();
 

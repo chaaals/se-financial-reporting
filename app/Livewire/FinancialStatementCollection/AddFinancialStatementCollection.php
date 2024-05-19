@@ -80,39 +80,30 @@ class AddFinancialStatementCollection extends Component
         $tbData = $tb->getRelation('latestTbData');
         // $tbData = DB::select('SELECT tb_data from trial_balances WHERE tb_id = ?', [$this->tbID])[0];
         [$sfpoData, $sfpoTotals] = $this->getData($tbData, "sfpo_tb");
-        $sfpoEntry = FinancialStatement::create([
+        FinancialStatement::create([
             "fs_type" => "SFPO",
             "fs_data" => $sfpoData,
+            "totals_data" => $sfpoTotals,
             "collection_id" => $this->fscID,
             "template_name" => "sfpo",
         ]);
-        DB::table('fs_account_totals')->insert([
-            "fs_id" => $sfpoEntry->fs_id,
-            "totals_data" => $sfpoTotals,
-        ]);
 
         [$sfpeData, $sfpeTotals] = $this->getData($tbData, "sfpe_tb");
-        $sfpeEntry = FinancialStatement::create([
+        FinancialStatement::create([
             "fs_type" => "SFPE",
             "fs_data" => $sfpeData,
+            "totals_data" => $sfpeTotals,
             "collection_id" => $this->fscID,
             "template_name" => "sfpe",
         ]);
-        DB::table('fs_account_totals')->insert([
-            "fs_id" => $sfpeEntry->fs_id,
-            "totals_data" => $sfpeTotals,
-        ]);
 
         [$scfData, $scfTotals] = $this->getData($tbData, "scf_tb");
-        $scfEntry = FinancialStatement::create([
+        FinancialStatement::create([
             "fs_type" => "SCF",
             "fs_data" => $scfData,
+            "totals_data" => $scfTotals,
             "collection_id" => $this->fscID,
             "template_name" => "scf",
-        ]);
-        DB::table('fs_account_totals')->insert([
-            "fs_id" => $scfEntry->fs_id,
-            "totals_data" => $scfTotals,
         ]);
 
         $this->reset();
