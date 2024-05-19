@@ -1,10 +1,32 @@
-<section class="w-full p-2">
+<section x-data="{ showOverview: true, showActivity: false }" class="w-full p-2">
     <section class="p-2 mb-8">
         <h1 class="text-lg font-bold md:text-xl">Welcome back, <span class="text-primary">{{ $user->first_name }} {{ $user->last_name }}</span></h1>
-        <p>here are recent entries of financial reports.</p>
+        <p>we've provided a summary of the latest financial statements for you.</p>
     </section>
     <section class="w-full flex items-center justify-between mb-4">
-        <div></div>
+        <section class="flex items-center gap-4">
+            <button
+                x-on:click="showOverview=true;showActivity=false;"
+                class="w-28 p-2 rounded-full"
+                :class="showOverview ? 'bg-primary text-white' : 'bg-transparent text-neutralFour'">
+                Overview
+            </button>
+            {{-- @if($user->role == 'accounting')
+            <button
+                x-on:click="showOverview=false;showActivity=true;"
+                class="w-28 p-2 rounded-lg"
+                :class="showActivity ? 'bg-primary text-white' : 'bg-transparent text-neutralFour'">
+                My Activity
+            </button>
+            @else
+            <button
+                x-on:click="showOverview=false;showActivity=true;"
+                class="w-28 p-2 rounded-lg"
+                :class="showActivity ? 'bg-primary text-white' : 'bg-transparent text-neutralFour'">
+                Audit Trail
+            </button>
+            @endif --}}
+        </section>
         <section class="flex items-center gap-4">
             @foreach($filterOptions as $key=>$filter)
             <select
@@ -12,8 +34,8 @@
                     @if (in_array($key, ['Quarter']) && !in_array($filterPeriod, ['Quarterly']))
                         disabled
                     @endif
-                    wire:model.live={{ $filter['model'] }}
-                    {{-- wire:change='refreshChart' --}}
+                    wire:model={{ $filter['model'] }}
+                    wire:change='fetchChart'
                 >
                         <option selected hidden>{{ $key }}</option>
                     @foreach($filter['options'] as $option)
@@ -21,28 +43,44 @@
                     @endforeach
             </select>
             @endforeach
-                {{-- <button wire:click='refreshFilters'>
-                    <x-financial-reporting.assets.refresh />
-                </button> --}}
         </section>
     </section>
-    <section class="flex gap-4">
-        <section class="w-full bg-white drop-shadow-md rounded-lg p-4">
-            {!! $sfpoPie->container() !!}
+    <section x-cloak x-show="showOverview" class="flex flex-auto gap-4">
+        <section class="flex items-center justify-center shadow rounded p-4 border bg-white flex-1 h-[28rem]">
+            @if($sfpo)
+            <livewire:livewire-pie-chart
+                key="{{$sfpoPieModel->reactiveKey()}}"
+                :pie-chart-model='$sfpoPieModel'
+            />
+            @else
+            <div class="w-full flex items-center justify-center">
+                <span>No Statement found for @if($filterPeriod == 'Quarterly') {{$filterQuarter}} {{$filterYear}} @else {{$filterYear}} @endif Financial Position</span>
+            </div>
+            @endif
         </section>
-        <section class="w-full bg-white drop-shadow-md rounded-lg p-4"">
-            {!! $sfpePie->container() !!}
+        <section class="flex items-center justify-center shadow rounded p-4 border bg-white flex-1 h-[28rem]">
+            @if($sfpe)
+            <livewire:livewire-pie-chart
+                key="{{$sfpePieModel->reactiveKey()}}"
+                :pie-chart-model='$sfpePieModel'
+            />
+            @else
+            <div class="w-full flex items-center justify-center">
+                <span>No Statement found for @if($filterPeriod == 'Quarterly') {{$filterQuarter}} {{$filterYear}} @else {{$filterYear}} @endif Financial Performance</span>
+            </div>
+            @endif
         </section>
-        <section class="w-full bg-white drop-shadow-md rounded-lg p-4"">
-            {!! $scfPie->container() !!}
+        <section class="flex items-center justify-center shadow rounded p-4 border bg-white flex-1 h-[28rem]">
+            @if($scf)
+            <livewire:livewire-pie-chart
+                key="{{$scfPieModel->reactiveKey()}}"
+                :pie-chart-model='$scfPieModel'
+            />
+            @else
+            <div class="w-full flex items-center justify-center">
+                <span>No Statement found for @if($filterPeriod == 'Quarterly') {{$filterQuarter}} {{$filterYear}} @else {{$filterYear}} @endif Cash Flows</span>
+            </div>
+            @endif
         </section>
     </section>
 </section>
-<script src="{{ $sfpoPie->cdn() }}"></script>
-<script src="{{ $sfpePie->cdn() }}"></script>
-<script src="{{ $scfPie->cdn() }}"></script>
-
-
-{{ $sfpoPie->script() }}
-{{ $sfpePie->script() }}
-{{ $scfPie->script() }}
