@@ -57,9 +57,4 @@ class TrialBalance extends Model
     {
         return $this->hasOne(TrialBalanceHistory::class, 'tb_id')->latestOfMany('created_at');
     }
-
-    public function tbTotals()
-    {
-        return $this->hasOne(TrialBalanceTotals::class, 'tb_id');
-    }
 }

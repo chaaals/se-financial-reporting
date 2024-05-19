@@ -99,13 +99,14 @@ class AddTrialBalance extends Component
             TrialBalanceHistory::create([
                 "tb_id" => $tb->tb_id,
                 "tb_data" => $this->tbData,
+                "totals_data" => $this->tbDataTotals,
                 "date" => $this->tbDate
             ]);
             
-            TrialBalanceTotals::create([
-                "tb_id" => $tb->tb_id,
-                "totals_data" => $this->tbDataTotals,
-            ]);
+            // TrialBalanceTotals::create([
+            //     "tb_data_id" => $tbHistory->tb_data_id,
+            //     "totals_data" => $this->tbDataTotals,
+            // ]);
         }
         
         if ($this->isTbBalanced){

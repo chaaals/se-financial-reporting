@@ -6,6 +6,7 @@ use App\Exports\TrialBalanceExport;
 use App\Mail\FinancialReportEmail;
 use App\Models\TrialBalance;
 use App\Models\TrialBalanceHistory;
+use App\Models\TrialBalanceTotals;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use Livewire\Attributes\On;
@@ -24,6 +25,7 @@ class PreviewTrialBalance extends Component
     public $exportableFilePath;
     public $all_tb_data;
     public $trial_balance_data;
+    public $trial_balance_totals;
     public $active_trial_balance_data = 0;
     public $reportType = "tb";
     public $reportStatusOptions = [];
@@ -278,6 +280,7 @@ class PreviewTrialBalance extends Component
     public function rebalance(){
         // TODO: Add logic that refetches GL
         $tbData = $this->trial_balance_data["tb_data"];
+        $tbTotals = $this->trial_balance_data["totals_data"];
         $rebalanced = json_decode($tbData, true);
 
         foreach($rebalanced as $code=>$value){
@@ -292,6 +295,7 @@ class PreviewTrialBalance extends Component
         TrialBalanceHistory::create([
             "tb_id" => $this->trial_balance->tb_id,
             "tb_data" => $rebalanced,
+            "totals_data" => $tbTotals,
             "date" => $this->trial_balance->tb_date
         ]);
 

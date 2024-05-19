@@ -13,7 +13,7 @@ class TrialBalanceTotals extends Model
     protected $primaryKey = 'totals_id';
     use HasFactory;
     protected $fillable = [
-        'tb_id',
+        'tb_data_id',
         'totals_data',
     ];
 
@@ -21,8 +21,8 @@ class TrialBalanceTotals extends Model
         'totals_id' => 'string',
     ];
 
-    public function trialBalance()
+    public function trialBalanceData()
     {
-        return $this->belongsTo(TrialBalance::class);
+        return $this->belongsTo(TrialBalanceHistory::class);
     }
 }

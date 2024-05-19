@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('trial_balance_totals', function (Blueprint $table) {
             $table->id('totals_id');
-            $table->foreignUuid('tb_id')
-                ->constrained(table: 'trial_balances', column: 'tb_id')
-                ->cascadeOnDelete();
+            // $table->foreignUuid('tb_data_id')
+            //     ->constrained(table: 'trial_balance_histories', column: 'tb_data_id')
+            //     ->cascadeOnDelete();
             $table->jsonb('totals_data');
             $table->softDeletes();
             $table->timestamps();
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tb_account_totals');
+        Schema::dropIfExists('trial_balance_totals');
     }
 };
