@@ -34,7 +34,6 @@ class Home extends Component
 
         if(!$years){
             $years = [date('Y')];
-            $this->filterYear = $years[0];
         }
         
         $this->filterOptions = [
@@ -51,7 +50,7 @@ class Home extends Component
                 "options" => ["Q1", "Q2", "Q3", "Q4"]
             ]
         ];
-
+        $this->filterYear = $years[0];
     }
 
     public function parseStatement(FinancialStatement|null $fs, PieChartModel $chartModel){
@@ -89,7 +88,6 @@ class Home extends Component
             $this->sfpe = null;
             $this->scf = null;
         }
-
         foreach ($query as $fsc){
             foreach ($fsc->financialStatements as $financialStatement) {
                 if($financialStatement->fs_type == 'SFPO'){
