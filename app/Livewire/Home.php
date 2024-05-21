@@ -31,6 +31,11 @@ class Home extends Component
 
         $this->trialBalances = TrialBalance::orderBy('created_at', 'desc')->take(6)->get();
         $years = FinancialStatementCollection::selectRaw('YEAR(date) as year')->distinct()->orderBy('year')->pluck('year')->toArray();
+
+        if(!$years){
+            $years = [date('Y')];
+            $this->filterYear = $years[0];
+        }
         
         $this->filterOptions = [
             "Year" => [
@@ -47,7 +52,6 @@ class Home extends Component
             ]
         ];
 
-        $this->filterYear = $years[0];
     }
 
     public function parseStatement(FinancialStatement|null $fs, PieChartModel $chartModel){
