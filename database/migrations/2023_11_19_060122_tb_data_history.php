@@ -12,13 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('trial_balance_histories', function (Blueprint $table) {
-            $table->uuid('tb_data_id')
-                ->default(DB::raw('(UUID())'))
-                ->primary();
+            $table->uuid('tb_data_id')->primary();
             $table->foreignUuid('tb_id')
                 ->constrained(table: 'trial_balances', column: 'tb_id')
                 ->cascadeOnDelete();
             $table->longText('tb_data'); // json
+            $table->longText('totals_data'); // json
             $table->date('date');
             $table->softDeletes();
             $table->timestamp('created_at');

@@ -17,6 +17,7 @@ class FinancialStatement extends Model
         'collection_id',
         'fs_type',
         'fs_data',
+        'totals_data',
         'template_name',
     ];
 
