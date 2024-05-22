@@ -79,7 +79,7 @@ class PreviewFinancialStatementCollection extends Component
 
 
         Storage::copy($this->filePath, $this->exportableFilePath);
-
+        
         $spreadsheet = IOFactory::load(storage_path('app/' . $this->exportableFilePath));
 
         // sfpo, sfpe, scf in order
