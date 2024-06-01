@@ -14,6 +14,7 @@ class Home extends Component
     public $user;
     public $trialBalances;
     public $financialStatements;
+    public $collectionName;
     public $filterPeriod = 'Annual';
     public $filterQuarter;
     public $filterYear;
@@ -84,11 +85,13 @@ class Home extends Component
         $query = $query->get();
         if($query->isEmpty()){
             // dd($query);
+            $this->collectionName = null;
             $this->sfpo = null;
             $this->sfpe = null;
             $this->scf = null;
         }
         foreach ($query as $fsc){
+            $this->collectionName = $fsc->collection_name;
             foreach ($fsc->financialStatements as $financialStatement) {
                 if($financialStatement->fs_type == 'SFPO'){
                     $this->sfpo = $financialStatement;

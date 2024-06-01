@@ -45,6 +45,10 @@
             @endforeach
         </section>
     </section>
+
+
+    @if($collectionName)
+    <h1 class="mb-2"><strong>{{ $collectionName }}</strong></h1>
     <section x-cloak x-show="showOverview" class="flex flex-auto gap-4">
         <section class="flex items-center justify-center shadow rounded p-4 border bg-white flex-1 h-[28rem]">
             @if($sfpo)
@@ -52,10 +56,6 @@
                 key="{{$sfpoPieModel->reactiveKey()}}"
                 :pie-chart-model='$sfpoPieModel'
             />
-            @else
-            <div class="w-full flex items-center justify-center">
-                <span>No Statement found for @if($filterPeriod == 'Quarterly') {{$filterQuarter}} {{$filterYear}} @else {{$filterYear}} @endif Financial Position</span>
-            </div>
             @endif
         </section>
         <section class="flex items-center justify-center shadow rounded p-4 border bg-white flex-1 h-[28rem]">
@@ -64,10 +64,6 @@
                 key="{{$sfpePieModel->reactiveKey()}}"
                 :pie-chart-model='$sfpePieModel'
             />
-            @else
-            <div class="w-full flex items-center justify-center">
-                <span>No Statement found for @if($filterPeriod == 'Quarterly') {{$filterQuarter}} {{$filterYear}} @else {{$filterYear}} @endif Financial Performance</span>
-            </div>
             @endif
         </section>
         <section class="flex items-center justify-center shadow rounded p-4 border bg-white flex-1 h-[28rem]">
@@ -76,11 +72,17 @@
                 key="{{$scfPieModel->reactiveKey()}}"
                 :pie-chart-model='$scfPieModel'
             />
-            @else
-            <div class="w-full flex items-center justify-center">
-                <span>No Statement found for @if($filterPeriod == 'Quarterly') {{$filterQuarter}} {{$filterYear}} @else {{$filterYear}} @endif Cash Flows</span>
-            </div>
             @endif
         </section>
     </section>
+    @else
+    <section class="flex flex-col items-center">
+        <x-financial-reporting.assets.no-results />
+        <h1 class="text-lg">
+        <strong>
+        No Financial Statements found @if($filterPeriod == 'Quarterly') {{$filterQuarter}} {{$filterYear}} @else {{$filterYear}} @endif
+        </strong>
+        </h1>
+    </section>
+    @endif
 </section>
