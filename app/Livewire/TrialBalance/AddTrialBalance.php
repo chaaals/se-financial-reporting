@@ -11,6 +11,8 @@ use Livewire\Component;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\DB;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Illuminate\Support\Facades\Storage;
 
 class AddTrialBalance extends Component
 {
@@ -147,6 +149,90 @@ class AddTrialBalance extends Component
 
         session()->flash("success", "Trial Balance has been updated.");
         $this->redirect('/trial-balances', navigate: true);
+    }
+
+    public function importFromGL()
+    {
+        // load excel template
+        if ($this->tbType) {
+            $tbExportFormat = 'TB_' . strtoupper($this->tbType);
+        } else {
+            $tbExportFormat = "TB_PRE";
+        }
+        $filePath = 'public/uploads/' . $tbExportFormat . '.xlsx';
+        $newFilePath = 'uploads/' . $tbExportFormat . '.xlsx';
+        Storage::copy($filePath, $newFilePath);
+        $spreadsheet = IOFactory::load(storage_path('app/' . $newFilePath));
+
+        // load export config
+        $tbExportConfig = DB::select('SELECT template FROM report_templates WHERE template_name = ?', [$tbExportFormat]);
+        $jsonConfig = array_column($tbExportConfig, 'template')[0];
+        $jsonConfig = json_decode($jsonConfig, true);
+
+        // query data from GL
+        $queryMonth = date('m', strtotime($this->tbDate));
+        $queryYear = date('Y', strtotime($this->tbDate));
+        $this->interimPeriod = trim($this->interimPeriod);
+        if ($this->interimPeriod == 'Quarterly') {
+            $months = [];
+            switch ($this->quarter) {
+                case 'Q1':
+                    $months = ['01', '02', '03'];
+                    break;
+                case 'Q2':
+                    $months = ['04', '05', '06'];
+                    break;
+                case 'Q3':
+                    $months = ['07', '08', '09'];
+                    break;
+                case 'Q4':
+                    $months = ['10', '11', '12'];
+                    break;
+            }
+            $res = DB::select("SELECT ls_account_title_code,ls_total_credit,ls_total_debit FROM ledgersheet_total_debit_credit WHERE ls_summary_month IN ('" . implode("','", $months) . "') AND ls_summary_year = '$queryYear'");
+        } else if ($this->interimPeriod == 'Monthly') {
+            $res = DB::select("SELECT ls_account_title_code,ls_total_credit,ls_total_debit FROM ledgersheet_total_debit_credit WHERE ls_summary_month LIKE '$queryMonth%' AND ls_summary_year = '$queryYear'");
+        } else {
+            $res = DB::select("SELECT ls_account_title_code,ls_total_credit,ls_total_debit FROM ledgersheet_total_debit_credit WHERE ls_summary_year = '$queryYear'");
+        }
+
+        // queried data
+        $credits = array_column($res, 'ls_total_credit');
+        $debits = array_column($res, 'ls_total_debit');
+        $accountCodes = array_column($res, 'ls_account_title_code');
+        // GL accounts codes is formatted as: `<code> - <title>`
+        // we only need the <code>
+        for ($index = 0; $index < count($accountCodes); $index++) {
+            $accountCodes[$index] = trim(explode('-', $accountCodes[$index])[0]);
+        }
+
+        // key : val == rowNumber : fsData
+        $exportConfig = [];
+        $i = 0;
+        foreach ($jsonConfig as $key => $value) {
+            if (array_key_exists($accountCodes[$i], $jsonConfig)) {
+                $exportConfig[$value] = [
+                    'credit' => $credits[$i],
+                    'debit' => $debits[$i],
+                ];
+            }
+            $i += 1;
+            if ($i >= count($accountCodes)) {
+                break;
+            }
+        }
+
+        // write to excel
+        foreach ($exportConfig as $row => $value) {
+            $spreadsheet->getActiveSheet()->setCellValue('F' . $row, $value['debit']);
+            $spreadsheet->getActiveSheet()->setCellValue('H' . $row, $value['credit']);
+        }
+        $writer = new Xlsx($spreadsheet);
+        $writer->save(storage_path('app/' . $newFilePath));
+
+        // imported from gl
+        $this->importedFromGL = storage_path('app/' . $newFilePath);
+        $this->getTBData();
     }
 
     private function getTBData()
