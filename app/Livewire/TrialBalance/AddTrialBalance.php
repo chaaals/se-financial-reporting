@@ -32,6 +32,7 @@ class AddTrialBalance extends Component
 
     public $source;
     public $importedSpreadsheet;
+    public $importedFromGL;
 
     public $spreadsheet = [];
     public $preview = [];
@@ -39,7 +40,7 @@ class AddTrialBalance extends Component
         "tbName" => "nullable|max:255",
         "tbDate" => "required|date",
         "tbType" => "nullable|in:pre,post",
-        "importedSpreadsheet" => "required|file|mimes:xlsx,xls,ods",
+        // "importedSpreadsheet" => "required|file|mimes:xlsx,xls,ods",
         'interimPeriod' => 'required|in:Monthly,Quarterly,Annual',
         'quarter' => 'nullable',
     ];
@@ -200,7 +201,7 @@ class AddTrialBalance extends Component
 
     public function render()
     {
-        if ($this->importedSpreadsheet) {
+        if ($this->importedFromGL) {
             $this->getTBData();
         }
 
