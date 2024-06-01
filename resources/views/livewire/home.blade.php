@@ -11,7 +11,7 @@
                 :class="showOverview ? 'bg-primary text-white' : 'bg-transparent text-neutralFour'">
                 Overview
             </button>
-            {{-- @if($user->role == 'accounting')
+            @if($user->role == 'accounting')
             <button
                 x-on:click="showOverview=false;showActivity=true;"
                 class="w-28 p-2 rounded-lg"
@@ -23,9 +23,9 @@
                 x-on:click="showOverview=false;showActivity=true;"
                 class="w-28 p-2 rounded-lg"
                 :class="showActivity ? 'bg-primary text-white' : 'bg-transparent text-neutralFour'">
-                Audit Trail
+                Recent Activity
             </button>
-            @endif --}}
+            @endif
         </section>
         <section class="flex items-center gap-4">
             @foreach($filterOptions as $key=>$filter)
@@ -48,7 +48,7 @@
 
 
     @if($collectionName)
-    <h1 class="mb-2"><strong>{{ $collectionName }}</strong></h1>
+    <h1 x-cloak x-show="showOverview" class="mb-2"><strong>{{ $collectionName }}</strong></h1>
     <section x-cloak x-show="showOverview" class="flex flex-auto gap-4">
         <section class="flex items-center justify-center shadow rounded p-4 border bg-white flex-1 h-[28rem]">
             @if($sfpo)
@@ -83,6 +83,7 @@
         No Financial Statements found @if($filterPeriod == 'Quarterly') {{$filterQuarter}} {{$filterYear}} @else {{$filterYear}} @endif
         </strong>
         </h1>
+        <p>Start by creating a {{ $filterQuarter }} Trial Balance report!</p>
     </section>
     @endif
 </section>
