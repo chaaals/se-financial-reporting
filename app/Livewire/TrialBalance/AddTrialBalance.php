@@ -237,7 +237,8 @@ class AddTrialBalance extends Component
 
     private function getTBData()
     {
-        $spreadsheet = IOFactory::load($this->importedSpreadsheet->getRealPath());
+        // get data from GL
+        $spreadsheet = IOFactory::load($this->importedFromGL);
 
         $tbImportConfig = DB::select("SELECT template FROM report_templates WHERE template_name = 'tb_pre'");
         $jsonConfig = array_column($tbImportConfig, 'template')[0];
@@ -273,6 +274,8 @@ class AddTrialBalance extends Component
         $this->tbDataTotals = json_encode($tbDataTotals);
 
         session()->now("success", "Import successful!");
+        // remove excel file
+        unlink($this->importedFromGL);
     }
 
     public function resetImport()
