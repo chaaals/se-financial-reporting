@@ -65,6 +65,7 @@ class AddTrialBalance extends Component
 
     public function add()
     {
+        $this->interimPeriod = trim($this->interimPeriod);
         $fr_month = date('m', strtotime($this->tbDate));
 
         if ($this->interimPeriod === 'Quarterly') {
@@ -83,7 +84,7 @@ class AddTrialBalance extends Component
         }
 
         $this->validate();
-        if ($this->importedSpreadsheet && $this->tbData) {
+        if ($this->tbData) {
             $tb = TrialBalance::create([
                 "tb_name" => $this->tbName,
                 "tb_type" => $this->tbType ?? null,
@@ -103,19 +104,19 @@ class AddTrialBalance extends Component
                 "totals_data" => $this->tbDataTotals,
                 "date" => $this->tbDate
             ]);
-            
+
             // TrialBalanceTotals::create([
             //     "tb_data_id" => $tbHistory->tb_data_id,
             //     "totals_data" => $this->tbDataTotals,
             // ]);
         }
-        
-        if ($this->isTbBalanced){
+
+        if ($this->isTbBalanced) {
             session()->flash("success", "Trial Balance has been added.");
         } else {
             session()->flash("success", "Trial Balance has been added. Unbalanced Trial Balance accounts has been sent to General Ledger.");
         }
-        
+
         $this->reset();
         $this->redirect('/trial-balances', navigate: true);
     }
