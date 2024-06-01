@@ -6,28 +6,6 @@
                 <input class="w-full rounded-lg focus:ring-0 md:w-96" id='trialBalanceName' type='text' wire:model='tbName' placeholder='Add trial balance name' />
             </div>
 
-            <div class="mb-4">
-                <label class="text-md font-bold" for="update_tb">Update Existing TB?</label>
-
-                <fieldset id="update_tb" class="flex items-center gap-4 pl-4 md:pl-8">
-                    <section>
-                        <input type="checkbox" id="update_tb_checkbox" class="checked:bg-black checked:hover:bg-secondary focus:ring-0" wire:model="updateExistingTb" wire:click="tbList" x-on:click="update_existing = !update_existing" />
-                        <label class="text-sm md:text-base" for="update_tb_checkbox">Yes</label>
-                    </section>
-                </fieldset>
-            </div>
-
-            <div x-cloak x-show="update_existing">
-                <div class="mb-4">
-                    <label class="text-md font-bold" for="tb_list">Select TB</label>
-                    <select id="tb_list" wire:model="updateExistingTbId">
-                        @foreach($tbList as $tb)
-                        <option value="{{ $tb['id'] }}">{{ $tb['name'] }}</option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-
             <div class="flex flex-col items-start mb-4" x-cloak x-show="!update_existing">
                 <label class="text-md font-bold" for='trialBalancePeriod'>Date</label>
                 <input class="w-full rounded-lg focus:ring-0 md:w-96" id='trialBalancePeriod' type='date' wire:model='tbDate' />
@@ -99,32 +77,24 @@
             <div class="mb-4">
                 <label class="text-md font-bold" for="source">Source</label>
 
-                <fieldset id="source" class="flex items-center gap-4 pl-4 md:pl-8">
-                    <section>
-                        <input
-                            type="radio"
-                            id="import"
-                            class="checked:bg-black checked:hover:bg-secondary focus:ring-0"
-                            value="import"
-                            wire:model="source"
-                            x-on:click="import_active = true" />
-                        <label class="text-sm md:text-base" for="import">Import Trial Balance</label>
-                    </section>
-                    <section>
-                        <input
-                            type="radio"
-                            id="general_ledger"
-                            class="checked:bg-black checked:hover:bg-secondary focus:ring-0"
-                            value="general_ledger"
-                            wire:model="source"
-                            x-on:click="import_active = false"
-                            wire:click="resetImport" />
-                        <label class="text-sm md:text-base" for="import">From General Ledger</label>
-                    </section>
-                </fieldset>
-            </div>
+                <div class="w-full h-44 relative mb-4 rounded-md bg-primary bg-opacity-5 border-2 border-dashed border-primary border-opacity-30 md:w-96">
+                    <div class="w-full h-full flex flex-col items-center justify-center md:w-96">
+                        <p>
+                            <strong>General Ledger Source Details</strong>
+                        </p>
 
-            <div x-cloak x-show="import_active" class="w-full h-44 relative mb-4 rounded-md bg-primary bg-opacity-5 border-2 border-dashed border-primary border-opacity-30 md:w-96">
+                        <button type="button" class="underline hover:text-secondary" wire:click="testGLIntegration" x-on:click="uploading=true">Preview</button>
+                        
+                        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" x-show="uploading" x-cloak>
+                            <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-gray-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {{-- <div x-cloak x-show="import_active" class="w-full h-44 relative mb-4 rounded-md bg-primary bg-opacity-5 border-2 border-dashed border-primary border-opacity-30 md:w-96">
                 <label
                     class="w-full h-full flex flex-col items-center justify-center md:w-96"
                     for="file-upload"
@@ -154,13 +124,13 @@
                 </div>
                 
                 <div>@error('importedSpreadsheet')<span>{{ $message }}</span>@enderror</div>
-            </div>
+            </div> --}}
 
-            <section class="w-full flex items-center justify-between md:w-96">
+            <section x-data="{ withGLSource: @entangle('importedFromGL') }" class="w-full flex items-center justify-between md:w-96">
                 <button class="border-accentOne border-2 rounded-lg px-4 py-2" type="button" wire:click="cancel">
                     Cancel
                 </button>
-                <button class="bg-primary text-white px-4 py-2 rounded-lg" type="submit">
+                <button class="bg-primary text-white px-4 py-2 rounded-lg disabled:bg-opacity-50" type="submit" :disabled="withGLSource ? false : true">
                     Add
                 </button>
             </section>

@@ -269,6 +269,10 @@ class AddTrialBalance extends Component
         unlink($this->importedFromGL);
     }
 
+    public function testGLIntegration(){
+        $this->importedFromGL = true;
+    }
+
     public function resetImport()
     {
         if ($this->tbData && $this->importedSpreadsheet) {
@@ -283,7 +287,7 @@ class AddTrialBalance extends Component
     public function render()
     {
         if ($this->importedFromGL) {
-            $this->getTBData();
+            // $this->getTBData();
         }
 
         return view('livewire.trial-balance.add-trial-balance');
