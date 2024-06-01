@@ -14,14 +14,14 @@
             @if($user->role == 'accounting')
             <button
                 x-on:click="showOverview=false;showActivity=true;"
-                class="w-28 p-2 rounded-lg"
+                class="w-28 p-2 rounded-full"
                 :class="showActivity ? 'bg-primary text-white' : 'bg-transparent text-neutralFour'">
                 My Activity
             </button>
             @else
             <button
                 x-on:click="showOverview=false;showActivity=true;"
-                class="w-28 p-2 rounded-lg"
+                class="w-28 p-2 rounded-full"
                 :class="showActivity ? 'bg-primary text-white' : 'bg-transparent text-neutralFour'">
                 Recent Activity
             </button>
