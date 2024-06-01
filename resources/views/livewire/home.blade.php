@@ -80,10 +80,10 @@
         <x-financial-reporting.assets.no-results />
         <h1 class="text-lg">
         <strong>
-        No Financial Statements found @if($filterPeriod == 'Quarterly') {{$filterQuarter}} {{$filterYear}} @else {{$filterYear}} @endif
+        No Financial Statements found for @if($filterPeriod == 'Quarterly') {{$filterQuarter}} {{$filterYear}} @else {{$filterYear}} @endif
         </strong>
         </h1>
-        <p>Start by creating a {{ $filterQuarter }} Trial Balance report!</p>
+        <p>Start by creating a {{ $filterQuarter }} Trial Balance report.</p>
     </section>
     @endif
 </section>
