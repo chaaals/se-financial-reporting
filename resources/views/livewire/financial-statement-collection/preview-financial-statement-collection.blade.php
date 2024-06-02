@@ -64,14 +64,17 @@
                 @if($fsType === "SFPO")
                 <livewire:financial-reporting.financial-position-template
                     :data="$fs->fs_data"
+                    :totalsData="$fs->totals_data"
                 />
                 @elseif($fsType === "SFPE")
                 <livewire:financial-reporting.financial-performance-template
                     :data="$fs->fs_data"
+                    :totalsData="$fs->totals_data"
                 />
                 @elseif($fsType === "SCF")
                 <livewire:financial-reporting.cash-flow-template
                     :data="$fs->fs_data"
+                    :totalsData="$fs->totals_data"
                 />
                 @endif
             </div>

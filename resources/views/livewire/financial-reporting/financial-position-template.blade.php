@@ -11,19 +11,19 @@
             <x-financial-reporting.account-title-items :accountTitles="$accountTitles['assets']['current']" :data="$data" />
             <tr class="bg-slate-200">
                 <td class="text-left font-bold pl-4">Total Current Assets</td>
-                <td>{{ $getTotalAmount('assets',['current'], true) }}</td>
+                <td>{{ $totalsData['Current Assets'] }}</td>
             </tr>
 
             <x-financial-reporting.account-title accountTitle="Non-Current Assets" />
             <x-financial-reporting.account-title-items :accountTitles="$accountTitles['assets']['nonCurrent']" :data="$data" />
             <tr class="bg-slate-200">
                 <td class="text-left font-bold pl-4">Total Non-Current Assets</td>
-                <td>{{ $getTotalAmount('assets',['nonCurrent'], true) }}</td>
+               <td>{{ $totalsData['Non-Current Assets'] }}</td>
             </tr>
 
             <tr class="bg-slate-200">
                 <td class="text-left font-bold">Total Assets</td>
-                <td>{{ $getTotalAmount('assets',['current','nonCurrent'], true) }}</td>
+                <td>{{ $totalsData['Assets'] }}</td>
             </tr>
 
             <x-financial-reporting.account-class accountClass="Liabilities" />
@@ -32,30 +32,30 @@
             <x-financial-reporting.account-title-items :accountTitles="$accountTitles['liabilities']['current']" :data="$data" />
             <tr class="bg-slate-200">
                 <td class="text-left font-bold pl-4">Total Current Liabilities</td>
-                <td>{{ $getTotalAmount('liabilities',['current'], true) }}</td>
+                <td>{{ $totalsData['Current Liabilities'] }}</td>
             </tr>
 
-            <x-financial-reporting.account-title accountTitle="Non-Current Assets" />
+            <x-financial-reporting.account-title accountTitle="Non-Current Liabilities" />
             <x-financial-reporting.account-title-items :accountTitles="$accountTitles['liabilities']['nonCurrent']" :data="$data" />
             <tr class="bg-slate-200">
                 <td class="text-left font-bold pl-4">Total Non-Current Liabilities</td>
-                <td>{{ $getTotalAmount('liabilities',['nonCurrent'], true) }}</td>
+                <td>{{ $totalsData['Non-Current Liabilities'] }}</td>
             </tr>
             <tr class="bg-slate-200">
                 <td class="text-left font-bold">Total Liabilities</td>
-                <td>{{ array_sum($liabilities) }}</td>
+                <td>{{ $totalsData['Liabilities'] }}</td>
             </tr>
 
             <x-financial-reporting.account-class accountClass="Equity" />
             <x-financial-reporting.account-title-items :accountTitles="$accountTitles['equity']" :data="$data" />
             <tr class="bg-slate-200">
                 <td class="text-left font-bold pl-4">Total Equity</td>
-                <td>{{ $getTotalAmount('equity',[], true) }}</td>
+                <td>{{ $totalsData['Equity'] }}</td>
             </tr>
 
             <tr class="bg-slate-200">
                 <td class="text-left font-bold">Total Liabilities and Equity</td>
-                <td>{{ array_sum($liabilities) + array_sum($equity) }}</td>
+                <td>{{ $totalsData['Liabilities and Equity'] }}</td>
             </tr>
         </tbody>
     </table>

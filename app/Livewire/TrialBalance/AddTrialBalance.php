@@ -70,16 +70,17 @@ class AddTrialBalance extends Component
         $this->interimPeriod = trim($this->interimPeriod);
         $fr_month = date('m', strtotime($this->tbDate));
 
-        if ($this->interimPeriod === 'Quarterly') {
+        if ($this->interimPeriod === 'Quarterly' && !$this->quarter) {
             $this->rules['quarter'] = 'required|in:Q1,Q2,Q3,Q4';
             $quarter = ceil($fr_month / 3);
             $this->quarter = "Q$quarter";
             $this->tbName = "Q$quarter Trial Balance " . date('Y');
         } else {
-            $this->quarter = null;
             if ($this->interimPeriod === "Annual") {
                 $this->tbName = "Annual Trial Balance " . date('Y');
                 $this->tbType = "pre";
+            } else if($this->interimPeriod === "Quarterly"){
+                $this->tbName = "$this->quarter Trial Balance " . date('Y');
             } else {
                 $this->tbName = "Trial Balance " . date('Y-m');
             }
@@ -106,11 +107,6 @@ class AddTrialBalance extends Component
                 "totals_data" => $this->tbDataTotals,
                 "date" => $this->tbDate
             ]);
-
-            // TrialBalanceTotals::create([
-            //     "tb_data_id" => $tbHistory->tb_data_id,
-            //     "totals_data" => $this->tbDataTotals,
-            // ]);
         }
 
         if ($this->isTbBalanced) {
@@ -223,7 +219,16 @@ class AddTrialBalance extends Component
 
         // imported from gl
         $this->importedFromGL = storage_path('app/' . $newFilePath);
-        $this->getTBData();
+
+        if(count($accountCodes) > 0){
+            $this->getTBData();
+        }
+
+        $this->source = [
+            "accountCodes" => count($accountCodes),
+            "debitGrandTotals" => $this->debitGrandTotals,
+            "creditGrandTotals" => $this->creditGrandTotals,
+        ];
     }
 
     private function getTBData()
@@ -271,8 +276,8 @@ class AddTrialBalance extends Component
 
     public function resetImport()
     {
-        if ($this->tbData && $this->importedSpreadsheet) {
-            $this->reset(['tbData', 'importedSpreadsheet']);
+        if ($this->importedFromGL) {
+            $this->reset(['tbData', 'tbDataTotals', 'importedFromGL', 'source']);
         }
     }
     public function cancel()
@@ -282,10 +287,6 @@ class AddTrialBalance extends Component
 
     public function render()
     {
-        if ($this->importedFromGL) {
-            $this->getTBData();
-        }
-
         return view('livewire.trial-balance.add-trial-balance');
     }
 }

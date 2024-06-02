@@ -70,6 +70,7 @@
             <livewire:financial-reporting.trial-balance-template
                 key="{{ now() }}"
                 :data="$trial_balance_data['tb_data']"
+                :totalsData="$trial_balance_data['totals_data']"
             />
         </section>
         

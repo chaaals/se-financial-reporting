@@ -10,7 +10,7 @@
 
             <tr class="bg-slate-200">
                 <td class="text-left font-bold pl-4">Total Revenue</td>
-                <td>{{ $getTotalAmount('revenue', [], true) }}</td>
+                <td>{{ $totalsData['Revenue'] }}</td>
             </tr>
 
             <x-financial-reporting.account-class accountClass="Less: Current Operating Expenses" />
@@ -18,30 +18,30 @@
 
             <tr class="bg-slate-200">
                 <td class="text-left font-bold pl-4">Total Current Operating Expenses</td>
-                <td>{{ $getTotalAmount('currOperatingExpenses', [], true) }}</td>
+                <td>{{ $totalsData['Current Operating Expenses'] }}</td>
             </tr class="bg-slate-200">
 
             <tr>
                 <td class="text-left font-bold">Surplus for the Period</td>
-                <td>{{ $surplus }}</td>
+                <td>{{ $totalsData['Surplus for the Period'] }}</td>
             </tr>
 
             <tr class="bg-slate-200">
                 <td class="text-left font-bold">Surplus (Deficit) for the Period</td>
-                <td>{{ $surplus }}</td>
+               <td>{{ $totalsData['Surplus (Deficit) for the period'] }}</td>
             </tr>
 
             <x-financial-reporting.account-class accountClass="Add(Less)" />
             <x-financial-reporting.account-title-items :accountTitles="$accountTitles['addLess']" :data="$data" />
 
-            <tr>
+            {{-- <tr>
                 <td class="text-left pl-6">Loss on Sale of Property, PLant & Equipment</td>
                 <td>{{ $getTotalAmount('addLess', [], true) }}</td>
-            </tr>
+            </tr> --}}
 
             <tr class="bg-slate-200">
                 <td class="text-left font-bold">Surplus (Deficit) for the Period</td>
-                <td>{{ $surplus }}</td>
+                <td>{{ $totalsData['Surplus (Deficit) for the Period'] }}</td>
             </tr>
         </tbody>
     </table>

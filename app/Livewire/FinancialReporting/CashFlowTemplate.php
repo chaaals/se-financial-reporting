@@ -7,8 +7,7 @@ use Livewire\Component;
 class CashFlowTemplate extends Component
 {
     public $data;
-    public $outflow;
-    public $inflow;
+    public $totalsData;
 
     public $accountTitles = [
         "cashInflows" => [
@@ -31,49 +30,15 @@ class CashFlowTemplate extends Component
 
     ];
 
-    public function mount(string $data){
+    public function mount(string $data, string $totalsData){
         $this->data = json_decode($data, true);
+        $this->totalsData = json_decode($totalsData, true);
     }
     public function render()
     {
-        $getTotalAmount = function (string $parent, $items, bool $verbose) {
-            $amount = 0;
-
-            if(count($items) > 0){
-                foreach($items as $item){
-                    foreach($this->accountTitles[$parent][$item] as $cell=>$title){
-                        if($this->data[$cell]){
-                            $amount += $this->data[$cell];
-                        }
-                    }            
-                }
-            } else {
-                foreach($items as $cell=>$title){
-                    if($this->data[$cell]){
-                        $amount += $this->data[$cell];
-                    }
-                }
-            }
-            
-            if($parent == 'cashInflows'){
-                $this->inflow = $amount;
-            }
-
-            if($parent == 'cashOutflows'){
-                $this->outflow = $amount;
-            }
-
-            if($verbose){
-                return $amount;
-            }
-        };
-
-        $getCashBalanceEOQ = function () {
-            return $this->data['34'] + $this->data['35'];
-        };
 
         return view('livewire.financial-reporting.cash-flow-template',
-            ["data" => $this->data, "accountTitles" => $this->accountTitles, "getTotalAmount" => $getTotalAmount, "getCashBalanceEOQ" => $getCashBalanceEOQ ,"netCash" => $this->inflow - $this->outflow],
+            ["data" => $this->data, "accountTitles" => $this->accountTitles, "totalsData" => $this->totalsData],
         );
     }
 }
