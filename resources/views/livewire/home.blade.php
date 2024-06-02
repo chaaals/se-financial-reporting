@@ -75,7 +75,7 @@
         </section>
     </section>
     @else
-    <section class="flex flex-col items-center">
+    <section x-cloak x-show="showOverview" class="flex flex-col items-center">
         <x-financial-reporting.assets.no-results />
         <h1 class="text-lg">
         <strong>
