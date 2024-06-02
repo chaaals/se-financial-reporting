@@ -59,19 +59,19 @@
 
                 <fieldset id="quarter" class="flex items-center gap-4 pl-4 md:pl-8">
                     <section>
-                        <input class="checked:bg-black checked:hover:bg-secondary focus:ring-0"" type="radio" id="q1" value="Q1" wire:model="quarter" x-on:click="selected_interim = true;loading = false" />
+                        <input class="checked:bg-black checked:hover:bg-secondary focus:ring-0"" type="radio" id="q1" value="Q1" wire:model="quarter" x-on:click="selected_interim = true;loading = false" wire:click='resetImport' />
                         <label for="q1">Q1</label>
                     </section>
                     <section>
-                        <input class="checked:bg-black checked:hover:bg-secondary focus:ring-0"" type="radio" id="q2" value="Q2" wire:model="quarter" x-on:click="selected_interim = true;loading = false" />
+                        <input class="checked:bg-black checked:hover:bg-secondary focus:ring-0"" type="radio" id="q2" value="Q2" wire:model="quarter" x-on:click="selected_interim = true;loading = false" wire:click='resetImport' />
                         <label for="q2">Q2</label>
                     </section>
                     <section>
-                        <input class="checked:bg-black checked:hover:bg-secondary focus:ring-0"" type="radio" id="q3" value="Q3" wire:model="quarter" x-on:click="selected_interim = true;loading = false" />
+                        <input class="checked:bg-black checked:hover:bg-secondary focus:ring-0"" type="radio" id="q3" value="Q3" wire:model="quarter" x-on:click="selected_interim = true;loading = false" wire:click='resetImport' />
                         <label for="q3">Q3</label>
                     </section>
                     <section>
-                        <input class="checked:bg-black checked:hover:bg-secondary focus:ring-0"" type="radio" id="q4" value="Q4" wire:model="quarter" x-on:click="selected_interim = true;loading = false" />
+                        <input class="checked:bg-black checked:hover:bg-secondary focus:ring-0"" type="radio" id="q4" value="Q4" wire:model="quarter" x-on:click="selected_interim = true;loading = false" wire:click='resetImport' />
                         <label for="q4">Q4</label>
                     </section>
                 </fieldset>
@@ -99,6 +99,7 @@
                     </div>
                 @elseif($source)
                     <div class="p-4">
+                        @if($source['accountCodes'] > 0)
                         <p class="mb-2">Successfully gathered financial information from <strong>{{ $source['accountCodes'] }}</strong> ledger entries.</p>
                         <p>
                             <strong>Grand Totals</strong>
@@ -106,13 +107,22 @@
 
                         <p>Debit Grand Totals &colon; {{ $source['debitGrandTotals'] }}</p>
                         <p>Credit Grand Totals &colon; {{ $source['creditGrandTotals'] }}</p>
+                        @else
+                            @if($interimPeriod == 'Monthly')
+                            <p>No financial information was fround from General Ledger for the month of {{ date('F', strtotime($tbDate)) }}</p>
+                            @elseif($interimPeriod == 'Quarterly')
+                            <p>No financial information was fround from General Ledger for {{ $quarter }}</p>
+                            @else
+                            <p>No financial information was fround from General Ledger for {{ date('Y', strtotime($tbDate)) }}</p>
+                            @endif
+                        @endif
                     </div>
                 @endif
                 </div>
 
             </div>
 
-            <section x-data="{ withGLSource: @entangle('importedFromGL') }" class="w-full flex items-center justify-between md:w-96">
+            <section x-data="{ withGLSource: @entangle('tbData') }" class="w-full flex items-center justify-between md:w-96">
                 <button class="border-accentOne border-2 rounded-lg px-4 py-2" type="button" wire:click="cancel">
                     Cancel
                 </button>
@@ -124,7 +134,7 @@
     </section>
 
     <section class="hidden grow text-center md:block sm:h-136 2xl:h-160">
-        @if($tbData)
+        @if($tbData && $source['accountCodes'] > 0)
         <livewire:financial-reporting.trial-balance-template
             :data="$tbData"
             :totalsData="$tbDataTotals"
@@ -136,8 +146,8 @@
         @endif
 
         @if($tbData && !$isTbBalanced)
-        <section class="w-full flex p-4 mt-4 items-start border-2 border-dashed border-secondary rounded-lg">
-            <p class="text-secondary text-left">WARNING: The generated Trial Balance report is unbalanced. Adding this report will send a notification to the General Ledger module for resolution.</p>
+        <section class="w-full flex p-4 mt-4 items-start border-2 border-dashed border-accentTwo rounded-lg">
+            <p class="text-black text-left">WARNING: The generated Trial Balance report is unbalanced. Adding this report will send a notification to the General Ledger module for resolution.</p>
         </section>
         @endif
     </section>
