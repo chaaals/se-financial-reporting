@@ -177,13 +177,13 @@ class AddTrialBalance extends Component
             $months = [];
             switch ($this->quarter) {
                 case 'Q1':
-                    $months = ['01', '02', '03'];
+                    $months = ['1', '2', '3'];
                     break;
                 case 'Q2':
-                    $months = ['04', '05', '06'];
+                    $months = ['4', '5', '6'];
                     break;
                 case 'Q3':
-                    $months = ['07', '08', '09'];
+                    $months = ['7', '8', '9'];
                     break;
                 case 'Q4':
                     $months = ['10', '11', '12'];
