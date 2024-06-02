@@ -46,7 +46,6 @@
         </section>
     </section>
 
-
     @if($collectionName)
     <h1 x-cloak x-show="showOverview" class="mb-2"><strong>{{ $collectionName }}</strong></h1>
     <section x-cloak x-show="showOverview" class="flex flex-auto gap-4">
@@ -86,4 +85,40 @@
         <p>Start by creating a {{ $filterQuarter }} Trial Balance report.</p>
     </section>
     @endif
+
+    <section x-cloak x-show="showActivity">
+        <section class="h-160 bg-white rounded-t-lg overflow-hidden overflow-y-scroll scrollbar sm:h-128 2xl:h-128">
+            <table class="w-full">
+                <thead>
+                    <th class="w-36 bg-primary text-white relative text-left p-2 sticky top-0">
+                        Activity Description
+                    </th>
+                    <th class="w-36 bg-primary text-white relative text-left p-2 sticky top-0">
+                        Date
+                    </th>
+                    <th class="w-36 bg-primary text-white relative text-left p-2 sticky top-0">
+                        Performed By
+                    </th>
+                </thead>
+
+                <tbody>
+                    @foreach($logs as $log)
+                        <x-financial-reporting.activity-log :log="$log" />
+                    @endforeach
+                </tbody>
+            </table>
+
+        </section>
+        <section class="flex items-center justify-between px-4">
+            <div></div>
+            <div class="w-32 flex items-center justify-between p-4">
+                <button wire:click="previous">
+                    <x-financial-reporting.assets.arrow-left />
+                </button>
+                <button wire:click="next">
+                    <x-financial-reporting.assets.arrow-right />
+                </button>
+            </div>
+        </section>
+    </section>
 </section>

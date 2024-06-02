@@ -6,11 +6,13 @@ use App\Models\FinancialStatement;
 use App\Models\FinancialStatementCollection;
 use App\Models\TrialBalance;
 use Asantibanez\LivewireCharts\Models\PieChartModel;
-use Livewire\Attributes\Reactive;
 use Livewire\Component;
+use Livewire\WithPagination;
+use Spatie\Activitylog\Models\Activity;
 
 class Home extends Component
 {
+    use WithPagination;
     public $user;
     public $trialBalances;
     public $financialStatements;
@@ -26,6 +28,8 @@ class Home extends Component
     public $sfpo;
     public $sfpe;
     public $scf;
+    public $logs;
+    public $hasMorePages;
 
     public function mount($user){
         $this->user = $user;
@@ -105,6 +109,16 @@ class Home extends Component
             }
         }
     }
+
+    public function previous(){
+        $this->previousPage();
+    }
+
+    public function next(){
+        if($this->hasMorePages){
+            $this->nextPage();
+        }
+    }
     
     public function render()
     {
@@ -114,6 +128,9 @@ class Home extends Component
         $sfpePieModel = $this->parseStatement($this->sfpe, (new PieChartModel())->setTitle('Financial Performance'));
         $scfPieModel = $this->parseStatement($this->scf, (new PieChartModel())->setTitle('Cash Flows'));
 
+        $logsQuery = Activity::where('properties->role', 'accounting')->paginate(10);
+        $this->logs = $logsQuery->items();
+        $this->hasMorePages = $logsQuery->hasMorePages();
 
         return view('livewire.home',[
             'sfpoPieModel' => $sfpoPieModel,
