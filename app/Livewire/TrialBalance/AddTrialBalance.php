@@ -203,17 +203,13 @@ class AddTrialBalance extends Component
 
         // key : val == rowNumber : fsData
         $exportConfig = [];
-        $i = 0;
-        foreach ($jsonConfig as $key => $value) {
+        for ($i = 0; $i < count($accountCodes); $i++) {
             if (array_key_exists($accountCodes[$i], $jsonConfig)) {
-                $exportConfig[$value] = [
-                    'credit' => $credits[$i],
-                    'debit' => $debits[$i],
-                ];
-            }
-            $i += 1;
-            if ($i >= count($accountCodes)) {
-                break;
+                if (!array_key_exists($jsonConfig[$accountCodes[$i]], $exportConfig)) {
+                    $exportConfig[$jsonConfig[$accountCodes[$i]]] = ['debit' => 0, 'credit' => 0];
+                }
+                $exportConfig[$jsonConfig[$accountCodes[$i]]]['credit'] += $credits[$i];
+                $exportConfig[$jsonConfig[$accountCodes[$i]]]['debit'] += $debits[$i];
             }
         }
 
