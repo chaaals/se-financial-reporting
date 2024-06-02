@@ -275,14 +275,10 @@ class AddTrialBalance extends Component
         unlink($this->importedFromGL);
     }
 
-    public function testGLIntegration(){
-        $this->importedFromGL = true;
-    }
-
     public function resetImport()
     {
-        if ($this->tbData && $this->importedSpreadsheet) {
-            $this->reset(['tbData', 'importedSpreadsheet']);
+        if ($this->tbData && $this->importedFromGL) {
+            $this->reset(['tbData', 'tbDataTotals', 'importedFromGL', 'source']);
         }
     }
     public function cancel()
