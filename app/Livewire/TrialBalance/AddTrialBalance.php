@@ -286,10 +286,6 @@ class AddTrialBalance extends Component
 
     public function render()
     {
-        if ($this->importedFromGL) {
-            // $this->getTBData();
-        }
-
         return view('livewire.trial-balance.add-trial-balance');
     }
 }

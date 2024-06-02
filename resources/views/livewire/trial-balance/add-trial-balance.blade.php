@@ -83,7 +83,7 @@
                             <strong>General Ledger Source Details</strong>
                         </p>
 
-                        <button type="button" class="underline hover:text-secondary" wire:click="testGLIntegration" x-on:click="uploading=true">Preview</button>
+                        <button type="button" class="underline hover:text-secondary" wire:click="importFromGL" x-on:click="uploading=true">Preview</button>
                         
                         <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" x-show="uploading" x-cloak>
                             <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-gray-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -141,6 +141,7 @@
         @if($tbData)
         <livewire:financial-reporting.trial-balance-template
             :data="$tbData"
+            :totalsData="$tbDataTotals"
         />
         @else
         <section class="w-full h-full flex items-center justify-center border-2 border-dashed border-primary">

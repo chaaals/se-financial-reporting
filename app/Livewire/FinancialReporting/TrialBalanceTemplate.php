@@ -7,6 +7,7 @@ use Livewire\Component;
 class TrialBalanceTemplate extends Component
 {
     public $data;
+    public $totalsData;
     public $accountTitles = [
         "assets" => [
             "cashOnHand" => [
@@ -16,6 +17,9 @@ class TrialBalanceTemplate extends Component
             "cashInBankLocalCurrency" => [
                 "1 01 02 010" => "Cash in Bank - Local Currency Current Account",
                 "1 02 01 010" => "Cash in Bank - Local Currency Time Deposits"
+            ],
+            "financialAssets" => [
+                "1 02 05 010" => "Guaranty Deposits"
             ],
             "loansAndReceivable" => [
                 "1 03 01 010" => "Accounts Receivable",
@@ -234,45 +238,13 @@ class TrialBalanceTemplate extends Component
         ]
     ];
 
-    public function mount(string $data){
+    public function mount(string $data, string $totalsData){
         $this->data = json_decode($data, true);
+        $this->totalsData = json_decode($totalsData, true);
     }
 
     public function render()
     {
-        $getTotalDebit = function (string $parent, $items, bool $verbose) {
-            $debit = 0;
-    
-            foreach($items as $item){
-                foreach($this->accountTitles[$parent][$item] as $code=>$title){
-                    if($this->data[$code]['debit']){
-                        $debit += $this->data[$code]['debit'];
-                    }
-                }            
-            }
-            // array_push($this->debitTotals, $debit);
-            // $this->dispatch('add-value', type: 'debit', payload: $debit);
-            // if($verbose){
-            //     return $debit;
-            // }
-        };
-        $getTotalCredit = function (string $parent, $items, bool $verbose){
-            $credit = 0;
-    
-            foreach($items as $item){
-                foreach($this->accountTitles[$parent][$item] as $code=>$title){
-                    if($this->data[$code]['credit']){
-                        $credit += $this->data[$code]['credit'];
-                    }
-                }
-            }
-            // array_push($this->debitTotals, $credit);
-            // $this->dispatch('add-value', type: 'credit', payload: $credit);
-            // if($verbose){
-            //     return $credit;
-            // }
-        };
-        
-        return view('livewire.financial-reporting.trial-balance-template', compact(['getTotalDebit', 'getTotalCredit']));
+        return view('livewire.financial-reporting.trial-balance-template');
     }
 }
