@@ -76,8 +76,8 @@
 
             <div x-data="{ withQuarter: @entangle('quarter')}" class="mb-4">
                 <label class="text-md font-bold" for="source">Source</label>
-
                 <div class="w-full h-44 relative mb-4 rounded-md bg-primary bg-opacity-5 border-2 border-dashed border-primary border-opacity-30 md:w-96">
+                @if(!$importedFromGL)
                     <div class="w-full h-full flex flex-col items-center justify-center md:w-96">
                         <p>
                             <strong>General Ledger Source Details</strong>
@@ -92,7 +92,19 @@
                             </svg>
                         </div>
                     </div>
+                @elseif($source)
+                    <div class="p-4">
+                        <p class="mb-2">Successfully gathered financial information from <strong>{{ $source['accountCodes'] }}</strong> ledger entries.</p>
+                        <p>
+                            <strong>Grand Totals</strong>
+                        </p>
+
+                        <p>Debit Grand Totals &colon; {{ $source['debitGrandTotals'] }}</p>
+                        <p>Credit Grand Totals &colon; {{ $source['creditGrandTotals'] }}</p>
+                    </div>
+                @endif
                 </div>
+
             </div>
 
             <section x-data="{ withGLSource: @entangle('importedFromGL') }" class="w-full flex items-center justify-between md:w-96">

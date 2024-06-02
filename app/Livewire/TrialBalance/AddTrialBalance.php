@@ -224,6 +224,12 @@ class AddTrialBalance extends Component
         // imported from gl
         $this->importedFromGL = storage_path('app/' . $newFilePath);
         $this->getTBData();
+
+        $this->source = [
+            "accountCodes" => count($accountCodes),
+            "debitGrandTotals" => $this->debitGrandTotals,
+            "creditGrandTotals" => $this->creditGrandTotals,
+        ];
     }
 
     private function getTBData()
