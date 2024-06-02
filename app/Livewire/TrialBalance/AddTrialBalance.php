@@ -170,7 +170,7 @@ class AddTrialBalance extends Component
         $jsonConfig = json_decode($jsonConfig, true);
 
         // query data from GL
-        $queryMonth = date('m', strtotime($this->tbDate));
+        $queryMonth = ltrim(date('m', strtotime($this->tbDate)), '0');
         $queryYear = date('Y', strtotime($this->tbDate));
         $this->interimPeriod = trim($this->interimPeriod);
         if ($this->interimPeriod == 'Quarterly') {
