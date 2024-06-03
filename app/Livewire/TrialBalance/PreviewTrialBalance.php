@@ -73,7 +73,7 @@ class PreviewTrialBalance extends Component
         $this->all_tb_data = $this->trial_balance->getRelation('tbData');
 
         $this->trial_balance_data = $this->all_tb_data[$this->active_trial_balance_data];
-        $this->isBalanced = ($this->trial_balance->debit_grand_totals + $this->trial_balance->credit_grand_totals) == 0;
+        $this->isBalanced = ($this->trial_balance->debit_grand_totals - $this->trial_balance->credit_grand_totals) == 0;
 
         if ($this->trial_balance->tb_type) {
             $this->tbExportFormat = 'TB_' . strtoupper($this->trial_balance->tb_type);
@@ -383,7 +383,7 @@ class PreviewTrialBalance extends Component
         }
         $this->debitGrandTotals = $tbDataTotals['GRAND TOTALS']['debit'];
         $this->creditGrandTotals = $tbDataTotals['GRAND TOTALS']['credit'];
-        $this->isBalanced = ($this->debitGrandTotals + $this->creditGrandTotals) == 0;
+        $this->isBalanced = ($this->debitGrandTotals - $this->creditGrandTotals) == 0;
 
         $rebalanced = json_encode($tbData);
         $rebalancedTotals = json_encode($tbDataTotals);
