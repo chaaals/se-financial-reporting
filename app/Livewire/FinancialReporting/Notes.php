@@ -36,6 +36,8 @@ class Notes extends Component
             "author" => "$firstName $lastName"
         ]);
 
+        $user = $firstName . " " . $lastName;
+        activity()->withProperties(['user' => $user, 'role' => auth()->user()->role])->log("Created a note content $this->content");
         $this->note = null;
     }
 
