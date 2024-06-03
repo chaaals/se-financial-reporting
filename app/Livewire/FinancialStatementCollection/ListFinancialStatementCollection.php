@@ -106,6 +106,9 @@ class ListFinancialStatementCollection extends Component
         $collection_name = $this->fsCollection->collection_name;
         FinancialStatementCollection::where('collection_id', '=', $collection_id)->delete();
 
+        $user = auth()->user()->first_name . " " . auth()->user()->last_name;
+        activity()->withProperties(['user' => $user, 'role' => auth()->user()->role])->log("Archived $collection_name");
+
         $this->setFSCollection();
         session()->now('success', "$collection_name has been archived.");
     }
