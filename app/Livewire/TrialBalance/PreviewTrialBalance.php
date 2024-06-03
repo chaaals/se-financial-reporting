@@ -12,8 +12,8 @@ use Illuminate\Support\Facades\Route;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Maatwebsite\Excel\Facades\Excel;
-use DB;
-use Storage;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
@@ -57,14 +57,15 @@ class PreviewTrialBalance extends Component
 
     protected $listeners = ["rebalance" => "refresh"];
 
-    public function mount(){
+    public function mount()
+    {
         $tb_id = Route::current()->parameter("tb_id");
         // $query = TrialBalance::with('tbData')->where('tb_id', $tb_id)->get();
         $query = TrialBalance::withTrashed()->with('tbData')->where('tb_id', $tb_id)->get();
         // $tb_data_query = TrialBalanceHistory::where('tb_id', $tb_id)->get();
 
-        foreach($query as $tb){
-            $this->trial_balance= $tb;
+        foreach ($query as $tb) {
+            $this->trial_balance = $tb;
         }
 
         // $this->trial_balance->orderByDesc()
@@ -72,18 +73,19 @@ class PreviewTrialBalance extends Component
         $this->all_tb_data = $this->trial_balance->getRelation('tbData');
 
         $this->trial_balance_data = $this->all_tb_data[$this->active_trial_balance_data];
-        $this->isBalanced = ($this->trial_balance->debit_grand_totals + $this->trial_balance->credit_grand_totals) == 0; 
+        $this->isBalanced = ($this->trial_balance->debit_grand_totals + $this->trial_balance->credit_grand_totals) == 0;
 
-        if($this->trial_balance->tb_type){
-            $this->tbExportFormat = 'TB_'.strtoupper($this->trial_balance->tb_type);
+        if ($this->trial_balance->tb_type) {
+            $this->tbExportFormat = 'TB_' . strtoupper($this->trial_balance->tb_type);
         }
 
         $this->filePath = 'public/uploads/' . $this->tbExportFormat . '.xlsx';
         $this->exportableFilePath = 'uploads/' . $this->tbExportFormat . '.xlsx';
     }
-    
 
-    public function setActiveTrialBalanceData(int $index){
+
+    public function setActiveTrialBalanceData(int $index)
+    {
         $this->active_trial_balance_data = $index;
         $this->trial_balance_data = $this->all_tb_data[$index];
 
@@ -91,16 +93,16 @@ class PreviewTrialBalance extends Component
         $this->creditTotals = [];
         $this->debitGrandTotals = 0;
         $this->creditGrandTotals = 0;
-
     }
 
-    public function writeReport(){
-        if($this->attachment or $this->isWriting){
+    public function writeReport()
+    {
+        if ($this->attachment or $this->isWriting) {
             return;
         }
         $this->isWriting = true;
         $this->filename = $this->trial_balance->tb_name;
-        
+
         Storage::copy($this->filePath, $this->exportableFilePath);
         $spreadsheet = IOFactory::load(storage_path('app/' . $this->exportableFilePath));
 
@@ -119,7 +121,7 @@ class PreviewTrialBalance extends Component
                 $exportConfig[$value] = $jsonData[$key];
             }
         }
-        
+
         // write to excel
         foreach ($exportConfig as $row => $value) {
             $spreadsheet->getActiveSheet()->setCellValue('F' . $row, $value['debit']);
@@ -129,10 +131,10 @@ class PreviewTrialBalance extends Component
         // set date on excel
         $tbYear = date('Y', strtotime($this->trial_balance->date));
         $date = [
-            'Q1'=> "March 31, ".$tbYear,
-            'Q2'=> "June 31, ".$tbYear,
-            'Q3'=> "September 31, ".$tbYear,
-            'Q4'=> "December 31, ".$tbYear,
+            'Q1' => "March 31, " . $tbYear,
+            'Q2' => "June 31, " . $tbYear,
+            'Q3' => "September 31, " . $tbYear,
+            'Q4' => "December 31, " . $tbYear,
         ];
         $dateHeader = $spreadsheet->getActiveSheet()->getCell('A6')->getValue();
         if ($this->trial_balance->interim_period === 'Quarterly') {
@@ -143,35 +145,37 @@ class PreviewTrialBalance extends Component
             $quarter = "Q$quarter";
             $newDateHeader = str_replace('<date>', $date[$quarter], $dateHeader);
         } else {
-            $newDateHeader = 'For the Year Ended December 31, '.$tbYear;
+            $newDateHeader = 'For the Year Ended December 31, ' . $tbYear;
         }
         $spreadsheet->getActiveSheet()->setCellValue('A6', $newDateHeader);
 
         $this->attachment = new Xlsx($spreadsheet);
-        $this->attachment->save(storage_path('app/'.$this->exportableFilePath));
+        $this->attachment->save(storage_path('app/' . $this->exportableFilePath));
 
         $this->isWriting = false;
     }
 
-    public function mailReport(){
-        if(!$this->attachment){
+    public function mailReport()
+    {
+        if (!$this->attachment) {
             $this->writeReport();
         }
 
         $this->validate();
 
-        Mail::to($this->receiver)->send(new FinancialReportEmail($this->subject, $this->message, $this->filename, storage_path('app/'.$this->exportableFilePath)));
+        Mail::to($this->receiver)->send(new FinancialReportEmail($this->subject, $this->message, $this->filename, storage_path('app/' . $this->exportableFilePath)));
 
         session()->now("success", "Successfully mailed $this->filename");
 
         $this->reset('subject', 'receiver', 'message');
     }
 
-    public function export(){
-        if(!$this->attachment){
+    public function export()
+    {
+        if (!$this->attachment) {
             $this->writeReport();
         }
-        
+
         $headers = [
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         ];
@@ -179,7 +183,7 @@ class PreviewTrialBalance extends Component
         session()->now("success", "Successfully exported file.");
 
         $this->attachment = null;
-        return response()->download(storage_path('app/'.$this->exportableFilePath), $this->filename.'.xlsx', $headers)
+        return response()->download(storage_path('app/' . $this->exportableFilePath), $this->filename . '.xlsx', $headers)
             ->deleteFileAfterSend(true);
     }
 
@@ -210,7 +214,7 @@ class PreviewTrialBalance extends Component
     //             $exportConfig[$value] = $jsonData[$key];
     //         }
     //     }
-        
+
     //     // write to excel
     //     foreach ($exportConfig as $row => $value) {
     //         $spreadsheet->getActiveSheet()->setCellValue('F' . $row, $value['debit']);
@@ -244,7 +248,7 @@ class PreviewTrialBalance extends Component
     //         'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     //     ];
     //     $filename = $this->trial_balance->tb_name;
-        
+
     //     $sessionMessage = "";
     //     if($this->isBalanced && $this->trial_balance->approved && auth()->user()->role === "accounting"){
     //         $reciever = 'cmlching2021@plm.edu.ph';
@@ -253,7 +257,7 @@ class PreviewTrialBalance extends Component
     //     } else {
     //         $sessionMessage = "Successfully exported Trial Balance.";
     //     }
-        
+
     //     session()->now("success", $sessionMessage);
     //     return response()->download(storage_path('app/'.$newFilePath), $filename.'.xlsx', $headers)
     //         ->deleteFileAfterSend(true);
@@ -303,12 +307,13 @@ class PreviewTrialBalance extends Component
         $this->refetch();
     }
 
-    public function refetch(){
+    public function refetch()
+    {
         $query = TrialBalance::with('tbData')->orderBy('created_at', 'desc')->where('tb_id', $this->trial_balance->tb_id)->get();
         // $tb_data_query = TrialBalanceHistory::where('tb_id', $tb_id)->get();
 
-        foreach($query as $tb){
-            $this->trial_balance= $tb;
+        foreach ($query as $tb) {
+            $this->trial_balance = $tb;
         }
 
         $this->all_tb_data = $this->trial_balance->getRelation('tbData')->toArray();
@@ -339,7 +344,7 @@ class PreviewTrialBalance extends Component
         //     $quarter = ceil($tb_month / 3);
         //     $this->editedQuarter = "Q$quarter";
         // }
-        
+
         // update fields
         // $this->trial_balance->report_name = $this->editedReportName;
         // $this->trial_balance->date = $this->editedDate;
@@ -356,30 +361,30 @@ class PreviewTrialBalance extends Component
 
 
     public function render()
-    {   
+    {
         // if($this->trial_balance->trashed()){
         //     dd('Report is archived');
         // }
 
-        if(auth()->user()->role === "accounting"){
-            if(in_array($this->trial_balance->tb_status, ['Draft', 'Change Requested'])){
+        if (auth()->user()->role === "accounting") {
+            if (in_array($this->trial_balance->tb_status, ['Draft', 'Change Requested'])) {
                 $this->selectedStatusOption = "For Approval";
             } else {
                 $this->selectedStatusOption = "Draft";
             }
         }
 
-        if(auth()->user()->role === "ovpf"){
-            if($this->trial_balance->tb_status === "Draft") {
+        if (auth()->user()->role === "ovpf") {
+            if ($this->trial_balance->tb_status === "Draft") {
                 $this->selectedStatusOption = "For Approval";
-            } 
-            
-            if($this->trial_balance->tb_status === "Change Requested"){
+            }
+
+            if ($this->trial_balance->tb_status === "Change Requested") {
                 $this->selectedStatusOption = "Approved";
             }
 
-            if($this->trial_balance->tb_status === "For Approval") {
-                if($this->isBalanced){
+            if ($this->trial_balance->tb_status === "For Approval") {
+                if ($this->isBalanced) {
                     $this->reportStatusOptions = ["Approved", "Change Requested"];
                     $this->selectedStatusOption = "Approved";
                 } else {
@@ -388,9 +393,11 @@ class PreviewTrialBalance extends Component
             }
         }
 
-        return view('livewire.trial-balance.preview-trial-balance',
-            ["statusColor" => strtolower(join("", explode(" ",$this->trial_balance->tb_status))),
-            "numModifications" => count($this->all_tb_data)
+        return view(
+            'livewire.trial-balance.preview-trial-balance',
+            [
+                "statusColor" => strtolower(join("", explode(" ", $this->trial_balance->tb_status))),
+                "numModifications" => count($this->all_tb_data)
             ]
         );
     }
