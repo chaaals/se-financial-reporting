@@ -130,7 +130,8 @@ class Home extends Component
 
         $logsQuery = null;
         if(auth()->user()->role == 'accounting'){
-            $logsQuery = Activity::where('properties->role', auth()->user()->role)->paginate(10);
+            $user = auth()->user()->first_name . " " . auth()->user()->last_name;
+            $logsQuery = Activity::where('properties->role', auth()->user()->role)->where('properties->user', $user)->paginate(10);
         } else {
             $logsQuery = Activity::select('*')->paginate(10);
         }
