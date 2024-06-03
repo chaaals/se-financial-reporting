@@ -90,10 +90,42 @@
             </div>
             @endif
 
-            <div>
-                <livewire:financial-reporting.suggestion-search
-                    :interimPeriod="$interimPeriod"
-                />
+            <div x-data="{isToolTipVisible: false}">
+                <section class="flex flex-col justify-center gap-1.5">
+                    @foreach($trialBalances as $key=>$tb)
+                    <label
+                        class="flex items-center gap-2 text-md font-bold @if(count($tb['options']) == 0) {{"text-neutral"}}@endif" for="trialBalances">
+                        Trial Balance
+
+                        <div class="relative" x-on:mouseenter="isToolTipVisible = true" x-on:mouseleave="isToolTipVisible = false">
+                            <x-financial-reporting.assets.info />
+                            <div
+                                x-cloak
+                                x-show="isToolTipVisible"
+                                class="absolute -left-46 -top-20 rounded-t-lg rounded-bl-lg bg-black bg-opacity-75 w-48 p-2 text-sm after:content-[''] after:absolute after:top-full after:left-2/4 after:ml-22 after:border-4 after:border-solid after:border-t-black after:border-opacity-75 after:border-r-transparent after:border-b-transparent after:border-l-transparent">
+                                <p class="text-white text-xs">
+                                    Kindly select an interim period first before searching for a Trial Balance.
+                                </p>
+                            </div>
+                        </div>
+                    </label>
+                    <select
+                            id="trialBalances"
+                            class="w-full text-lg appearance-none rounded-lg border-neutral pr-8 md:w-96 md:text-sm"
+                            @if (count($tb['options']) == 0)
+                                disabled
+                            @endif
+                            wire:model={{ $tb['model'] }}
+                        >
+                            <option selected hidden>{{ $key }}</option>
+                            @if(count($tb['options']) > 0)
+                                @foreach($tb['options'] as $i=>$option)
+                                    <option value='{{ $option['tb_id'] }}'>{{ $option['tb_name'] }}</option>
+                                @endforeach
+                            @endif
+                    </select>
+                    @endforeach
+                </section>
                 <div class="mb-4">@error('tbID')<span class="text-amber-500">{{ $message }}</span>@enderror</div>
             </div>
 
