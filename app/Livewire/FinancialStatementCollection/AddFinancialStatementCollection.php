@@ -25,6 +25,12 @@ class AddFinancialStatementCollection extends Component
     public $tbName;
     public $fscID;
     public $fsTypes = ["SFPO", "SFPE", "SCF"];
+    public $trialBalances = [
+        'Trial Balance' => [
+            'model' => 'tbID',
+            'options' => []
+        ]
+    ];
 
     protected $listeners = ["setTrialBalance" => "setTrialBalance"];
 
@@ -189,11 +195,16 @@ class AddFinancialStatementCollection extends Component
             $this->rules['quarter'] = 'required|in:Q1,Q2,Q3,Q4';
             $quarter = ceil($fr_month / 3);
             $this->quarter = "Q$quarter";
+            
+            
+            $this->trialBalances['Trial Balance']['options'] = TrialBalance::select(['tb_id', 'tb_name'])->where('interim_period', 'Quarterly')->where('quarter', $this->quarter)->where('approved', true)->get()->toArray();
         }
 
         if ($this->interimPeriod === "Annual") {
             $this->quarter = null;
+            $this->trialBalances['Trial Balance']['options'] = TrialBalance::select(['tb_id', 'tb_name'])->where('interim_period', 'Annual')->get()->toArray();
         }
+
 
         return view('livewire.financial-statement-collection.add-financial-statement-collection');
     }
