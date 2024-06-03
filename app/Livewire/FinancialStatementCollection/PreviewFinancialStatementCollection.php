@@ -122,6 +122,9 @@ class PreviewFinancialStatementCollection extends Component
 
         Mail::to($this->receiver)->send(new FinancialReportEmail($this->subject, $this->message, $this->filename, storage_path('app/'.$this->exportableFilePath)));
 
+        $user = auth()->user()->first_name . " " . auth()->user()->last_name;
+        activity()->withProperties(['user' => $user, 'role' => auth()->user()->role])->log("Mailed $this->filename to $this->receiver");
+
         session()->now("success", "Successfully mailed $this->filename");
 
         $this->reset('subject', 'receiver', 'message');
@@ -133,6 +136,9 @@ class PreviewFinancialStatementCollection extends Component
         }
 
         $headers = ['Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',];
+
+        $user = auth()->user()->first_name . " " . auth()->user()->last_name;
+        activity()->withProperties(['user' => $user, 'role' => auth()->user()->role])->log("Exported $this->filename");
 
         $this->attachment = null;
         session()->now("success", "Successfully exported Financial Statements");
@@ -224,6 +230,9 @@ class PreviewFinancialStatementCollection extends Component
         $this->fsCollection->approved = $this->selectedStatusOption === "Approved";
         $this->fsCollection->collection_status = $this->selectedStatusOption;
         $this->fsCollection->save();
+
+        $user = auth()->user()->first_name . " " . auth()->user()->last_name;
+        activity()->withProperties(['user' => $user, 'role' => auth()->user()->role])->log("Updated $this->filename");
 
         session()->now("success", "Financial Statement Collection has been updated.");
         // exit edit mode

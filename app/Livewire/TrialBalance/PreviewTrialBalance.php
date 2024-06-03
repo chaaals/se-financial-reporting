@@ -165,6 +165,10 @@ class PreviewTrialBalance extends Component
 
         Mail::to($this->receiver)->send(new FinancialReportEmail($this->subject, $this->message, $this->filename, storage_path('app/' . $this->exportableFilePath)));
 
+        $user = auth()->user()->first_name . " " . auth()->user()->last_name;
+        $tbName = $this->trial_balance->tb_name;
+        activity()->withProperties(['user' => $user, 'role' => auth()->user()->role])->log("Mailed $tbName to $this->receiver");
+
         session()->now("success", "Successfully mailed $this->filename");
 
         $this->reset('subject', 'receiver', 'message');
@@ -179,6 +183,10 @@ class PreviewTrialBalance extends Component
         $headers = [
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         ];
+
+        $user = auth()->user()->first_name . " " . auth()->user()->last_name;
+        $tbName = $this->trial_balance->tb_name;
+        activity()->withProperties(['user' => $user, 'role' => auth()->user()->role])->log("Exported $tbName");
 
         session()->now("success", "Successfully exported file.");
 
@@ -395,6 +403,10 @@ class PreviewTrialBalance extends Component
             "date" => $this->trial_balance->tb_date
         ]);
 
+        $user = auth()->user()->first_name . " " . auth()->user()->last_name;
+        $tbName = $this->trial_balance->tb_name;
+        activity()->withProperties(['user' => $user, 'role' => auth()->user()->role])->log("Rebalanced $tbName");
+
         session()->now("success", "Trial Balance has been rebalanced");
         unlink(storage_path('app/' . $newFilePath));
         $this->refetch();
@@ -446,6 +458,10 @@ class PreviewTrialBalance extends Component
         $this->trial_balance->approved = $this->selectedStatusOption === "Approved";
         $this->trial_balance->tb_status = $this->selectedStatusOption;
         $this->trial_balance->save();
+
+        $user = auth()->user()->first_name . " " . auth()->user()->last_name;
+        $tbName = $this->trial_balance->tb_name;
+        activity()->withProperties(['user' => $user, 'role' => auth()->user()->role])->log("Updated $tbName");
 
         session()->now("success", "Trial Balance has been updated.");
         // exit edit mode

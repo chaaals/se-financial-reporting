@@ -21,7 +21,7 @@
             @else
             <button
                 x-on:click="showOverview=false;showActivity=true;"
-                class="w-28 p-2 rounded-full"
+                class="w-36 p-2 rounded-full"
                 :class="showActivity ? 'bg-primary text-white' : 'bg-transparent text-neutralFour'">
                 Recent Activity
             </button>
@@ -75,7 +75,7 @@
         </section>
     </section>
     @else
-    <section class="flex flex-col items-center">
+    <section x-cloak x-show="showOverview" class="flex flex-col items-center">
         <x-financial-reporting.assets.no-results />
         <h1 class="text-lg">
         <strong>

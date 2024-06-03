@@ -128,7 +128,14 @@ class Home extends Component
         $sfpePieModel = $this->parseStatement($this->sfpe, (new PieChartModel())->setTitle('Financial Performance'));
         $scfPieModel = $this->parseStatement($this->scf, (new PieChartModel())->setTitle('Cash Flows'));
 
-        $logsQuery = Activity::where('properties->role', auth()->user()->role)->paginate(10);
+        $logsQuery = null;
+        if(auth()->user()->role == 'accounting'){
+            $user = auth()->user()->first_name . " " . auth()->user()->last_name;
+            $logsQuery = Activity::where('properties->role', auth()->user()->role)->where('properties->user', $user)->paginate(10);
+        } else {
+            $logsQuery = Activity::select('*')->paginate(10);
+        }
+
         $this->logs = $logsQuery->items();
         $this->hasMorePages = $logsQuery->hasMorePages();
 
