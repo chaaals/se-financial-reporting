@@ -79,7 +79,7 @@ class AddTrialBalance extends Component
             if ($this->interimPeriod === "Annual") {
                 $this->tbName = "Annual Trial Balance " . date('Y');
                 $this->tbType = "pre";
-            } else if($this->interimPeriod === "Quarterly"){
+            } else if ($this->interimPeriod === "Quarterly") {
                 $this->tbName = "$this->quarter Trial Balance " . date('Y');
             } else {
                 $this->tbName = "Trial Balance " . date('Y-m');
@@ -220,7 +220,7 @@ class AddTrialBalance extends Component
         // imported from gl
         $this->importedFromGL = storage_path('app/' . $newFilePath);
 
-        if(count($accountCodes) > 0){
+        if (count($accountCodes) > 0) {
             $this->getTBData();
         }
 
@@ -264,7 +264,7 @@ class AddTrialBalance extends Component
 
         $this->debitGrandTotals = $tbDataTotals['GRAND TOTALS']['debit'];
         $this->creditGrandTotals = $tbDataTotals['GRAND TOTALS']['credit'];
-        $this->isTbBalanced = ($this->debitGrandTotals + $this->creditGrandTotals) == 0;
+        $this->isTbBalanced = ($this->debitGrandTotals - $this->creditGrandTotals) == 0;
 
         $this->tbData = json_encode($tbData);
         $this->tbDataTotals = json_encode($tbDataTotals);
