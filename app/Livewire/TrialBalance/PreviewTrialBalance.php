@@ -281,29 +281,122 @@ class PreviewTrialBalance extends Component
         $this->editMode = !$this->editMode;
     }
 
-    public function rebalance(){
-        // TODO: Add logic that refetches GL
-        $tbData = $this->trial_balance_data["tb_data"];
-        $tbTotals = $this->trial_balance_data["totals_data"];
-        $rebalanced = json_decode($tbData, true);
+    public function rebalance()
+    {
+        // load excel template
+        if ($this->trial_balance->tb_type) {
+            $tbExportFormat = 'TB_' . strtoupper($this->trial_balance->tb_type);
+        } else {
+            $tbExportFormat = "TB_PRE";
+        }
+        $filePath = 'public/uploads/' . $tbExportFormat . '.xlsx';
+        $newFilePath = 'uploads/' . $tbExportFormat . '.xlsx';
+        Storage::copy($filePath, $newFilePath);
+        $spreadsheet = IOFactory::load(storage_path('app/' . $newFilePath));
 
-        foreach($rebalanced as $code=>$value){
-            if (rand(0,1) < 0.25){
-                $rebalanced[$code]['debit'] = rand(1, 500);
-                $rebalanced[$code]['credit'] = rand(1, 500);
+        // load export config
+        $tbExportConfig = DB::select('SELECT template FROM report_templates WHERE template_name = ?', [$tbExportFormat]);
+        $jsonConfig = array_column($tbExportConfig, 'template')[0];
+        $jsonConfig = json_decode($jsonConfig, true);
+
+        // query data from GL
+        $queryMonth = ltrim(date('m', strtotime($this->trial_balance->tb_date)), '0');
+        $queryYear = date('Y', strtotime($this->trial_balance->tb_date));
+        $this->trial_balance->interim_period = trim($this->trial_balance->interim_period);
+        if ($this->trial_balance->interim_period == 'Quarterly') {
+            $months = [];
+            switch ($this->trial_balance->quarter) {
+                case 'Q1':
+                    $months = ['1', '2', '3'];
+                    break;
+                case 'Q2':
+                    $months = ['4', '5', '6'];
+                    break;
+                case 'Q3':
+                    $months = ['7', '8', '9'];
+                    break;
+                case 'Q4':
+                    $months = ['10', '11', '12'];
+                    break;
+            }
+            $res = DB::select("SELECT ls_account_title_code,ls_total_credit,ls_total_debit FROM ledgersheet_total_debit_credit WHERE ls_summary_month IN ('" . implode("','", $months) . "') AND ls_summary_year = '$queryYear'");
+        } else if ($this->trial_balance->interim_period == 'Monthly') {
+            $res = DB::select("SELECT ls_account_title_code,ls_total_credit,ls_total_debit FROM ledgersheet_total_debit_credit WHERE ls_summary_month LIKE '$queryMonth%' AND ls_summary_year = '$queryYear'");
+        } else {
+            $res = DB::select("SELECT ls_account_title_code,ls_total_credit,ls_total_debit FROM ledgersheet_total_debit_credit WHERE ls_summary_year = '$queryYear'");
+        }
+
+        // queried data
+        $credits = array_column($res, 'ls_total_credit');
+        $debits = array_column($res, 'ls_total_debit');
+        $accountCodes = array_column($res, 'ls_account_title_code');
+
+        // key : val == rowNumber : fsData
+        $exportConfig = [];
+        for ($i = 0; $i < count($accountCodes); $i++) {
+            if (array_key_exists($accountCodes[$i], $jsonConfig)) {
+                if (!array_key_exists($jsonConfig[$accountCodes[$i]], $exportConfig)) {
+                    $exportConfig[$jsonConfig[$accountCodes[$i]]] = ['debit' => 0, 'credit' => 0];
+                }
+                $exportConfig[$jsonConfig[$accountCodes[$i]]]['credit'] += $credits[$i];
+                $exportConfig[$jsonConfig[$accountCodes[$i]]]['debit'] += $debits[$i];
             }
         }
-    
-        $rebalanced = json_encode($rebalanced);
+
+        // write to excel
+        foreach ($exportConfig as $row => $value) {
+            $spreadsheet->getActiveSheet()->setCellValue('F' . $row, $value['debit']);
+            $spreadsheet->getActiveSheet()->setCellValue('H' . $row, $value['credit']);
+        }
+        $writer = new Xlsx($spreadsheet);
+        $writer->save(storage_path('app/' . $newFilePath));
+
+        // load written xlsx
+        $spreadsheet = IOFactory::load(storage_path('app/' . $newFilePath));
+
+        // re-get tbdata from xlsx
+        $tbImportConfig = DB::select("SELECT template FROM report_templates WHERE template_name = 'tb_pre'");
+        $jsonConfig = array_column($tbImportConfig, 'template')[0];
+        $jsonConfig = json_decode($jsonConfig, true);
+        $tbData = $jsonConfig;
+        foreach ($jsonConfig as $accountCode => $row) {
+            $debit = $spreadsheet->getActiveSheet()->getCell("F" . $row)->getCalculatedValue();
+            $credit = $spreadsheet->getActiveSheet()->getCell("H" . $row)->getCalculatedValue();
+            $tbData[$accountCode] = [
+                "debit" => $debit,
+                "credit" => $credit
+            ];
+        }
+
+        // get totals data from xlsx
+        $tbTotalsConfig = DB::select("SELECT template FROM report_templates WHERE template_name = 'tb_pre_totals'");
+        $totalsConfig = array_column($tbTotalsConfig, 'template')[0];
+        $totalsConfig = json_decode($totalsConfig, true);
+        $tbDataTotals = $totalsConfig;
+        foreach ($totalsConfig as $title => $row) {
+            $debit = $spreadsheet->getActiveSheet()->getCell("F" . $row)->getCalculatedValue();
+            $credit = $spreadsheet->getActiveSheet()->getCell("H" . $row)->getCalculatedValue();
+            $tbDataTotals[$title] = [
+                "debit" => $debit,
+                "credit" => $credit
+            ];
+        }
+        $this->debitGrandTotals = $tbDataTotals['GRAND TOTALS']['debit'];
+        $this->creditGrandTotals = $tbDataTotals['GRAND TOTALS']['credit'];
+        $this->isBalanced = ($this->debitGrandTotals + $this->creditGrandTotals) == 0;
+
+        $rebalanced = json_encode($tbData);
+        $rebalancedTotals = json_encode($tbDataTotals);
 
         TrialBalanceHistory::create([
             "tb_id" => $this->trial_balance->tb_id,
             "tb_data" => $rebalanced,
-            "totals_data" => $tbTotals,
+            "totals_data" => $rebalancedTotals,
             "date" => $this->trial_balance->tb_date
         ]);
 
         session()->now("success", "Trial Balance has been rebalanced");
+        unlink(storage_path('app/' . $newFilePath));
         $this->refetch();
     }
 
