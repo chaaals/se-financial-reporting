@@ -202,7 +202,7 @@ class AddFinancialStatementCollection extends Component
 
         if ($this->interimPeriod === "Annual") {
             $this->quarter = null;
-            $this->trialBalances['Trial Balance']['options'] = TrialBalance::select(['tb_id', 'tb_name'])->where('interim_period', 'Annual')->get()->toArray();
+            $this->trialBalances['Trial Balance']['options'] = TrialBalance::select(['tb_id', 'tb_name'])->where('interim_period', 'Annual')->where('approved', true)->get()->toArray();
         }
 
 
