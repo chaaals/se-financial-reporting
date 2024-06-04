@@ -7,5 +7,6 @@ use Livewire\Volt\Volt;
 Route::middleware('guest')->group(function () {
     Volt::route('login', 'pages.auth.admin-login')
         ->name('login');
-
+    Volt::route('access-denied', 'pages.auth.prod-auth-warning')
+        ->name('access-denied');
 });
