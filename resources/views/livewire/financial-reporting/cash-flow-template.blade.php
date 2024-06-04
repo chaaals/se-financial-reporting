@@ -12,7 +12,7 @@
 
             <tr class="bg-slate-200">
                 <td class="text-left font-bold pl-4">Total Cash Inflows</td>
-                <td>{{ $getTotalAmount('cashInflows', [], true) }}</td>
+                <td>{{ $totalsData['Cash Inflows'] }}</td>
             </tr>
 
             <x-financial-reporting.account-sub-class accountSubClass="Cash Outflows" />
@@ -20,12 +20,12 @@
 
             <tr class="bg-slate-200">
                 <td class="text-left font-bold pl-4">Total Cash Outflows</td>
-                <td>{{ $getTotalAmount('cashOutflows', [], true) }}</td>
+                <td>{{ $totalsData['Cash Outflows'] }}</td>
             </tr>
 
             <tr class="bg-slate-200">
                 <td class="text-left font-bold">Net Cash Flows from Operating Activities</td>
-                <td>{{ $netCash }}</td>
+                <td>{{ $totalsData['Net Cash Flows from Operating Activities'] }}</td>
             </tr>
 
             <x-financial-reporting.account-class accountClass="Cash Flows from Investing Activities" />
@@ -35,14 +35,14 @@
 
             <tr class="bg-slate-200">
                 <td class="text-left font-bold">Net Cash Flows from Investing Activities</td>
-                 <td>{{ $getTotalAmount('cashOutflow', [], true) }}</td>
+                 <td>{{ $totalsData['Net Cash Flows from Investing Activities'] }}</td>
             </tr>
 
             <x-financial-reporting.account-title-items :accountTitles="$accountTitles['others']" :data="$data" />
 
             <tr class="bg-slate-200">
                 <td class="text-left font-bold">Cash Balance at the End of the Quarter</td>
-                <td>{{ $getCashBalanceEOQ() }}</td>
+                <td>{{ $totalsData['Cash Balance at the End of the Quarter'] }}</td>
             </tr>
         </tbody>
     </table>

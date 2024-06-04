@@ -22,10 +22,22 @@
             <tr class="bg-slate-200">
                 <td class="text-left font-bold pl-2">Total Cash</td>
                 <td></td>
-                <td>{{ $getTotalDebit('assets', ['cashOnHand', 'cashInBankLocalCurrency'], true) }}</td>
-                <td>{{ $getTotalCredit('assets', ['cashOnHand', 'cashInBankLocalCurrency'], true) }}</td>
+                <td>{{ $totalsData['Cash']['debit'] ?? '-' }}</td>
+                <td>{{ $totalsData['Cash']['credit'] ?? '-' }}</td>
             </tr>
-            
+
+            {{-- Financial Assets --}}
+            <x-financial-reporting.account-sub-class accountSubClass="Financial Assets" />
+
+            <x-financial-reporting.account-title accountTitle="Financial Assets - Others" />
+            <x-financial-reporting.account-title-items :accountTitles="$accountTitles['assets']['financialAssets']" :data="$data" />
+            <tr class="bg-slate-200">
+                <td class="text-left font-bold pl-2">Total Financial Assets</td>
+                <td></td>
+                <td>{{ $totalsData['Financial Assets']['debit'] ?? '-' }}</td>
+                <td>{{ $totalsData['Financial Assets']['credit'] ?? '-' }}</td>
+            </tr>
+
             {{-- current receivables --}}
             <x-financial-reporting.account-sub-class accountSubClass="Current Receivables" />
 
@@ -41,14 +53,13 @@
             <tr class="mb-4 bg-slate-200">
                 <td class="text-left font-bold pl-2">Total Current Receivables</td>
                 <td></td>
-                <td>{{ $getTotalDebit('assets', ['loansAndReceivable', 'interAgencyReceivables', 'otherReceivables'], true) }}</td>
-                <td>{{ $getTotalCredit('assets', ['loansAndReceivable', 'interAgencyReceivables', 'otherReceivables'], true) }}</td>
+                <td>{{ $totalsData['Current Receivables']['debit'] ?? '-' }}</td>
+                <td>{{ $totalsData['Current Receivables']['credit'] ?? '-' }}</td>
             </tr>
 
             {{-- allowance impairment loss --}}
             <x-financial-reporting.account-title-items :accountTitles="$accountTitles['assets']['allowanceForImpairmentLoss']" :data="$data" />
-            {{ $getTotalDebit('assets', ['allowanceForImpairmentLoss'], false) }}
-            {{ $getTotalCredit('assets', ['allowanceForImpairmentLoss'], false) }}
+
             {{-- inventories --}}
             <x-financial-reporting.account-sub-class accountSubClass="Inventories" />
 
@@ -58,8 +69,8 @@
             <tr class="bg-slate-200">
                 <td class="text-left font-bold pl-2">Total Inventories</td>
                 <td></td>
-                <td>{{ $getTotalDebit('assets', ['inventoryHeldForConsumption'], true) }}</td>
-                <td>{{ $getTotalCredit('assets', ['inventoryHeldForConsumption'], true) }}</td>
+                <td>{{ $totalsData['Inventories']['debit'] ?? '-' }}</td>
+                <td>{{ $totalsData['Inventories']['credit'] ?? '-' }}</td>
             </tr>
 
             {{-- prepayments --}}
@@ -71,8 +82,8 @@
             <tr class="mb-4 bg-slate-200">
                 <td class="text-left font-bold pl-2">Total Prepayments</td>
                 <td></td>
-                <td>{{ $getTotalDebit('assets', ['prepayments'], true) }}</td>
-                <td>{{ $getTotalCredit('assets', ['prepayments'], true) }}</td>
+                <td>{{ $totalsData['Prepayments']['debit'] ?? '-' }}</td>
+                <td>{{ $totalsData['Prepayments']['credit'] ?? '-' }}</td>
             </tr>
 
             {{-- ppe --}}
@@ -99,12 +110,15 @@
             <tr class="bg-slate-200">
                 <td class="text-left font-bold pl-2">Total Property,Plant and Equipment</td>
                 <td></td>
-                <td>{{ $getTotalDebit('assets', ['buildingsAndOtherStructures', 'machineryAndEquipment', 'transportEquipment', 'furnitureFixturesAndBooks', 'constructionInProgress'], true) }}</td>
-                <td>{{ $getTotalCredit('assets', ['buildingsAndOtherStructures', 'machineryAndEquipment', 'transportEquipment', 'furnitureFixturesAndBooks', 'constructionInProgress'], true) }}</td>
+                <td>{{ $totalsData['Property, Plant and Equipment']['debit'] ?? '-' }}</td>
+                <td>{{ $totalsData['Property, Plant and Equipment']['credit'] ?? '-' }}</td>
             </tr>
-            {{-- <tr>
+            <tr>
                 <td class="text-left font-bold pl-2">Total Accumulated Depreciation</td>
-            </tr> --}}
+                <td></td>
+                <td>{{ $totalsData['Accumulated Depreciation']['debit'] ?? '-' }}</td>
+                <td>{{ $totalsData['Accumulated Depreciation']['credit'] ?? '-' }}</td>
+            </tr>
 
             {{-- Liabilities --}}
             <x-financial-reporting.account-class accountClass="Liabilities" />
@@ -118,8 +132,8 @@
             <tr class="bg-slate-200">
                 <td class="text-left font-bold pl-2">Total Financial Liabilities</td>
                 <td></td>
-                <td>{{ $getTotalDebit('liabilities', ['payables'], true) }}</td>
-                <td>{{ $getTotalCredit('liabilities', ['payables'], true) }}</td>
+                <td>{{ $totalsData['Financial Liabilities']['debit'] ?? '-' }}</td>
+                <td>{{ $totalsData['Financial Liabilities']['credit'] ?? '-' }}</td>
             </tr>
 
             {{-- inter agency payables --}}
@@ -131,8 +145,8 @@
             <tr class="bg-slate-200">
                 <td class="text-left font-bold pl-2">Total Inter - Agency Payables</td>
                 <td></td>
-                <td>{{ $getTotalDebit('liabilities', ['interAgencyPayables'], true) }}</td>
-                <td>{{ $getTotalCredit('liabilities', ['interAgencyPayables'], true) }}</td>
+                <td>{{ $totalsData['Inter-Agency Payables']['debit'] ?? '-' }}</td>
+                <td>{{ $totalsData['Inter-Agency Payables']['credit'] ?? '-' }}</td>
             </tr>
 
             {{-- trust liabilities --}}
@@ -144,8 +158,8 @@
             <tr class="bg-slate-200">
                 <td class="text-left font-bold pl-2">Total Trust Liabilities</td>
                 <td></td>
-                <td>{{ $getTotalDebit('liabilities', ['trustLiabilities'], true) }}</td>
-                <td>{{ $getTotalCredit('liabilities', ['trustLiabilities'], true) }}</td>
+                <td>{{ $totalsData['Trust Liabilities']['debit'] ?? '-' }}</td>
+                <td>{{ $totalsData['Trust Liabilities']['credit'] ?? '-' }}</td>
             </tr>
 
             {{-- deferred credits/unearned income --}}
@@ -154,13 +168,6 @@
             <x-financial-reporting.account-title accountTitle="Deferred Credits" />
             <x-financial-reporting.account-title-items :accountTitles="$accountTitles['liabilities']['deferredCredits']" :data="$data" />
 
-            <tr class="bg-slate-200">
-                <td class="text-left font-bold pl-2">Total Trust Liabilities</td>
-                <td></td>
-                <td>{{ $getTotalDebit('liabilities', ['deferredCredits'], true) }}</td>
-                <td>{{ $getTotalCredit('liabilities', ['deferredCredits'], true) }}</td>
-            </tr>
-
             {{-- other payables --}}
             <x-financial-reporting.account-title accountTitle="Other Payables" />
             <x-financial-reporting.account-title-items :accountTitles="$accountTitles['liabilities']['otherPayables']" :data="$data" />
@@ -168,8 +175,8 @@
             <tr class="bg-slate-200">
                 <td class="text-left font-bold">Total Liabilities</td>
                 <td></td>
-                <td>{{ $getTotalDebit('liabilities', ['otherPayables'], true) }}</td>
-                <td>{{ $getTotalCredit('liabilities', ['otherPayables'], true) }}</td>
+                <td>{{ $totalsData['Liabilities']['debit'] ?? '-' }}</td>
+                <td>{{ $totalsData['Liabilities']['credit'] ?? '-' }}</td>
             </tr>
 
             {{-- equity --}}
@@ -183,8 +190,8 @@
             <tr class="bg-slate-200">
                 <td class="text-left font-bold pl-2">Total Government Equity</td>
                 <td></td>
-                <td>{{ $getTotalDebit('equity', ['governmentEquity'], true) }}</td>
-                <td>{{ $getTotalCredit('equity', ['governmentEquity'], true) }}</td>
+                <td>{{ $totalsData['Government Equity']['debit'] ?? '-' }}</td>
+                <td>{{ $totalsData['Government Equity']['credit'] ?? '-' }}</td>
             </tr>
 
             {{-- income --}}
@@ -198,8 +205,8 @@
             <tr class="bg-slate-200">
                 <td class="text-left font-bold pl-2">Total Service Income</td>
                 <td></td>
-                <td>{{ $getTotalDebit('income', ['serviceIncome'], true) }}</td>
-                <td>{{ $getTotalCredit('income', ['serviceIncome'], true) }}</td>
+                <td>{{ $totalsData['Service Income']['debit'] ?? '-' }}</td>
+                <td>{{ $totalsData['Service Income']['credit'] ?? '-' }}</td>
             </tr>
 
             <x-financial-reporting.account-title accountTitle="Business Income" />
@@ -208,8 +215,8 @@
             <tr class="bg-slate-200">
                 <td class="text-left font-bold pl-2">Total Business Income</td>
                 <td></td>
-                <td>{{ $getTotalDebit('income', ['businessIncome'], true) }}</td>
-                <td>{{ $getTotalCredit('income', ['businessIncome'], true) }}</td>
+                <td>{{ $totalsData['Business Income']['debit'] ?? '-' }}</td>
+                <td>{{ $totalsData['Business Income']['credit'] ?? '-' }}</td>
             </tr>
 
             <x-financial-reporting.account-sub-class accountSubClass="Transfers,Assistance and Subsidy" />
@@ -225,18 +232,18 @@
             <tr class="bg-slate-200">
                 <td class="text-left font-bold pl-2">Total Grants & Donations</td>
                 <td></td>
-                <td>{{ $getTotalDebit('income', ['assistanceAndSubsidy', 'grantsAndDonations'], true) }}</td>
-                <td>{{ $getTotalCredit('income', ['assistanceAndSubsidy', 'grantsAndDonations'], true) }}</td>
+                <td>{{ $totalsData['Grants & Donations']['debit'] ?? '-' }}</td>
+                <td>{{ $totalsData['Grants & Donations']['credit'] ?? '-' }}</td>
             </tr>
 
             <x-financial-reporting.account-title accountTitle="Miscellaneous Income" />
             <x-financial-reporting.account-title-items :accountTitles="$accountTitles['income']['miscIncome']" :data="$data" />
 
             <tr class="bg-slate-200">
-                <td class="text-left font-bold">Total Liabilities</td>
+                <td class="text-left font-bold">Total Income</td>
                 <td></td>
-                <td>{{ $getTotalDebit('income', ['miscIncome'], true) }}</td>
-                <td>{{ $getTotalCredit('income', ['miscIncome'], true) }}</td>
+                <td>{{ $totalsData['Income']['debit'] ?? '-' }}</td>
+                <td>{{ $totalsData['Income']['credit'] ?? '-' }}</td>
             </tr>
 
             {{-- personnel services --}}
@@ -257,8 +264,8 @@
             <tr class="bg-slate-200">
                 <td class="text-left font-bold pl-2">Total Personnel Services</td>
                 <td></td>
-                <td>{{ $getTotalDebit('personnelServices', ['salariesAndWages', 'otherCompensation', 'personnelBenefitContributions', 'otherPersonnelBenefits'], true) }}</td>
-                <td>{{ $getTotalCredit('personnelServices', ['salariesAndWages', 'otherCompensation', 'personnelBenefitContributions', 'otherPersonnelBenefits'], true) }}</td>
+                <td>{{ $totalsData['Personnel Services']['debit'] ?? '-' }}</td>
+                <td>{{ $totalsData['Personnel Services']['credit'] ?? '-' }}</td>
             </tr>
 
             {{-- maintenance and operating expenses --}}
@@ -299,15 +306,15 @@
                     Total Other Maintenance and Operating Expenses
                 </td>
                 <td></td>
-                <td>{{ $getTotalDebit('maintenanceAndOtherOperatingExpenses', ['otherMaintenanceAndOperatingExpenses'], true) }}</td>
-                <td>{{ $getTotalCredit('maintenanceAndOtherOperatingExpenses', ['otherMaintenanceAndOperatingExpenses'], true) }}</td>
+                <td>{{ $totalsData['Other Maintenance and Operating Expenses']['debit'] ?? '-' }}</td>
+                <td>{{ $totalsData['Other Maintenance and Operating Expenses']['credit'] ?? '-' }}</td>
             </tr>
 
             <tr class="bg-slate-200">
                 <td class="text-left font-bold pl-2">Total Maintenance and Other Operating Expenses</td>
                 <td></td>
-                <td>{{ $getTotalDebit('maintenanceAndOtherOperatingExpenses', ['travelingExpenses','trainingAndScholarshipExpenses','suppliesAndMaterialsExpenses','utilityExpenses','communicationExpenses','intelligenceExpenses','professionalServices','repairsAndMaintenance','taxAndOtherFees','otherMaintenanceAndOperatingExpenses'], true) }}</td>
-                <td>{{ $getTotalCredit('maintenanceAndOtherOperatingExpenses', ['travelingExpenses','trainingAndScholarshipExpenses','suppliesAndMaterialsExpenses','utilityExpenses','communicationExpenses','intelligenceExpenses','professionalServices','repairsAndMaintenance','taxAndOtherFees','otherMaintenanceAndOperatingExpenses'], true) }}</td>
+                <td>{{ $totalsData['Maintenance and Other Operating Expenses']['debit'] ?? '-' }}</td>
+                <td>{{ $totalsData['Maintenance and Other Operating Expenses']['credit'] ?? '-' }}</td>
             </tr>
 
             {{-- financial expenses --}}
@@ -315,8 +322,6 @@
 
             <x-financial-reporting.account-title accountTitle="Financial Expenses" />
             <x-financial-reporting.account-title-items :accountTitles="$accountTitles['financialExpenses']['financialExpenses']" :data="$data" />
-            {{ $getTotalDebit('financialExpenses', ['financialExpenses'], false) }}
-            {{ $getTotalCredit('financialExpenses', ['financialExpenses'], false) }}
 
             {{-- non cash --}}
             <x-financial-reporting.account-sub-class accountSubClass="Non Cash Expenses" />
@@ -327,8 +332,8 @@
             <tr class="bg-slate-200">
                 <td class="text-left font-bold pl-2">Total Non Cash</td>
                 <td></td>
-                <td>{{ $getTotalDebit('nonCashExpenses', ['depreciation'], true) }}</td>
-                <td>{{ $getTotalCredit('nonCashExpenses', ['depreciation'], true) }}</td>
+                <td>{{ $totalsData['Non Cash']['debit'] ?? '-' }}</td>
+                <td>{{ $totalsData['Non Cash']['credit'] ?? '-' }}</td>
             </tr>
         </tbody>
     </table>

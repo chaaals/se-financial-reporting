@@ -12,8 +12,8 @@ use Illuminate\Support\Facades\Route;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Maatwebsite\Excel\Facades\Excel;
-use DB;
-use Storage;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
@@ -57,14 +57,15 @@ class PreviewTrialBalance extends Component
 
     protected $listeners = ["rebalance" => "refresh"];
 
-    public function mount(){
+    public function mount()
+    {
         $tb_id = Route::current()->parameter("tb_id");
         // $query = TrialBalance::with('tbData')->where('tb_id', $tb_id)->get();
         $query = TrialBalance::withTrashed()->with('tbData')->where('tb_id', $tb_id)->get();
         // $tb_data_query = TrialBalanceHistory::where('tb_id', $tb_id)->get();
 
-        foreach($query as $tb){
-            $this->trial_balance= $tb;
+        foreach ($query as $tb) {
+            $this->trial_balance = $tb;
         }
 
         // $this->trial_balance->orderByDesc()
@@ -72,18 +73,19 @@ class PreviewTrialBalance extends Component
         $this->all_tb_data = $this->trial_balance->getRelation('tbData');
 
         $this->trial_balance_data = $this->all_tb_data[$this->active_trial_balance_data];
-        $this->isBalanced = ($this->trial_balance->debit_grand_totals + $this->trial_balance->credit_grand_totals) == 0; 
+        $this->isBalanced = ($this->trial_balance->debit_grand_totals - $this->trial_balance->credit_grand_totals) == 0;
 
-        if($this->trial_balance->tb_type){
-            $this->tbExportFormat = 'TB_'.strtoupper($this->trial_balance->tb_type);
+        if ($this->trial_balance->tb_type) {
+            $this->tbExportFormat = 'TB_' . strtoupper($this->trial_balance->tb_type);
         }
 
         $this->filePath = 'public/uploads/' . $this->tbExportFormat . '.xlsx';
         $this->exportableFilePath = 'uploads/' . $this->tbExportFormat . '.xlsx';
     }
-    
 
-    public function setActiveTrialBalanceData(int $index){
+
+    public function setActiveTrialBalanceData(int $index)
+    {
         $this->active_trial_balance_data = $index;
         $this->trial_balance_data = $this->all_tb_data[$index];
 
@@ -91,16 +93,16 @@ class PreviewTrialBalance extends Component
         $this->creditTotals = [];
         $this->debitGrandTotals = 0;
         $this->creditGrandTotals = 0;
-
     }
 
-    public function writeReport(){
-        if($this->attachment or $this->isWriting){
+    public function writeReport()
+    {
+        if ($this->attachment or $this->isWriting) {
             return;
         }
         $this->isWriting = true;
         $this->filename = $this->trial_balance->tb_name;
-        
+
         Storage::copy($this->filePath, $this->exportableFilePath);
         $spreadsheet = IOFactory::load(storage_path('app/' . $this->exportableFilePath));
 
@@ -119,7 +121,7 @@ class PreviewTrialBalance extends Component
                 $exportConfig[$value] = $jsonData[$key];
             }
         }
-        
+
         // write to excel
         foreach ($exportConfig as $row => $value) {
             $spreadsheet->getActiveSheet()->setCellValue('F' . $row, $value['debit']);
@@ -129,10 +131,10 @@ class PreviewTrialBalance extends Component
         // set date on excel
         $tbYear = date('Y', strtotime($this->trial_balance->date));
         $date = [
-            'Q1'=> "March 31, ".$tbYear,
-            'Q2'=> "June 31, ".$tbYear,
-            'Q3'=> "September 31, ".$tbYear,
-            'Q4'=> "December 31, ".$tbYear,
+            'Q1' => "March 31, " . $tbYear,
+            'Q2' => "June 31, " . $tbYear,
+            'Q3' => "September 31, " . $tbYear,
+            'Q4' => "December 31, " . $tbYear,
         ];
         $dateHeader = $spreadsheet->getActiveSheet()->getCell('A6')->getValue();
         if ($this->trial_balance->interim_period === 'Quarterly') {
@@ -143,43 +145,53 @@ class PreviewTrialBalance extends Component
             $quarter = "Q$quarter";
             $newDateHeader = str_replace('<date>', $date[$quarter], $dateHeader);
         } else {
-            $newDateHeader = 'For the Year Ended December 31, '.$tbYear;
+            $newDateHeader = 'For the Year Ended December 31, ' . $tbYear;
         }
         $spreadsheet->getActiveSheet()->setCellValue('A6', $newDateHeader);
 
         $this->attachment = new Xlsx($spreadsheet);
-        $this->attachment->save(storage_path('app/'.$this->exportableFilePath));
+        $this->attachment->save(storage_path('app/' . $this->exportableFilePath));
 
         $this->isWriting = false;
     }
 
-    public function mailReport(){
-        if(!$this->attachment){
+    public function mailReport()
+    {
+        if (!$this->attachment) {
             $this->writeReport();
         }
 
         $this->validate();
 
-        Mail::to($this->receiver)->send(new FinancialReportEmail($this->subject, $this->message, $this->filename, storage_path('app/'.$this->exportableFilePath)));
+        Mail::to($this->receiver)->send(new FinancialReportEmail($this->subject, $this->message, $this->filename, storage_path('app/' . $this->exportableFilePath)));
+
+        $user = auth()->user()->first_name . " " . auth()->user()->last_name;
+        $tbName = $this->trial_balance->tb_name;
+        activity()->withProperties(['user' => $user, 'role' => auth()->user()->role])->log("Mailed $tbName to $this->receiver");
 
         session()->now("success", "Successfully mailed $this->filename");
 
         $this->reset('subject', 'receiver', 'message');
     }
 
-    public function export(){
-        if(!$this->attachment){
+    public function export()
+    {
+        if (!$this->attachment) {
             $this->writeReport();
         }
-        
+
         $headers = [
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         ];
 
+        $user = auth()->user()->first_name . " " . auth()->user()->last_name;
+        $tbName = $this->trial_balance->tb_name;
+        activity()->withProperties(['user' => $user, 'role' => auth()->user()->role])->log("Exported $tbName");
+
         session()->now("success", "Successfully exported file.");
 
         $this->attachment = null;
-        return response()->download(storage_path('app/'.$this->exportableFilePath), $this->filename.'.xlsx', $headers)
+        return response()->download(storage_path('app/' . $this->exportableFilePath), $this->filename . '.xlsx', $headers)
             ->deleteFileAfterSend(true);
     }
 
@@ -210,7 +222,7 @@ class PreviewTrialBalance extends Component
     //             $exportConfig[$value] = $jsonData[$key];
     //         }
     //     }
-        
+
     //     // write to excel
     //     foreach ($exportConfig as $row => $value) {
     //         $spreadsheet->getActiveSheet()->setCellValue('F' . $row, $value['debit']);
@@ -244,7 +256,7 @@ class PreviewTrialBalance extends Component
     //         'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     //     ];
     //     $filename = $this->trial_balance->tb_name;
-        
+
     //     $sessionMessage = "";
     //     if($this->isBalanced && $this->trial_balance->approved && auth()->user()->role === "accounting"){
     //         $reciever = 'cmlching2021@plm.edu.ph';
@@ -253,7 +265,7 @@ class PreviewTrialBalance extends Component
     //     } else {
     //         $sessionMessage = "Successfully exported Trial Balance.";
     //     }
-        
+
     //     session()->now("success", $sessionMessage);
     //     return response()->download(storage_path('app/'.$newFilePath), $filename.'.xlsx', $headers)
     //         ->deleteFileAfterSend(true);
@@ -277,38 +289,136 @@ class PreviewTrialBalance extends Component
         $this->editMode = !$this->editMode;
     }
 
-    public function rebalance(){
-        // TODO: Add logic that refetches GL
-        $tbData = $this->trial_balance_data["tb_data"];
-        $tbTotals = $this->trial_balance_data["totals_data"];
-        $rebalanced = json_decode($tbData, true);
+    public function rebalance()
+    {
+        // load excel template
+        if ($this->trial_balance->tb_type) {
+            $tbExportFormat = 'TB_' . strtoupper($this->trial_balance->tb_type);
+        } else {
+            $tbExportFormat = "TB_PRE";
+        }
+        $filePath = 'public/uploads/' . $tbExportFormat . '.xlsx';
+        $newFilePath = 'uploads/' . $tbExportFormat . '.xlsx';
+        Storage::copy($filePath, $newFilePath);
+        $spreadsheet = IOFactory::load(storage_path('app/' . $newFilePath));
 
-        foreach($rebalanced as $code=>$value){
-            if (rand(0,1) < 0.25){
-                $rebalanced[$code]['debit'] = rand(1, 500);
-                $rebalanced[$code]['credit'] = rand(1, 500);
+        // load export config
+        $tbExportConfig = DB::select('SELECT template FROM report_templates WHERE template_name = ?', [$tbExportFormat]);
+        $jsonConfig = array_column($tbExportConfig, 'template')[0];
+        $jsonConfig = json_decode($jsonConfig, true);
+
+        // query data from GL
+        $queryMonth = ltrim(date('m', strtotime($this->trial_balance->tb_date)), '0');
+        $queryYear = date('Y', strtotime($this->trial_balance->tb_date));
+        $this->trial_balance->interim_period = trim($this->trial_balance->interim_period);
+        if ($this->trial_balance->interim_period == 'Quarterly') {
+            $months = [];
+            switch ($this->trial_balance->quarter) {
+                case 'Q1':
+                    $months = ['1', '2', '3'];
+                    break;
+                case 'Q2':
+                    $months = ['4', '5', '6'];
+                    break;
+                case 'Q3':
+                    $months = ['7', '8', '9'];
+                    break;
+                case 'Q4':
+                    $months = ['10', '11', '12'];
+                    break;
+            }
+            $res = DB::select("SELECT ls_account_title_code,ls_total_credit,ls_total_debit FROM ledgersheet_total_debit_credit WHERE ls_summary_month IN ('" . implode("','", $months) . "') AND ls_summary_year = '$queryYear'");
+        } else if ($this->trial_balance->interim_period == 'Monthly') {
+            $res = DB::select("SELECT ls_account_title_code,ls_total_credit,ls_total_debit FROM ledgersheet_total_debit_credit WHERE ls_summary_month LIKE '$queryMonth%' AND ls_summary_year = '$queryYear'");
+        } else {
+            $res = DB::select("SELECT ls_account_title_code,ls_total_credit,ls_total_debit FROM ledgersheet_total_debit_credit WHERE ls_summary_year = '$queryYear'");
+        }
+
+        // queried data
+        $credits = array_column($res, 'ls_total_credit');
+        $debits = array_column($res, 'ls_total_debit');
+        $accountCodes = array_column($res, 'ls_account_title_code');
+
+        // key : val == rowNumber : fsData
+        $exportConfig = [];
+        for ($i = 0; $i < count($accountCodes); $i++) {
+            if (array_key_exists($accountCodes[$i], $jsonConfig)) {
+                if (!array_key_exists($jsonConfig[$accountCodes[$i]], $exportConfig)) {
+                    $exportConfig[$jsonConfig[$accountCodes[$i]]] = ['debit' => 0, 'credit' => 0];
+                }
+                $exportConfig[$jsonConfig[$accountCodes[$i]]]['credit'] += $credits[$i];
+                $exportConfig[$jsonConfig[$accountCodes[$i]]]['debit'] += $debits[$i];
             }
         }
-    
-        $rebalanced = json_encode($rebalanced);
+
+        // write to excel
+        foreach ($exportConfig as $row => $value) {
+            $spreadsheet->getActiveSheet()->setCellValue('F' . $row, $value['debit']);
+            $spreadsheet->getActiveSheet()->setCellValue('H' . $row, $value['credit']);
+        }
+        $writer = new Xlsx($spreadsheet);
+        $writer->save(storage_path('app/' . $newFilePath));
+
+        // load written xlsx
+        $spreadsheet = IOFactory::load(storage_path('app/' . $newFilePath));
+
+        // re-get tbdata from xlsx
+        $tbImportConfig = DB::select("SELECT template FROM report_templates WHERE template_name = 'tb_pre'");
+        $jsonConfig = array_column($tbImportConfig, 'template')[0];
+        $jsonConfig = json_decode($jsonConfig, true);
+        $tbData = $jsonConfig;
+        foreach ($jsonConfig as $accountCode => $row) {
+            $debit = $spreadsheet->getActiveSheet()->getCell("F" . $row)->getCalculatedValue();
+            $credit = $spreadsheet->getActiveSheet()->getCell("H" . $row)->getCalculatedValue();
+            $tbData[$accountCode] = [
+                "debit" => $debit,
+                "credit" => $credit
+            ];
+        }
+
+        // get totals data from xlsx
+        $tbTotalsConfig = DB::select("SELECT template FROM report_templates WHERE template_name = 'tb_pre_totals'");
+        $totalsConfig = array_column($tbTotalsConfig, 'template')[0];
+        $totalsConfig = json_decode($totalsConfig, true);
+        $tbDataTotals = $totalsConfig;
+        foreach ($totalsConfig as $title => $row) {
+            $debit = $spreadsheet->getActiveSheet()->getCell("F" . $row)->getCalculatedValue();
+            $credit = $spreadsheet->getActiveSheet()->getCell("H" . $row)->getCalculatedValue();
+            $tbDataTotals[$title] = [
+                "debit" => $debit,
+                "credit" => $credit
+            ];
+        }
+        $this->debitGrandTotals = $tbDataTotals['GRAND TOTALS']['debit'];
+        $this->creditGrandTotals = $tbDataTotals['GRAND TOTALS']['credit'];
+        $this->isBalanced = ($this->debitGrandTotals - $this->creditGrandTotals) == 0;
+
+        $rebalanced = json_encode($tbData);
+        $rebalancedTotals = json_encode($tbDataTotals);
 
         TrialBalanceHistory::create([
             "tb_id" => $this->trial_balance->tb_id,
             "tb_data" => $rebalanced,
-            "totals_data" => $tbTotals,
+            "totals_data" => $rebalancedTotals,
             "date" => $this->trial_balance->tb_date
         ]);
 
+        $user = auth()->user()->first_name . " " . auth()->user()->last_name;
+        $tbName = $this->trial_balance->tb_name;
+        activity()->withProperties(['user' => $user, 'role' => auth()->user()->role])->log("Rebalanced $tbName");
+
         session()->now("success", "Trial Balance has been rebalanced");
+        unlink(storage_path('app/' . $newFilePath));
         $this->refetch();
     }
 
-    public function refetch(){
+    public function refetch()
+    {
         $query = TrialBalance::with('tbData')->orderBy('created_at', 'desc')->where('tb_id', $this->trial_balance->tb_id)->get();
         // $tb_data_query = TrialBalanceHistory::where('tb_id', $tb_id)->get();
 
-        foreach($query as $tb){
-            $this->trial_balance= $tb;
+        foreach ($query as $tb) {
+            $this->trial_balance = $tb;
         }
 
         $this->all_tb_data = $this->trial_balance->getRelation('tbData')->toArray();
@@ -339,7 +449,7 @@ class PreviewTrialBalance extends Component
         //     $quarter = ceil($tb_month / 3);
         //     $this->editedQuarter = "Q$quarter";
         // }
-        
+
         // update fields
         // $this->trial_balance->report_name = $this->editedReportName;
         // $this->trial_balance->date = $this->editedDate;
@@ -349,6 +459,10 @@ class PreviewTrialBalance extends Component
         $this->trial_balance->tb_status = $this->selectedStatusOption;
         $this->trial_balance->save();
 
+        $user = auth()->user()->first_name . " " . auth()->user()->last_name;
+        $tbName = $this->trial_balance->tb_name;
+        activity()->withProperties(['user' => $user, 'role' => auth()->user()->role])->log("Updated $tbName");
+
         session()->now("success", "Trial Balance has been updated.");
         // exit edit mode
         // $this->editMode = false;
@@ -356,30 +470,30 @@ class PreviewTrialBalance extends Component
 
 
     public function render()
-    {   
+    {
         // if($this->trial_balance->trashed()){
         //     dd('Report is archived');
         // }
 
-        if(auth()->user()->role === "accounting"){
-            if(in_array($this->trial_balance->tb_status, ['Draft', 'Change Requested'])){
+        if (auth()->user()->role === "accounting") {
+            if (in_array($this->trial_balance->tb_status, ['Draft', 'Change Requested'])) {
                 $this->selectedStatusOption = "For Approval";
             } else {
                 $this->selectedStatusOption = "Draft";
             }
         }
 
-        if(auth()->user()->role === "ovpf"){
-            if($this->trial_balance->tb_status === "Draft") {
+        if (auth()->user()->role === "ovpf") {
+            if ($this->trial_balance->tb_status === "Draft") {
                 $this->selectedStatusOption = "For Approval";
-            } 
-            
-            if($this->trial_balance->tb_status === "Change Requested"){
+            }
+
+            if ($this->trial_balance->tb_status === "Change Requested") {
                 $this->selectedStatusOption = "Approved";
             }
 
-            if($this->trial_balance->tb_status === "For Approval") {
-                if($this->isBalanced){
+            if ($this->trial_balance->tb_status === "For Approval") {
+                if ($this->isBalanced) {
                     $this->reportStatusOptions = ["Approved", "Change Requested"];
                     $this->selectedStatusOption = "Approved";
                 } else {
@@ -388,9 +502,11 @@ class PreviewTrialBalance extends Component
             }
         }
 
-        return view('livewire.trial-balance.preview-trial-balance',
-            ["statusColor" => strtolower(join("", explode(" ",$this->trial_balance->tb_status))),
-            "numModifications" => count($this->all_tb_data)
+        return view(
+            'livewire.trial-balance.preview-trial-balance',
+            [
+                "statusColor" => strtolower(join("", explode(" ", $this->trial_balance->tb_status))),
+                "numModifications" => count($this->all_tb_data)
             ]
         );
     }

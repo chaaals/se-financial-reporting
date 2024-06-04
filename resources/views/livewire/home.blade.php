@@ -11,21 +11,21 @@
                 :class="showOverview ? 'bg-primary text-white' : 'bg-transparent text-neutralFour'">
                 Overview
             </button>
-            {{-- @if($user->role == 'accounting')
+            @if($user->role == 'accounting')
             <button
                 x-on:click="showOverview=false;showActivity=true;"
-                class="w-28 p-2 rounded-lg"
+                class="w-28 p-2 rounded-full"
                 :class="showActivity ? 'bg-primary text-white' : 'bg-transparent text-neutralFour'">
                 My Activity
             </button>
             @else
             <button
                 x-on:click="showOverview=false;showActivity=true;"
-                class="w-28 p-2 rounded-lg"
+                class="w-36 p-2 rounded-full"
                 :class="showActivity ? 'bg-primary text-white' : 'bg-transparent text-neutralFour'">
-                Audit Trail
+                Recent Activity
             </button>
-            @endif --}}
+            @endif
         </section>
         <section class="flex items-center gap-4">
             @foreach($filterOptions as $key=>$filter)
@@ -45,6 +45,9 @@
             @endforeach
         </section>
     </section>
+
+    @if($collectionName)
+    <h1 x-cloak x-show="showOverview" class="mb-2"><strong>{{ $collectionName }}</strong></h1>
     <section x-cloak x-show="showOverview" class="flex flex-auto gap-4">
         <section class="flex items-center justify-center shadow rounded p-4 border bg-white flex-1 h-[28rem]">
             @if($sfpo)
@@ -52,10 +55,6 @@
                 key="{{$sfpoPieModel->reactiveKey()}}"
                 :pie-chart-model='$sfpoPieModel'
             />
-            @else
-            <div class="w-full flex items-center justify-center">
-                <span>No Statement found for @if($filterPeriod == 'Quarterly') {{$filterQuarter}} {{$filterYear}} @else {{$filterYear}} @endif Financial Position</span>
-            </div>
             @endif
         </section>
         <section class="flex items-center justify-center shadow rounded p-4 border bg-white flex-1 h-[28rem]">
@@ -64,10 +63,6 @@
                 key="{{$sfpePieModel->reactiveKey()}}"
                 :pie-chart-model='$sfpePieModel'
             />
-            @else
-            <div class="w-full flex items-center justify-center">
-                <span>No Statement found for @if($filterPeriod == 'Quarterly') {{$filterQuarter}} {{$filterYear}} @else {{$filterYear}} @endif Financial Performance</span>
-            </div>
             @endif
         </section>
         <section class="flex items-center justify-center shadow rounded p-4 border bg-white flex-1 h-[28rem]">
@@ -76,11 +71,54 @@
                 key="{{$scfPieModel->reactiveKey()}}"
                 :pie-chart-model='$scfPieModel'
             />
-            @else
-            <div class="w-full flex items-center justify-center">
-                <span>No Statement found for @if($filterPeriod == 'Quarterly') {{$filterQuarter}} {{$filterYear}} @else {{$filterYear}} @endif Cash Flows</span>
-            </div>
             @endif
+        </section>
+    </section>
+    @else
+    <section x-cloak x-show="showOverview" class="flex flex-col items-center">
+        <x-financial-reporting.assets.no-results />
+        <h1 class="text-lg">
+        <strong>
+        No Financial Statements found for @if($filterPeriod == 'Quarterly') {{$filterQuarter}} {{$filterYear}} @else {{$filterYear}} @endif
+        </strong>
+        </h1>
+        <p>Start by creating a {{ $filterQuarter }} Trial Balance report.</p>
+    </section>
+    @endif
+
+    <section x-cloak x-show="showActivity">
+        <section class="h-160 bg-white rounded-t-lg overflow-hidden overflow-y-scroll scrollbar sm:h-128 2xl:h-128">
+            <table class="w-full">
+                <thead>
+                    <th class="w-36 bg-primary text-white relative text-left p-2 sticky top-0">
+                        Activity Description
+                    </th>
+                    <th class="w-36 bg-primary text-white relative text-left p-2 sticky top-0">
+                        Date
+                    </th>
+                    <th class="w-36 bg-primary text-white relative text-left p-2 sticky top-0">
+                        Performed By
+                    </th>
+                </thead>
+
+                <tbody>
+                    @foreach($logs as $log)
+                        <x-financial-reporting.activity-log :log="$log" />
+                    @endforeach
+                </tbody>
+            </table>
+
+        </section>
+        <section class="flex items-center justify-between px-4">
+            <div></div>
+            <div class="w-32 flex items-center justify-between p-4">
+                <button wire:click="previous">
+                    <x-financial-reporting.assets.arrow-left />
+                </button>
+                <button wire:click="next">
+                    <x-financial-reporting.assets.arrow-right />
+                </button>
+            </div>
         </section>
     </section>
 </section>

@@ -36,6 +36,8 @@ class Notes extends Component
             "author" => "$firstName $lastName"
         ]);
 
+        $user = $firstName . " " . $lastName;
+        activity()->withProperties(['user' => $user, 'role' => auth()->user()->role])->log("Created a note content: $this->note");
         $this->note = null;
     }
 
@@ -44,8 +46,14 @@ class Notes extends Component
             return;
         }
 
+        $firstName = auth()->user()->first_name;
+        $lastName = auth()->user()->last_name;
+
         $note = $this->notes[$noteIndex];
         DB::table("report_notes")->where("note_id", "=", $note->note_id)->delete();
+
+        $user = $firstName . " " . $lastName;
+        activity()->withProperties(['user' => $user, 'role' => auth()->user()->role])->log("Deleted note content: $note->content");
     }
 
     public function render()

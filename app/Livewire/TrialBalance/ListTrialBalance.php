@@ -102,6 +102,9 @@ class ListTrialBalance extends Component
         // DB::table('trial_balances')->where("tb_id", "=", $tb_id)->delete();
         TrialBalance::where('tb_id', '=', $tb_id)->delete();
 
+        $user = auth()->user()->first_name . " " . auth()->user()->last_name;
+        activity()->withProperties(['user' => $user, 'role' => auth()->user()->role])->log("Archived $tb_name");
+
         $this->setTrialBalance();
         session()->now('success', "$tb_name has been archived.");
     }
