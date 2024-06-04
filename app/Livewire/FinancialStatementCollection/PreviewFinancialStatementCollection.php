@@ -232,7 +232,8 @@ class PreviewFinancialStatementCollection extends Component
         $this->fsCollection->save();
 
         $user = auth()->user()->first_name . " " . auth()->user()->last_name;
-        activity()->withProperties(['user' => $user, 'role' => auth()->user()->role])->log("Updated $this->filename");
+        $collectionName = $this->fsCollection->collection_name;
+        activity()->withProperties(['user' => $user, 'role' => auth()->user()->role])->log("Updated $collectionName");
 
         session()->now("success", "Financial Statement Collection has been updated.");
         // exit edit mode
