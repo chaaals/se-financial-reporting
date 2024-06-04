@@ -17,7 +17,7 @@ class Authenticate extends Middleware
         $env = env('APP_ENV', 'local');
         $debug = env('APP_DEBUG');
 
-        $route = $env == 'local' ? 'login' : '/test';
+        $route = $env == 'local' ? 'login' : 'test';
 
         if($env == 'production' && !$debug){
             $userId = Session::get('user_id');
