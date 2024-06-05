@@ -15,21 +15,7 @@ class Authenticate extends Middleware
     protected function redirectTo(Request $request): ?string
     {
         $env = env('APP_ENV', 'local');
-        $debug = env('APP_DEBUG');
-
-        $route = $env == 'local' ? 'login' : 'test';
-
-        if($env == 'production' && !$debug){
-            $userId = Session::get('user_id');
-            $password = Session::get('password');
-            $roleId = Session::get('role_id');
-
-            if((!$userId && !$password) || ($roleId != 11 || $roleId !== 12)){
-                $route = 'access-denied';
-            } else {
-                Auth::attempt([$userId, $password]);
-            }
-        }
+        $route = $env == 'local' ? 'login' : 'authorize';
 
         return $request->expectsJson() ? null : route($route);
     }
