@@ -45,7 +45,7 @@
                 </section>
             </section>
             @endif
-            @if($isBalanced && $trial_balance->approved && auth()->user()->role_id === intval(env('ACCOUNTING_ROLE_ID', '9')))
+            @if($isBalanced && $trial_balance->approved)
             <section class="w-10 h-10 flex items-center justify-center">
                 <button
                 class="relative"
