@@ -45,7 +45,7 @@
                 </section>
             </section>
             @endif
-            @if($isBalanced && $trial_balance->approved && auth()->user()->role_id === 9)
+            @if($isBalanced && $trial_balance->approved && auth()->user()->role_id === intval(env('ACCOUNTING_ROLE_ID', '9')))
             <section class="w-10 h-10 flex items-center justify-center">
                 <button
                 class="relative"
@@ -125,7 +125,7 @@
                             {{ $trial_balance->tb_status }}
                         </button>
                         {{-- TODO: Disable if already balanced --}}
-                        @if(!$isBalanced && !$trial_balance->approved && auth()->user()->role_id === 9)
+                        @if(!$isBalanced && !$trial_balance->approved && auth()->user()->role_id === intval(env('ACCOUNTING_ROLE_ID', '9')))
                         <button 
                             class="w-full text-center rounded-lg text-white p-2 bg-primary"
                             wire:click='rebalance'

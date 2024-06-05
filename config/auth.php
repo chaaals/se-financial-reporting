@@ -61,7 +61,7 @@ return [
 
     'providers' => [
         'users' => [
-            'driver' => env('APP_ENV', 'local') ? 'eloquent' : 'database',
+            'driver' => env('APP_ENV', 'local') == 'local' ? 'eloquent' : 'database',
             'model' => App\Models\User::class,
             'table' => 'login_users'
         ],

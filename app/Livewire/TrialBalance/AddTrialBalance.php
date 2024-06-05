@@ -116,7 +116,7 @@ class AddTrialBalance extends Component
         }
 
         // $user = auth()->user()->first_name . " " . auth()->user()->last_name;
-        $user = auth()->user()->role_id == 9 ? 'Mara Calinao' : 'Andrea Malunes';
+        $user = auth()->user()->role_id == intval(env('ACCOUNTING_ROLE_ID', '9')) ? 'Mara Calinao' : 'Andrea Malunes';
         activity()->withProperties(['user' => $user, 'role' => auth()->user()->role_id])->log("Add $this->tbName");
         $this->reset();
         $this->redirect('/trial-balances', navigate: true);

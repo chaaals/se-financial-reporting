@@ -1,6 +1,6 @@
 <section x-data="{ showOverview: true, showActivity: false }" class="w-full p-2">
     <section class="p-2 mb-8">
-        <h1 class="text-lg font-bold md:text-xl">Welcome back, <span class="text-primary">{{ auth()->user()->role_id == 9 ? 'Mara Calinao' : 'Andrea Malunes' }}</span></h1>
+        <h1 class="text-lg font-bold md:text-xl">Welcome back, <span class="text-primary">{{ auth()->user()->role_id == intval(env('ACCOUNTING_ROLE_ID', '9')) ? 'Mara Calinao' : 'Andrea Malunes' }}</span></h1>
         <p>we've provided a summary of the latest financial statements for you.</p>
     </section>
     <section class="w-full flex items-center justify-between mb-4">
@@ -11,7 +11,7 @@
                 :class="showOverview ? 'bg-primary text-white' : 'bg-transparent text-neutralFour'">
                 Overview
             </button>
-            @if($user->role_id == 9)
+            @if(auth()->user()->role_id == intval(env('ACCOUNTING_ROLE_ID', '9')))
             <button
                 x-on:click="showOverview=false;showActivity=true;"
                 class="w-28 p-2 rounded-full"

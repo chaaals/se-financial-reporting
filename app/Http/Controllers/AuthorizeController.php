@@ -21,11 +21,13 @@ class AuthorizeController extends Controller
             $roleId = Session::get('role_id');
           	
             if($userId && $password){
-                if(in_array($roleId, [9,10])){
+                $accountingRoleId = intval(env('ACCOUNTING_ROLE_ID', '9'));
+                $accountingHeadRoleId = intval(env('ACCOUNTING_HEAD_ROLE_ID', '10'));
+                if(in_array($roleId, [$accountingRoleId,$accountingHeadRoleId])){
                     Auth::loginUsingId($userId);
 
                     if(Auth::check()){
-                        return redirect()->route('/');
+                        return redirect()->route('home');
                     }
                 }
             }

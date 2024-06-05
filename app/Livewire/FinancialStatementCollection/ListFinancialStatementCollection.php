@@ -56,7 +56,7 @@ class ListFinancialStatementCollection extends Component
     public function mount(){
         // TODO: Change to DB query builder and paginate
         // $this->filterStatus = auth()->user()->role === 'accounting' ? 'Draft' : 'For Approval';
-        $this->filterStatus = auth()->user()->role_id === 9 ? 'Draft' : 'For Approval';
+        $this->filterStatus = auth()->user()->role_id === intval(env('ACCOUNTING_ROLE_ID', '9')) ? 'Draft' : 'For Approval';
     }
 
     public function getFSinit($fscID) {
@@ -91,7 +91,7 @@ class ListFinancialStatementCollection extends Component
 
     public function refreshFilters(){
         // $this->filterStatus = auth()->user()->role === 'accounting' ? 'Draft' : 'For Approval';
-        $this->filterStatus = auth()->user()->role_id === 9 ? 'Draft' : 'For Approval';
+        $this->filterStatus = auth()->user()->role_id === intval(env('ACCOUNTING_ROLE_ID', '9')) ? 'Draft' : 'For Approval';
         $this->reset(['filterPeriod', 'filterQuarter', 'sortBy']);
     }
 
@@ -109,7 +109,7 @@ class ListFinancialStatementCollection extends Component
         FinancialStatementCollection::where('collection_id', '=', $collection_id)->delete();
 
         // $user = auth()->user()->first_name . " " . auth()->user()->last_name;
-        $user = auth()->user()->role_id == 9 ? 'Mara Calinao' : 'Andrea Malunes';
+        $user = auth()->user()->role_id == intval(env('ACCOUNTING_ROLE_ID', '9')) ? 'Mara Calinao' : 'Andrea Malunes';
         activity()->withProperties(['user' => $user, 'role' => auth()->user()->role_id])->log("Archived $collection_name");
 
         $this->setFSCollection();
