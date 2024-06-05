@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthorizeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,7 +14,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::view('/', 'home')->middleware('auth');
+Route::view('/', 'home')->middleware('auth')->name('home');
+Route::get('/authorize', [AuthorizeController::class, '__invoke'])->name('authorize');
 
 Route::prefix('/trial-balances')->middleware('auth')->group(function () {
     Route::view('/','trial-balance');

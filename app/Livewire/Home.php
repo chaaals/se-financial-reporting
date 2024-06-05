@@ -31,9 +31,7 @@ class Home extends Component
     public $logs;
     public $hasMorePages;
 
-    public function mount($user){
-        $this->user = $user;
-
+    public function mount(){
         $this->trialBalances = TrialBalance::orderBy('created_at', 'desc')->take(6)->get();
         $years = FinancialStatementCollection::selectRaw('YEAR(date) as year')->distinct()->orderBy('year')->pluck('year')->toArray();
 
@@ -129,9 +127,11 @@ class Home extends Component
         $scfPieModel = $this->parseStatement($this->scf, (new PieChartModel())->setTitle('Cash Flows'));
 
         $logsQuery = null;
-        if(auth()->user()->role == 'accounting'){
-            $user = auth()->user()->first_name . " " . auth()->user()->last_name;
-            $logsQuery = Activity::where('properties->role', auth()->user()->role)->where('properties->user', $user)->orderBy('created_at','desc')->paginate(10);
+        
+        if(auth()->user()->role_id == intval(env('ACCOUNTING_ROLE_ID', '9'))){
+            // $user = auth()->user()->first_name . " " . auth()->user()->last_name;
+            $user = 'Mara Calinao';
+            $logsQuery = Activity::where('properties->role', auth()->user()->role_id)->where('properties->user', $user)->orderBy('created_at','desc')->paginate(10);
         } else {
             $logsQuery = Activity::select('*')->orderBy('created_at','desc')->paginate(10);
         }

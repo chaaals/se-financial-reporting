@@ -26,18 +26,18 @@ class Notes extends Component
     public function add(){
         $this->validate();
 
-        $firstName = auth()->user()->first_name;
-        $lastName = auth()->user()->last_name;
+        // $firstName = auth()->user()->first_name;
+        // $lastName = auth()->user()->last_name;
+        $user = auth()->user()->role_id == intval(env('ACCOUNTING_ROLE_ID', '9')) ? 'Mara Calinao' : 'Andrea Malunes';
  
         DB::table("report_notes")->insert([
             "tb_id" => $this->reportType === "tb" ? $this->reportId : null,
             "collection_id" => $this->reportType === "fsc" ? $this->reportId : null,
             "content" => $this->note,
-            "author" => "$firstName $lastName"
+            "author" => "$user"
         ]);
 
-        $user = $firstName . " " . $lastName;
-        activity()->withProperties(['user' => $user, 'role' => auth()->user()->role])->log("Created a note content: $this->note");
+        activity()->withProperties(['user' => $user, 'role' => auth()->user()->role_id])->log("Created a note content: $this->note");
         $this->note = null;
     }
 
@@ -46,14 +46,14 @@ class Notes extends Component
             return;
         }
 
-        $firstName = auth()->user()->first_name;
-        $lastName = auth()->user()->last_name;
+        // $firstName = auth()->user()->first_name;
+        // $lastName = auth()->user()->last_name;
+        $user = auth()->user()->role_id == intval(env('ACCOUNTING_ROLE_ID', '9')) ? 'Mara Calinao' : 'Andrea Malunes';
 
         $note = $this->notes[$noteIndex];
         DB::table("report_notes")->where("note_id", "=", $note->note_id)->delete();
 
-        $user = $firstName . " " . $lastName;
-        activity()->withProperties(['user' => $user, 'role' => auth()->user()->role])->log("Deleted note content: $note->content");
+        activity()->withProperties(['user' => $user, 'role' => auth()->user()->role_id])->log("Deleted note content: $note->content");
     }
 
     public function render()
