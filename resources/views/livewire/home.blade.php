@@ -27,7 +27,7 @@
             </button>
             @endif
         </section>
-        <section class="flex items-center gap-4">
+        <section x-cloak x-show="showOverview" class="flex items-center gap-4">
             @foreach($filterOptions as $key=>$filter)
             <select
                     class="w-20 text-xs appearance-none rounded-lg border-neutral pr-8 md:w-24 md:text-sm"
