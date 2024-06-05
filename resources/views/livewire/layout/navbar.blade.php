@@ -1,11 +1,20 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use App\Livewire\Actions\Logout;
 
 $logout = function (Logout $logout) {
-    $logout();
+    $env = env('APP_ENV');
 
-    $this->redirect('/', navigate: true);
+    if($env == 'local'){
+        $logout();
+        $this->redirect('/', navigate: true);
+    } else {
+        if(Auth::check()){
+            $userType = session('usertype');
+            $this->redirect("https://login.plmerp24.cloud/$userType"."dashboard", navigate: true);
+        }
+    }
 };
 ?>
 
@@ -17,7 +26,17 @@ $logout = function (Logout $logout) {
         <section class="hidden md:flex md:items-center">
             <x-financial-reporting.assets.user-icon />
             {{-- TODO: Add logic to get logged user --}}
-            <button wire:click='logout'>{{ auth()->user()->first_name }} {{ auth()->user()->last_name }}</button>
+            <div x-data="{ open: false }" @click.away="open = false" style="z-index: 999;">
+                <button @click="open = !open" class="flex items-center space-x-2">
+                    <span>{{ auth()->user()->first_name }} {{ auth()->user()->last_name }}</span>
+                    <x-financial-reporting.assets.chevron-down />
+                </button>
+                <ul x-cloak x-show="open" class="absolute right-0 mt-2 w-48 bg-white border rounded shadow-lg">
+                    <li>
+                        <button wire:click="logout" class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-200 focus:outline-none">Go to Dashboard</button>
+                    </li>
+                </ul>
+            </div>
         </section>
 
         <button class="md:hidden" x-on:click="open = true" x-show="! open">
