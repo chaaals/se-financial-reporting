@@ -123,7 +123,7 @@ class PreviewFinancialStatementCollection extends Component
         Mail::to($this->receiver)->send(new FinancialReportEmail($this->subject, $this->message, $this->filename, storage_path('app/'.$this->exportableFilePath)));
 
         // $user = auth()->user()->first_name . " " . auth()->user()->last_name;
-        $user = auth()->user()->role_id == 9 ? 'Mara Calinao' : 'Andrea Malunes';
+        $user = auth()->user()->role_id == intval(env('ACCOUNTING_ROLE_ID', '9')) ? 'Mara Calinao' : 'Andrea Malunes';
         activity()->withProperties(['user' => $user, 'role' => auth()->user()->role_id])->log("Mailed $this->filename to $this->receiver");
 
         session()->now("success", "Successfully mailed $this->filename");
@@ -139,7 +139,7 @@ class PreviewFinancialStatementCollection extends Component
         $headers = ['Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',];
 
         // $user = auth()->user()->first_name . " " . auth()->user()->last_name;
-        $user = auth()->user()->role_id == 9 ? 'Mara Calinao' : 'Andrea Malunes';
+        $user = auth()->user()->role_id == intval(env('ACCOUNTING_ROLE_ID', '9')) ? 'Mara Calinao' : 'Andrea Malunes';
         activity()->withProperties(['user' => $user, 'role' => auth()->user()->role_id])->log("Exported $this->filename");
 
         $this->attachment = null;
@@ -234,7 +234,7 @@ class PreviewFinancialStatementCollection extends Component
         $this->fsCollection->save();
 
         // $user = auth()->user()->first_name . " " . auth()->user()->last_name;
-        $user = auth()->user()->role_id == 9 ? 'Mara Calinao' : 'Andrea Malunes';
+        $user = auth()->user()->role_id == intval(env('ACCOUNTING_ROLE_ID', '9')) ? 'Mara Calinao' : 'Andrea Malunes';
         $collectionName = $this->fsCollection->collection_name;
         activity()->withProperties(['user' => $user, 'role' => auth()->user()->role_id])->log("Updated $collectionName");
 
@@ -245,7 +245,7 @@ class PreviewFinancialStatementCollection extends Component
 
     public function render()
     {
-        if(auth()->user()->role_id === 9){
+        if(auth()->user()->role_id === intval(env('ACCOUNTING_ROLE_ID', '9'))){
             if(in_array($this->fsCollection->collection_status, ['Draft', 'Change Requested'])){
                 $this->selectedStatusOption = "For Approval";
             } else {
@@ -253,7 +253,7 @@ class PreviewFinancialStatementCollection extends Component
             }
         }
 
-        if(auth()->user()->role_id === 10){
+        if(auth()->user()->role_id === intval(env('ACCOUNTING_HEAD_ROLE_ID', '10'))){
             if($this->fsCollection->collection_status === "Draft") {
                 $this->selectedStatusOption = "For Approval";
             } 

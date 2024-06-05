@@ -166,7 +166,7 @@ class PreviewTrialBalance extends Component
         Mail::to($this->receiver)->send(new FinancialReportEmail($this->subject, $this->message, $this->filename, storage_path('app/' . $this->exportableFilePath)));
 
         // $user = auth()->user()->first_name . " " . auth()->user()->last_name;
-        $user = auth()->user()->role_id == 9 ? 'Mara Calinao' : 'Andrea Malunes';
+        $user = auth()->user()->role_id == intval(env('ACCOUNTING_ROLE_ID', '9')) ? 'Mara Calinao' : 'Andrea Malunes';
         $tbName = $this->trial_balance->tb_name;
         activity()->withProperties(['user' => $user, 'role' => auth()->user()->role_id])->log("Mailed $tbName to $this->receiver");
 
@@ -186,7 +186,7 @@ class PreviewTrialBalance extends Component
         ];
 
         // $user = auth()->user()->first_name . " " . auth()->user()->last_name;
-        $user = auth()->user()->role_id == 9 ? 'Mara Calinao' : 'Andrea Malunes';
+        $user = auth()->user()->role_id == intval(env('ACCOUNTING_ROLE_ID', '9')) ? 'Mara Calinao' : 'Andrea Malunes';
         $tbName = $this->trial_balance->tb_name;
         activity()->withProperties(['user' => $user, 'role' => auth()->user()->role_id])->log("Exported $tbName");
 
@@ -406,7 +406,7 @@ class PreviewTrialBalance extends Component
         ]);
 
         // $user = auth()->user()->first_name . " " . auth()->user()->last_name;
-        $user = auth()->user()->role_id == 9 ? 'Mara Calinao' : 'Andrea Malunes';
+        $user = auth()->user()->role_id == intval(env('ACCOUNTING_ROLE_ID', '9')) ? 'Mara Calinao' : 'Andrea Malunes';
         $tbName = $this->trial_balance->tb_name;
         activity()->withProperties(['user' => $user, 'role' => auth()->user()->role_id])->log("Rebalanced $tbName");
 
@@ -463,7 +463,7 @@ class PreviewTrialBalance extends Component
         $this->trial_balance->save();
 
         // $user = auth()->user()->first_name . " " . auth()->user()->last_name;
-        $user = auth()->user()->role_id == 9 ? 'Mara Calinao' : 'Andrea Malunes';
+        $user = auth()->user()->role_id == intval(env('ACCOUNTING_ROLE_ID', '9')) ? 'Mara Calinao' : 'Andrea Malunes';
         $tbName = $this->trial_balance->tb_name;
         activity()->withProperties(['user' => $user, 'role' => auth()->user()->role_id])->log("Updated $tbName");
 
@@ -479,7 +479,7 @@ class PreviewTrialBalance extends Component
         //     dd('Report is archived');
         // }
 
-        if (auth()->user()->role_id === 9) {
+        if (auth()->user()->role_id === intval(env('ACCOUNTING_ROLE_ID', '9'))) {
             if (in_array($this->trial_balance->tb_status, ['Draft', 'Change Requested'])) {
                 $this->selectedStatusOption = "For Approval";
             } else {
@@ -487,7 +487,7 @@ class PreviewTrialBalance extends Component
             }
         }
 
-        if (auth()->user()->role_id === 10) {
+        if (auth()->user()->role_id === intval(env('ACCOUNTING_HEAD_ROLE_ID', '10'))) {
             if ($this->trial_balance->tb_status === "Draft") {
                 $this->selectedStatusOption = "For Approval";
             }

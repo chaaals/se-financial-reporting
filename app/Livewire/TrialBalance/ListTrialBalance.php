@@ -58,7 +58,7 @@ class ListTrialBalance extends Component
     public $isArchived = false;
 
     public function mount(){
-        $this->filterStatus = auth()->user()->role_id === 9 ? 'Draft' : 'For Approval';
+        $this->filterStatus = auth()->user()->role_id === intval(env('ACCOUNTING_ROLE_ID', '9')) ? 'Draft' : 'For Approval';
     }
 
     public function previous(){
@@ -84,7 +84,7 @@ class ListTrialBalance extends Component
     }
 
     public function refreshFilters(){
-        $this->filterStatus = auth()->user()->role_id === 9 ? 'Draft' : 'For Approval';
+        $this->filterStatus = auth()->user()->role_id === intval(env('ACCOUNTING_ROLE_ID', '9')) ? 'Draft' : 'For Approval';
         $this->reset(['filterPeriod', 'filterQuarter', 'sortBy']);
     }
 
@@ -103,7 +103,7 @@ class ListTrialBalance extends Component
         TrialBalance::where('tb_id', '=', $tb_id)->delete();
 
         // $user = auth()->user()->first_name . " " . auth()->user()->last_name;
-        $user = auth()->user()->role_id == 9 ? 'Mara Calinao' : 'Andrea Malunes';
+        $user = auth()->user()->role_id == intval(env('ACCOUNTING_ROLE_ID', '9')) ? 'Mara Calinao' : 'Andrea Malunes';
         activity()->withProperties(['user' => $user, 'role' => auth()->user()->role_id])->log("Archived $tb_name");
 
         $this->setTrialBalance();

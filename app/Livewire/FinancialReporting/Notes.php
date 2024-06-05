@@ -28,7 +28,7 @@ class Notes extends Component
 
         // $firstName = auth()->user()->first_name;
         // $lastName = auth()->user()->last_name;
-        $user = auth()->user()->role_id == 9 ? 'Mara Calinao' : 'Andrea Malunes';
+        $user = auth()->user()->role_id == intval(env('ACCOUNTING_ROLE_ID', '9')) ? 'Mara Calinao' : 'Andrea Malunes';
  
         DB::table("report_notes")->insert([
             "tb_id" => $this->reportType === "tb" ? $this->reportId : null,
@@ -48,7 +48,7 @@ class Notes extends Component
 
         // $firstName = auth()->user()->first_name;
         // $lastName = auth()->user()->last_name;
-        $user = auth()->user()->role_id == 9 ? 'Mara Calinao' : 'Andrea Malunes';
+        $user = auth()->user()->role_id == intval(env('ACCOUNTING_ROLE_ID', '9')) ? 'Mara Calinao' : 'Andrea Malunes';
 
         $note = $this->notes[$noteIndex];
         DB::table("report_notes")->where("note_id", "=", $note->note_id)->delete();
