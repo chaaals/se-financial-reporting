@@ -75,8 +75,9 @@ class AddFinancialStatementCollection extends Component
         $this->fscID = $fs_col->collection_id;
         $this->addFS();
 
-        $user = auth()->user()->first_name . " " . auth()->user()->last_name;
-        activity()->withProperties(['user' => $user, 'role' => auth()->user()->role])->log("Add $fs_col->collection_name");
+        $user = auth()->user()->role_id == 9 ? 'Mara Calinao' : 'Andrea Malunes';
+        // $user = auth()->user()->first_name . " " . auth()->user()->last_name;
+        activity()->withProperties(['user' => $user, 'role' => auth()->user()->role_id])->log("Add $fs_col->collection_name");
     }
 
     public function addFS()

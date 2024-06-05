@@ -129,9 +129,10 @@ class Home extends Component
         $scfPieModel = $this->parseStatement($this->scf, (new PieChartModel())->setTitle('Cash Flows'));
 
         $logsQuery = null;
-        if(auth()->user()->role == 'accounting'){
-            $user = auth()->user()->first_name . " " . auth()->user()->last_name;
-            $logsQuery = Activity::where('properties->role', auth()->user()->role)->where('properties->user', $user)->paginate(10);
+        if(auth()->user()->role_id == 9){
+            // $user = auth()->user()->first_name . " " . auth()->user()->last_name;
+            $user = 'Mara Calinao';
+            $logsQuery = Activity::where('properties->role', auth()->user()->role_id)->where('properties->user', $user)->paginate(10);
         } else {
             $logsQuery = Activity::select('*')->paginate(10);
         }

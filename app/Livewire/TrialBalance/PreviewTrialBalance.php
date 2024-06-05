@@ -165,9 +165,10 @@ class PreviewTrialBalance extends Component
 
         Mail::to($this->receiver)->send(new FinancialReportEmail($this->subject, $this->message, $this->filename, storage_path('app/' . $this->exportableFilePath)));
 
-        $user = auth()->user()->first_name . " " . auth()->user()->last_name;
+        // $user = auth()->user()->first_name . " " . auth()->user()->last_name;
+        $user = auth()->user()->role_id == 9 ? 'Mara Calinao' : 'Andrea Malunes';
         $tbName = $this->trial_balance->tb_name;
-        activity()->withProperties(['user' => $user, 'role' => auth()->user()->role])->log("Mailed $tbName to $this->receiver");
+        activity()->withProperties(['user' => $user, 'role' => auth()->user()->role_id])->log("Mailed $tbName to $this->receiver");
 
         session()->now("success", "Successfully mailed $this->filename");
 
@@ -184,9 +185,10 @@ class PreviewTrialBalance extends Component
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         ];
 
-        $user = auth()->user()->first_name . " " . auth()->user()->last_name;
+        // $user = auth()->user()->first_name . " " . auth()->user()->last_name;
+        $user = auth()->user()->role_id == 9 ? 'Mara Calinao' : 'Andrea Malunes';
         $tbName = $this->trial_balance->tb_name;
-        activity()->withProperties(['user' => $user, 'role' => auth()->user()->role])->log("Exported $tbName");
+        activity()->withProperties(['user' => $user, 'role' => auth()->user()->role_id])->log("Exported $tbName");
 
         session()->now("success", "Successfully exported file.");
 
@@ -403,9 +405,10 @@ class PreviewTrialBalance extends Component
             "date" => $this->trial_balance->tb_date
         ]);
 
-        $user = auth()->user()->first_name . " " . auth()->user()->last_name;
+        // $user = auth()->user()->first_name . " " . auth()->user()->last_name;
+        $user = auth()->user()->role_id == 9 ? 'Mara Calinao' : 'Andrea Malunes';
         $tbName = $this->trial_balance->tb_name;
-        activity()->withProperties(['user' => $user, 'role' => auth()->user()->role])->log("Rebalanced $tbName");
+        activity()->withProperties(['user' => $user, 'role' => auth()->user()->role_id])->log("Rebalanced $tbName");
 
         session()->now("success", "Trial Balance has been rebalanced");
         unlink(storage_path('app/' . $newFilePath));
@@ -459,9 +462,10 @@ class PreviewTrialBalance extends Component
         $this->trial_balance->tb_status = $this->selectedStatusOption;
         $this->trial_balance->save();
 
-        $user = auth()->user()->first_name . " " . auth()->user()->last_name;
+        // $user = auth()->user()->first_name . " " . auth()->user()->last_name;
+        $user = auth()->user()->role_id == 9 ? 'Mara Calinao' : 'Andrea Malunes';
         $tbName = $this->trial_balance->tb_name;
-        activity()->withProperties(['user' => $user, 'role' => auth()->user()->role])->log("Updated $tbName");
+        activity()->withProperties(['user' => $user, 'role' => auth()->user()->role_id])->log("Updated $tbName");
 
         session()->now("success", "Trial Balance has been updated.");
         // exit edit mode
@@ -475,7 +479,7 @@ class PreviewTrialBalance extends Component
         //     dd('Report is archived');
         // }
 
-        if (auth()->user()->role === "accounting") {
+        if (auth()->user()->role_id === 9) {
             if (in_array($this->trial_balance->tb_status, ['Draft', 'Change Requested'])) {
                 $this->selectedStatusOption = "For Approval";
             } else {
@@ -483,7 +487,7 @@ class PreviewTrialBalance extends Component
             }
         }
 
-        if (auth()->user()->role === "ovpf") {
+        if (auth()->user()->role_id === 10) {
             if ($this->trial_balance->tb_status === "Draft") {
                 $this->selectedStatusOption = "For Approval";
             }

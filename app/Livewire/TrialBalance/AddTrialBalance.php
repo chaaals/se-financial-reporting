@@ -115,8 +115,9 @@ class AddTrialBalance extends Component
             session()->flash("success", "Trial Balance has been added. Unbalanced Trial Balance accounts has been sent to General Ledger.");
         }
 
-        $user = auth()->user()->first_name . " " . auth()->user()->last_name;
-        activity()->withProperties(['user' => $user, 'role' => auth()->user()->role])->log("Add $this->tbName");
+        // $user = auth()->user()->first_name . " " . auth()->user()->last_name;
+        $user = auth()->user()->role_id == 9 ? 'Mara Calinao' : 'Andrea Malunes';
+        activity()->withProperties(['user' => $user, 'role' => auth()->user()->role_id])->log("Add $this->tbName");
         $this->reset();
         $this->redirect('/trial-balances', navigate: true);
     }

@@ -122,8 +122,9 @@ class PreviewFinancialStatementCollection extends Component
 
         Mail::to($this->receiver)->send(new FinancialReportEmail($this->subject, $this->message, $this->filename, storage_path('app/'.$this->exportableFilePath)));
 
-        $user = auth()->user()->first_name . " " . auth()->user()->last_name;
-        activity()->withProperties(['user' => $user, 'role' => auth()->user()->role])->log("Mailed $this->filename to $this->receiver");
+        // $user = auth()->user()->first_name . " " . auth()->user()->last_name;
+        $user = auth()->user()->role_id == 9 ? 'Mara Calinao' : 'Andrea Malunes';
+        activity()->withProperties(['user' => $user, 'role' => auth()->user()->role_id])->log("Mailed $this->filename to $this->receiver");
 
         session()->now("success", "Successfully mailed $this->filename");
 
@@ -137,8 +138,9 @@ class PreviewFinancialStatementCollection extends Component
 
         $headers = ['Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',];
 
-        $user = auth()->user()->first_name . " " . auth()->user()->last_name;
-        activity()->withProperties(['user' => $user, 'role' => auth()->user()->role])->log("Exported $this->filename");
+        // $user = auth()->user()->first_name . " " . auth()->user()->last_name;
+        $user = auth()->user()->role_id == 9 ? 'Mara Calinao' : 'Andrea Malunes';
+        activity()->withProperties(['user' => $user, 'role' => auth()->user()->role_id])->log("Exported $this->filename");
 
         $this->attachment = null;
         session()->now("success", "Successfully exported Financial Statements");
@@ -231,9 +233,10 @@ class PreviewFinancialStatementCollection extends Component
         $this->fsCollection->collection_status = $this->selectedStatusOption;
         $this->fsCollection->save();
 
-        $user = auth()->user()->first_name . " " . auth()->user()->last_name;
+        // $user = auth()->user()->first_name . " " . auth()->user()->last_name;
+        $user = auth()->user()->role_id == 9 ? 'Mara Calinao' : 'Andrea Malunes';
         $collectionName = $this->fsCollection->collection_name;
-        activity()->withProperties(['user' => $user, 'role' => auth()->user()->role])->log("Updated $collectionName");
+        activity()->withProperties(['user' => $user, 'role' => auth()->user()->role_id])->log("Updated $collectionName");
 
         session()->now("success", "Financial Statement Collection has been updated.");
         // exit edit mode
@@ -242,7 +245,7 @@ class PreviewFinancialStatementCollection extends Component
 
     public function render()
     {
-        if(auth()->user()->role === "accounting"){
+        if(auth()->user()->role_id === 9){
             if(in_array($this->fsCollection->collection_status, ['Draft', 'Change Requested'])){
                 $this->selectedStatusOption = "For Approval";
             } else {
@@ -250,7 +253,7 @@ class PreviewFinancialStatementCollection extends Component
             }
         }
 
-        if(auth()->user()->role === "ovpf"){
+        if(auth()->user()->role_id === 10){
             if($this->fsCollection->collection_status === "Draft") {
                 $this->selectedStatusOption = "For Approval";
             } 
