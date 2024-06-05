@@ -199,6 +199,11 @@ class AddTrialBalance extends Component
         $credits = array_column($res, 'ls_total_credit');
         $debits = array_column($res, 'ls_total_debit');
         $accountCodes = array_column($res, 'ls_account_title_code');
+        // GL accounts codes is formatted as: `<code> - <title>`
+        // we only need the <code>
+        for ($index = 0; $index < count($accountCodes); $index++) {
+            $accountCodes[$index] = trim(explode('-', $accountCodes[$index])[0]);
+        }
 
         // key : val == rowNumber : fsData
         $exportConfig = [];

@@ -201,12 +201,27 @@ class AddFinancialStatementCollection extends Component
             $this->quarter = "Q$quarter";
             
             
-            $this->trialBalances['Trial Balance']['options'] = TrialBalance::select(['tb_id', 'tb_name'])->where('interim_period', 'Quarterly')->where('quarter', $this->quarter)->where('approved', true)->get()->toArray();
+            $this->trialBalances['Trial Balance']['options'] = TrialBalance::select(['tb_id', 'tb_name', DB::raw('debit_grand_totals - credit_grand_totals as balance_difference')])
+            ->where('interim_period', 'Quarterly')
+            ->where('quarter', $this->quarter)
+            ->where('approved', true)
+            ->whereNotIn('trial_balances.tb_id', function($query) {
+                $query->select('tb_id')->from('financial_statement_collections');
+            })
+            ->having('balance_difference', '=', 0)
+            ->get()->toArray();
         }
 
         if ($this->interimPeriod === "Annual") {
             $this->quarter = null;
-            $this->trialBalances['Trial Balance']['options'] = TrialBalance::select(['tb_id', 'tb_name'])->where('interim_period', 'Annual')->where('approved', true)->get()->toArray();
+            $this->trialBalances['Trial Balance']['options'] = TrialBalance::select(['tb_id', 'tb_name', DB::raw('debit_grand_totals - credit_grand_totals as balance_difference')])
+            ->where('interim_period', 'Annual')
+            ->where('approved', true)
+            ->whereNotIn('trial_balances.tb_id', function($query) {
+                $query->select('tb_id')->from('financial_statement_collections');
+            })
+            ->having('balance_difference', '=', 0)
+            ->get()->toArray();
         }
 
 

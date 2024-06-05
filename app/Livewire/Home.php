@@ -131,9 +131,9 @@ class Home extends Component
         if(auth()->user()->role_id == intval(env('ACCOUNTING_ROLE_ID', '9'))){
             // $user = auth()->user()->first_name . " " . auth()->user()->last_name;
             $user = 'Mara Calinao';
-            $logsQuery = Activity::where('properties->role', auth()->user()->role_id)->where('properties->user', $user)->paginate(10);
+            $logsQuery = Activity::where('properties->role', auth()->user()->role_id)->where('properties->user', $user)->orderBy('created_at','desc')->paginate(10);
         } else {
-            $logsQuery = Activity::select('*')->paginate(10);
+            $logsQuery = Activity::select('*')->orderBy('created_at','desc')->paginate(10);
         }
 
         $this->logs = $logsQuery->items();
