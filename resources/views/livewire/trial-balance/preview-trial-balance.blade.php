@@ -45,7 +45,7 @@
                 </section>
             </section>
             @endif
-            @if($isBalanced && $trial_balance->approved && auth()->user()->role === "accounting")
+            @if($isBalanced && $trial_balance->approved)
             <section class="w-10 h-10 flex items-center justify-center">
                 <button
                 class="relative"
