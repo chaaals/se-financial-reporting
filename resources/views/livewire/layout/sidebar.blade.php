@@ -17,9 +17,9 @@
         </section>
     </section>
 
-    <section class="flex items-center gap-2 p-2 mb-4">
-        <x-financial-reporting.assets.settings />
+    {{-- <section class="flex items-center gap-2 p-2 mb-4"> --}}
+        {{-- <x-financial-reporting.assets.settings /> --}}
         {{-- TODO: Add modal for user settings --}}
-        <button class="text-white">Settings</button>
-    </section>
+        {{-- <button class="text-white">Settings</button> --}}
+    {{-- </section> --}}
 </section>
