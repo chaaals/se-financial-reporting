@@ -70,8 +70,7 @@ class Home extends Component
     }
 
     public function fetchChart(){
-        $query = FinancialStatementCollection::with('financialStatements')->whereYear('date', '=', $this->filterYear);
-
+        $query = FinancialStatementCollection::whereYear('date', '=', $this->filterYear);
         if($this->filterPeriod == 'Annual' && $this->filterQuarter){
             $this->filterQuarter = null;
         }
@@ -81,9 +80,11 @@ class Home extends Component
             $query->where('interim_period', '=', $this->filterPeriod)->where('quarter', '=', $this->filterQuarter);
         } else if($this->filterPeriod == 'Quarterly' && $this->filterQuarter) {
             $query->where('interim_period', '=', $this->filterPeriod)->where('quarter', '=', $this->filterQuarter);
+        } else {
+            $query->where('interim_period', '=', $this->filterPeriod);
         }
-
-
+        
+        // dd($query->orderByDesc('created_at')->get()->toArray());
         $query = $query->get();
         if($query->isEmpty()){
             // dd($query);
@@ -91,20 +92,24 @@ class Home extends Component
             $this->sfpo = null;
             $this->sfpe = null;
             $this->scf = null;
+
+            return;
         }
-        foreach ($query as $fsc){
-            $this->collectionName = $fsc->collection_name;
-            foreach ($fsc->financialStatements as $financialStatement) {
-                if($financialStatement->fs_type == 'SFPO'){
-                    $this->sfpo = $financialStatement;
-                };
-                if($financialStatement->fs_type == 'SFPE'){
-                    $this->sfpe = $financialStatement;
-                };
-                if($financialStatement->fs_type == 'SCF'){
-                    $this->scf = $financialStatement;
-                };
-            }
+
+        $collection = $query->toArray()[0];
+        $this->collectionName = $collection['collection_name'];
+        $fsc = FinancialStatement::where('collection_id', '=', $collection['collection_id'])->get();
+        
+        foreach ($fsc as $fs){
+            if($fs->fs_type == 'SFPO'){
+                $this->sfpo = $fs;
+            };
+            if($fs->fs_type == 'SFPE'){
+                $this->sfpe = $fs;
+            };
+            if($fs->fs_type == 'SCF'){
+                $this->scf = $fs;
+            };
         }
     }
 
