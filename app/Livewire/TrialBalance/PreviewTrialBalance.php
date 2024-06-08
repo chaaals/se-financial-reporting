@@ -398,6 +398,10 @@ class PreviewTrialBalance extends Component
         $this->creditGrandTotals = $tbDataTotals['GRAND TOTALS']['credit'];
         $this->isBalanced = ($this->debitGrandTotals - $this->creditGrandTotals) == 0;
 
+        $this->trial_balance->debit_grand_totals = $this->debitGrandTotals;
+        $this->trial_balance->credit_grand_totals = $this->creditGrandTotals;
+        $this->trial_balance->save();
+
         $rebalanced = json_encode($tbData);
         $rebalancedTotals = json_encode($tbDataTotals);
 
@@ -414,6 +418,7 @@ class PreviewTrialBalance extends Component
 
         session()->now("success", "Trial Balance has been rebalanced");
         unlink(storage_path('app/' . $newFilePath));
+        $this->dispatch('rebalanced', $this->isBalanced ? "The report is now balanced." : "The report is still unbalanced; a notification has been sent to the General Ledger module for resolution.");
         $this->refetch();
     }
 
@@ -506,6 +511,7 @@ class PreviewTrialBalance extends Component
                 }
             }
         }
+        // dd($this->trial_balance);
 
         return view(
             'livewire.trial-balance.preview-trial-balance',
