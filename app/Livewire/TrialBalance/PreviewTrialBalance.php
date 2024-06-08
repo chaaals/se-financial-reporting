@@ -179,6 +179,8 @@ class PreviewTrialBalance extends Component
                     'receiver' => 'One or more emails are invalid.',
                 ]);
             }
+
+            $this->dispatch('mail');
         }
 
         Mail::to($emailsArray)->send(new FinancialReportEmail($this->subject, $this->message, $this->filename, storage_path('app/' . $this->exportableFilePath)));
@@ -190,6 +192,7 @@ class PreviewTrialBalance extends Component
         session()->now("success", "Successfully mailed $this->filename");
 
         $this->reset('subject', 'receiver', 'message');
+        $this->dispatch('mail');
     }
 
     public function export()
