@@ -175,12 +175,12 @@ class PreviewTrialBalance extends Component
             );
 
             if ($validator->fails()) {
+                $this->dispatch('mail');
                 throw ValidationException::withMessages([
                     'receiver' => 'One or more emails are invalid.',
                 ]);
             }
 
-            $this->dispatch('mail');
         }
 
         Mail::to($emailsArray)->send(new FinancialReportEmail($this->subject, $this->message, $this->filename, storage_path('app/' . $this->exportableFilePath)));
