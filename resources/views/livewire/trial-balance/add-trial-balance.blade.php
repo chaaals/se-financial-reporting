@@ -20,7 +20,7 @@
                             value="Monthly"
                             wire:model="interimPeriod"
                             wire:click="resetImport"
-                            x-on:click="monthly_active = true; quarterly_active = false; annual_active = false; loading = false" />
+                            x-on:click="monthly_active = true; quarterly_active = false; annual_active = false; selected_interim = false; loading = false" />
                         <label class="text-sm md:text-base" for="Monthly">Monthly</label>
                     </section>
                     <section>
