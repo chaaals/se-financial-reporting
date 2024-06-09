@@ -22,9 +22,11 @@ return new class extends Migration
                 ->nullable()
                 ->constrained(table: 'financial_statement_collections', column: 'collection_id')
                 ->cascadeOnDelete();
+            $table->json('participants');
             $table->string('content');
             $table->string('author');
             $table->timestamp('created_at')->default(\DB::raw('CURRENT_TIMESTAMP'));
+            $table->timestamp('updated_at')->default(\DB::raw('CURRENT_TIMESTAMP'));
             $table->softDeletes();
         });
     }

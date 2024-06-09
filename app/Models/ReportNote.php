@@ -13,6 +13,7 @@ class ReportNote extends Model
     protected $fillable = [
         'tb_id',
         'collection_id',
+        'participants',
         'content',
         'author',
         'created_at',
