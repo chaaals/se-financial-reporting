@@ -51,14 +51,14 @@
                             <x-financial-reporting.assets.table-sort />
                         </button>
                     </th>
-                    <th class="w-36 bg-primary text-white relative text-left p-2 sticky top-0">
-                        Date
+                    <th class="w-36 hidden bg-primary text-white relative text-left p-2 sticky top-0 md:table-cell">
+                        Period
                         <button wire:click="sort(1)" wire:target="sortBy" class="absolute top-1 right-2">
                             <x-financial-reporting.assets.table-sort />
                         </button>
                     </th>
-                    <th class="w-36 hidden bg-primary text-white relative text-left p-2 sticky top-0 md:table-cell">
-                        Period
+                    <th class="w-24 hidden bg-primary text-white relative text-left p-2 sticky top-0 md:table-cell">
+                        Month
                         <button wire:click="sort(2)" wire:target="sortBy" class="absolute top-1 right-2">
                             <x-financial-reporting.assets.table-sort />
                         </button>
@@ -69,21 +69,27 @@
                             <x-financial-reporting.assets.table-sort />
                         </button>
                     </th>
+                    <th class="w-24 hidden bg-primary text-white relative text-left p-2 sticky top-0 md:table-cell">
+                        Year
+                        <button wire:click="sort(4)" wire:target="sortBy" class="absolute top-1 right-2">
+                            <x-financial-reporting.assets.table-sort />
+                        </button>
+                    </th>
                     <th class="w-40 hidden bg-primary text-white relative text-left p-2 sticky top-0 md:table-cell">
                         Created At
-                        <button wire:click='sort(4)' wire:target="sortBy" class="absolute top-1 right-2">
+                        <button wire:click='sort(5)' wire:target="sortBy" class="absolute top-1 right-2">
                             <x-financial-reporting.assets.table-sort />
                         </button>
                     </th>
                     <th class="w-40 hidden bg-primary text-white relative text-left p-2 sticky top-0 md:table-cell">
                         Updated At
-                        <button wire:click="sort(5)" wire:target="sortBy" class="absolute top-1 right-2">
+                        <button wire:click="sort(6)" wire:target="sortBy" class="absolute top-1 right-2">
                             <x-financial-reporting.assets.table-sort />
                         </button>
                     </th>
                     <th class="w-24 hidden bg-primary text-white relative text-left p-2 sticky top-0 md:table-cell">
                         Status
-                        <button wire:click="sort(6)" wire:target="sortBy" class="absolute top-1 right-2">
+                        <button wire:click="sort(7)" wire:target="sortBy" class="absolute top-1 right-2">
                             <x-financial-reporting.assets.table-sort />
                         </button>
                     </th>
@@ -104,14 +110,17 @@
                                     &lpar;Archived&rpar; {{ $tb->tb_name }}
                                     @endif
                                 </td>
-                                <td class="h-16 p-2 text-center whitespace-nowrap">
-                                    {{ date('M d, Y', strtotime($tb->tb_date)) }}
-                                </td>
                                 <td class="h-16 p-2 hidden text-center whitespace-nowrap md:table-cell">
                                     {{ $tb->interim_period }}
                                 </td>
                                 <td class="h-16 p-2 hidden text-center whitespace-nowrap md:table-cell">
+                                    {{ $months[$tb->tb_month] ?? "-" }}
+                                </td>
+                                <td class="h-16 p-2 hidden text-center whitespace-nowrap md:table-cell">
                                     {{ $tb->quarter ?? "-" }}
+                                </td>
+                                <td class="h-16 p-2 hidden text-center whitespace-nowrap md:table-cell">
+                                    {{ $tb->tb_year }}
                                 </td>
                                 <td class="h-16 p-2 hidden text-center whitespace-wrap md:table-cell">
                                     {{ date('M d, Y H:i:s', strtotime($tb->created_at)) }}

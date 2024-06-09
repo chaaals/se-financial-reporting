@@ -22,12 +22,27 @@ class ListTrialBalance extends Component
     public $sortBy;
     public $sortIndices = [
         0 => "tb_name",
-        1 => "tb_date",
-        2 => "interim_period",
+        1 => "interim_period",
+        2 => "month",
         3 => "quarter",
-        4 => "created_at",
-        5 => "updated_at",
-        6 => "tb_status",
+        4 => "year",
+        5 => "created_at",
+        6 => "updated_at",
+        7 => "tb_status",
+    ];
+    public $months = [
+        "1" => "January",
+        "2" => "February",
+        "3" => "March",
+        "4" => "April",
+        "5" => "May",
+        "6" => "June",
+        "7" => "July",
+        "8" => "August",
+        "9" => "September",
+        "10" => "October",
+        "11" => "November",
+        "12" => "December"
     ];
     
     public $searchInput;
@@ -126,9 +141,9 @@ class ListTrialBalance extends Component
     {
         $query = null;
         if(in_array($this->filterReportFlag, ['Active'])){
-            $query = TrialBalance::select('tb_id', 'tb_name', 'tb_date', 'interim_period', 'quarter', 'created_at', 'updated_at', 'tb_status', 'deleted_at');
+            $query = TrialBalance::select('tb_id', 'tb_name', 'interim_period', 'tb_month', 'quarter', 'tb_year', 'created_at', 'updated_at', 'tb_status', 'deleted_at');
         } else {
-            $query = TrialBalance::onlyTrashed()->select('tb_id', 'tb_name', 'tb_date', 'interim_period', 'quarter', 'created_at', 'updated_at', 'tb_status', 'deleted_at');
+            $query = TrialBalance::onlyTrashed()->select('tb_id', 'tb_name', 'interim_period', 'tb_month', 'quarter', 'tb_year', 'created_at', 'updated_at', 'tb_status', 'deleted_at');
         }
 
         $isCorrectPeriodFilter = in_array($this->filterPeriod, ['Monthly', 'Annual', 'Quarterly']);
