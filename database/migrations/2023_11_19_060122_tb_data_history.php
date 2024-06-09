@@ -18,7 +18,7 @@ return new class extends Migration
                 ->cascadeOnDelete();
             $table->longText('tb_data'); // json
             $table->longText('totals_data'); // json
-            $table->date('date');
+            // $table->date('date');
             $table->softDeletes();
             $table->timestamp('created_at');
             $table->timestamp('updated_at');

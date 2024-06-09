@@ -115,7 +115,7 @@ class AddTrialBalance extends Component
                 "tb_id" => $tb->tb_id,
                 "tb_data" => $this->tbData,
                 "totals_data" => $this->tbDataTotals,
-                "date" => $this->tbDate
+                // "date" => $this->tbDate
             ]);
         }
 
