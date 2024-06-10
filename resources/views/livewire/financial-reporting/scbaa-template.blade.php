@@ -5,7 +5,6 @@
             <th class="text-sm p-2 sticky top-0 text-white bg-primary">Amount</th>
         </thead>
         <tbody>
-        
         </tbody>
     </table>
 </section>
