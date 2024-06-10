@@ -139,7 +139,7 @@
                     </div>
                 </label>
                 
-                <fieldset id="interim_period" class="flex flex-col gap-4 pl-4 md:w-96 md:pl-8 md:flex-row md:flex-wrap md:items-center">
+                <fieldset id="interim_period" class="gap-4 pl-4 md:w-96 md:pl-8 md:flex-row md:flex-wrap md:items-center">
                     <section>
                         <input
                             type="checkbox"
@@ -169,6 +169,26 @@
                             wire:model="fsTypes"
                             disabled />
                         <label class="text-sm md:text-base" for="SCF">Cash Flow</label>
+                    </section>
+                    <section>
+                        <input
+                            type="checkbox"
+                            id="SCNAE"
+                            class="checked:bg-black checked:hover:bg-secondary focus:ring-0 disabled:checked:bg-opacity-50"
+                            value="SCNAE"
+                            wire:model="fsTypes"
+                            disabled />
+                        <label class="text-sm md:text-base" for="SCNAE">Changes in Net Assets/Equity</label>
+                    </section>
+                    <section>
+                        <input
+                            type="checkbox"
+                            id="SCBAA"
+                            class="checked:bg-black checked:hover:bg-secondary focus:ring-0 disabled:checked:bg-opacity-50"
+                            value="SCBAA"
+                            wire:model="fsTypes"
+                            disabled />
+                        <label class="text-sm md:text-base" for="SCBAA">Comparison of Budget and Actual Amounts</label>
                     </section>
                 </fieldset>
             </div>
