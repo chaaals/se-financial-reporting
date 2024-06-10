@@ -25,7 +25,7 @@ class AddFinancialStatementCollection extends Component
     public $tbID;
     public $tbName;
     public $fscID;
-    public $fsTypes = ["SFPO", "SFPE", "SCF"];
+    public $fsTypes = ["SFPO", "SFPE", "SCF", "SCNAE", "SCBAA"];
     public $trialBalances = [
         'Trial Balance' => [
             'model' => 'tbID',
@@ -226,6 +226,8 @@ class AddFinancialStatementCollection extends Component
                 })
                 ->having('balance_difference', '=', 0)
                 ->get()->toArray();
+        } else if ($this->interimPeriod === 'Quarterly' && count($this->trialBalances['Trial Balance']['options']) > 0) {
+            $this->trialBalances['Trial Balance']['options'] = [];
         }
 
         if ($this->interimPeriod === "Annual") {
