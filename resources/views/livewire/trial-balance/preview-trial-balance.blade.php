@@ -81,13 +81,16 @@
                     <p class="font-inter font-bold">{{ $trial_balance->tb_name }}</p>
                 </div>
                 <div class="mb-0.5">
-                    <span class="text-xs font-inter text-slate-500">Date</span>
-                    <p class="font-inter font-bold">{{ $trial_balance->tb_date }}</p>
-                </div>
-                <div class="mb-0.5">
                     <span class="text-xs font-inter text-slate-500">Period</span>
                     <p class="font-inter font-bold">{{ $trial_balance->interim_period }}</p>
                 </div>
+
+                @if($trial_balance->tb_month)
+                <div class="mb-0.5">
+                    <span class="text-xs font-inter text-slate-500">Month</span>
+                    <p class="font-inter font-bold">{{ $months[$trial_balance->tb_month] }}</p>
+                </div>
+                @endif
 
                 @if($trial_balance->quarter)
                 <div class="mb-0.5">
@@ -95,6 +98,11 @@
                     <p class="font-inter font-bold">{{ $trial_balance->quarter }}</p>
                 </div>
                 @endif
+
+                <div class="mb-0.5">
+                    <span class="text-xs font-inter text-slate-500">Year</span>
+                    <p class="font-inter font-bold">{{ $trial_balance->tb_year }}</p>
+                </div>
                 <div class="mb-0.5">
                     <span class="text-xs font-inter text-slate-500">Created At</span>
                     <p class="font-inter font-bold">{{ $trial_balance->created_at }}</p>

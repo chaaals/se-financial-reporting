@@ -20,7 +20,9 @@ return new class extends Migration
             $table->enum('tb_status', ['Draft', 'For Approval', 'Change Requested', 'Approved'])->default('Draft');
             $table->enum('quarter', ['Q1', 'Q2', 'Q3', 'Q4'])->nullable();
             $table->boolean('approved')->default(false);
-            $table->date('tb_date');
+            // $table->date('tb_date');
+            $table->string('tb_month')->nullable();
+            $table->string('tb_year');
             $table->enum('interim_period', ['Monthly', 'Quarterly', 'Annual']);
             $table->string('template_name')->default('tb');
             $table->integer('debit_grand_totals');

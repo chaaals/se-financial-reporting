@@ -42,6 +42,20 @@ class PreviewTrialBalance extends Component
     public $subject = '';
     protected $attachment;
     public $filename;
+    public $months = [
+        "1" => "January",
+        "2" => "February",
+        "3" => "March",
+        "4" => "April",
+        "5" => "May",
+        "6" => "June",
+        "7" => "July",
+        "8" => "August",
+        "9" => "September",
+        "10" => "October",
+        "11" => "November",
+        "12" => "December"
+    ];
 
     protected $rules = [
         // 'editedReportName' => 'nullable|max:255',
@@ -129,7 +143,7 @@ class PreviewTrialBalance extends Component
         }
 
         // set date on excel
-        $tbYear = date('Y', strtotime($this->trial_balance->date));
+        $tbYear = $this->trial_balance->tb_year;
         $date = [
             'Q1' => "March 31, " . $tbYear,
             'Q2' => "June 31, " . $tbYear,
@@ -140,7 +154,7 @@ class PreviewTrialBalance extends Component
         if ($this->trial_balance->interim_period === 'Quarterly') {
             $newDateHeader = str_replace('<date>', $date[$this->trial_balance->quarter], $dateHeader);
         } else if ($this->trial_balance->interim_period === 'Monthly') {
-            $tb_month = date('m', strtotime($this->trial_balance->date));
+            $tb_month = $this->trial_balance->tb_month;
             $quarter = ceil($tb_month / 3);
             $quarter = "Q$quarter";
             $newDateHeader = str_replace('<date>', $date[$quarter], $dateHeader);
@@ -308,8 +322,8 @@ class PreviewTrialBalance extends Component
         $jsonConfig = json_decode($jsonConfig, true);
 
         // query data from GL
-        $queryMonth = ltrim(date('m', strtotime($this->trial_balance->tb_date)), '0');
-        $queryYear = date('Y', strtotime($this->trial_balance->tb_date));
+        $queryMonth = $this->trial_balance->tb_month;
+        $queryYear = $this->trial_balance->tb_year;
         $this->trial_balance->interim_period = trim($this->trial_balance->interim_period);
         if ($this->trial_balance->interim_period == 'Quarterly') {
             $months = [];
@@ -405,7 +419,7 @@ class PreviewTrialBalance extends Component
             "tb_id" => $this->trial_balance->tb_id,
             "tb_data" => $rebalanced,
             "totals_data" => $rebalancedTotals,
-            "date" => $this->trial_balance->tb_date
+            // "date" => date('Y-m-d', $this->trial_balance->created_at)
         ]);
 
         $user = auth()->user()->first_name . " " . auth()->user()->last_name;

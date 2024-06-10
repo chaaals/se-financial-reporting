@@ -1,15 +1,11 @@
 <section class="flex w-full p-4 gap-4">
-    <section class="relative" x-data="{ uploading: false, quarterly_active: false, import_active: false, selected_interim: false, loading: false }" x-on:livewire-upload-start="uploading = true" x-on:livewire-upload-finish="uploading = false" x-on:livewire-upload-error="uploading = false">
+    <section class="relative" x-data="{ uploading: false, monthly_active: false, quarterly_active: false, annual_active: false, import_active: false, selected_interim: false, loading: false }" x-on:livewire-upload-start="uploading = true" x-on:livewire-upload-finish="uploading = false" x-on:livewire-upload-error="uploading = false">
         <form wire:submit.prevent="add">
             <div class="flex flex-col items-start mb-4">
                 <label class="text-md font-bold" for='trialBalanceName'>Trial Balance Name</label>
                 <input class="w-full rounded-lg focus:ring-0 md:w-96" id='trialBalanceName' type='text' wire:model='tbName' placeholder='Add trial balance name' x-on:click="loading = false" />
-            </div>
 
-            <div class="flex flex-col items-start mb-4">
-                <label class="text-md font-bold" for='trialBalancePeriod'>Date</label>
-                <input class="w-full rounded-lg focus:ring-0 md:w-96" id='trialBalancePeriod' type='date' wire:model='tbDate' x-on:click="loading = false" />
-                <div>@error('tbDate')<span>{{ $message }}</span>@enderror</div>
+                <div>@error('tbName')<span class="text-red-500">{{ $message }}</span>@enderror</div>
             </div>
 
             <div class="mb-4">
@@ -24,7 +20,7 @@
                             value="Monthly"
                             wire:model="interimPeriod"
                             wire:click="resetImport"
-                            x-on:click="quarterly_active = false; selected_interim = true; loading = false" />
+                            x-on:click="monthly_active = true; quarterly_active = false; annual_active = false; selected_interim = false; loading = false" />
                         <label class="text-sm md:text-base" for="Monthly">Monthly</label>
                     </section>
                     <section>
@@ -35,7 +31,7 @@
                             value="Quarterly"
                             wire:model="interimPeriod"
                             wire:click="resetImport"
-                            x-on:click="quarterly_active = true; selected_interim = false; loading = false" />
+                            x-on:click="monthly_active = false; quarterly_active = true; annual_active = false; selected_interim = false; loading = false" />
                         <label class="text-sm md:text-base" for="Quarterly">Quarterly</label>
                     </section>
                     <section>
@@ -46,47 +42,69 @@
                             value="Annual"
                             wire:model="interimPeriod"
                             wire:click="resetImport"
-                            x-on:click="quarterly_active = false; selected_interim = true; loading = false"/>
+                            x-on:click="monthly_active = false; quarterly_active = false; annual_active = true; selected_interim = true; loading = false"/>
                         <label class="text-sm md:text-base" for="Annual">Annual</label>
                     </section>
                 </fieldset>
                 
-                <div>@error('interimPeriod')<span>{{ $message }}</span>@enderror</div>
+                <div>@error('interimPeriod')<span class="text-red-500">{{ $message }}</span>@enderror</div>
             </div>
 
-            <div x-cloak x-show="quarterly_active" class="mb-4">
+            <div x-cloak x-show="monthly_active" class="flex flex-col gap-1 mb-2">
+                <label class="text-md font-bold" for="month">Select Month</label>
+                <select id="month" class="w-full text-xs appearance-none rounded-lg pr-8 md:w-96 md:text-sm disabled:text-slate-500 disabled:border-slate-500" wire:model="month" @if($importedFromGL) disabled @endif>
+                            <option selected hidden>Select a Month</option>
+                        @foreach($months as $val=>$label)
+                            <option value='{{ $val }}' x-on:click="selected_interim = true;">{{ $label }}</option>
+                        @endforeach
+                </select>
+            </div>
+
+            <div x-cloak x-show="quarterly_active" class="mb-2">
                 <label class="text-md font-bold" for="quarter">Quarter</label>
 
                 <fieldset id="quarter" class="flex items-center gap-4 pl-4 md:pl-8">
                     <section>
-                        <input class="checked:bg-black checked:hover:bg-secondary focus:ring-0"" type="radio" id="q1" value="Q1" wire:model="quarter" x-on:click="selected_interim = true;loading = false" wire:click='resetImport' />
+                        <input class="checked:bg-black checked:hover:bg-secondary focus:ring-0"" type="radio" id="q1" value="Q1" wire:model="quarter" x-on:click="selected_interim = true;loading = false" @if($importedFromGL) disabled @endif />
                         <label for="q1">Q1</label>
                     </section>
                     <section>
-                        <input class="checked:bg-black checked:hover:bg-secondary focus:ring-0"" type="radio" id="q2" value="Q2" wire:model="quarter" x-on:click="selected_interim = true;loading = false" wire:click='resetImport' />
+                        <input class="checked:bg-black checked:hover:bg-secondary focus:ring-0"" type="radio" id="q2" value="Q2" wire:model="quarter" x-on:click="selected_interim = true;loading = false" @if($importedFromGL) disabled @endif />
                         <label for="q2">Q2</label>
                     </section>
                     <section>
-                        <input class="checked:bg-black checked:hover:bg-secondary focus:ring-0"" type="radio" id="q3" value="Q3" wire:model="quarter" x-on:click="selected_interim = true;loading = false" wire:click='resetImport' />
+                        <input class="checked:bg-black checked:hover:bg-secondary focus:ring-0"" type="radio" id="q3" value="Q3" wire:model="quarter" x-on:click="selected_interim = true;loading = false" @if($importedFromGL) disabled @endif />
                         <label for="q3">Q3</label>
                     </section>
                     <section>
-                        <input class="checked:bg-black checked:hover:bg-secondary focus:ring-0"" type="radio" id="q4" value="Q4" wire:model="quarter" x-on:click="selected_interim = true;loading = false" wire:click='resetImport' />
+                        <input class="checked:bg-black checked:hover:bg-secondary focus:ring-0"" type="radio" id="q4" value="Q4" wire:model="quarter" x-on:click="selected_interim = true;loading = false" @if($importedFromGL) disabled @endif />
                         <label for="q4">Q4</label>
                     </section>
                 </fieldset>
             </div>
 
-            <div x-data="{ withQuarter: @entangle('quarter') }" class="mb-4">
-                <label class="text-md font-bold" for="source">Source</label>
-                <div class="w-full h-44 relative mb-4 rounded-md bg-primary bg-opacity-5 border-2 border-dashed border-primary border-opacity-30 md:w-96">
+            <div x-cloak x-show="monthly_active || annual_active || quarterly_active" class="flex flex-col gap-1 mb-4">
+                <label class="text-md font-bold" for="year">Year</label>
+                <input class="w-full rounded-lg focus:ring-0 md:w-96 disabled:text-slate-400 disabled:border-slate-400" id='year' type='text' wire:model="year" placeholder='Enter year of the report' @if($importedFromGL) disabled @endif />
+            </div>
+
+            <div x-data="{ withQuarter: @entangle('quarter'), withMonth: @entangle('month') }" class="mb-4">
+                <div class="flex items-center justify-between mb-2">
+                    <label class="text-md font-bold" for="source">Source</label>
+                    @if($source)
+                    <button type="button" class="hover:text-secondary" wire:click="resetImport" x-on:click="loading=false;selected_interim=false;">
+                        <x-financial-reporting.assets.refresh-alt />
+                    </button>
+                    @endif
+                </div>
+                <div class="w-full h-44 relative mb-2 rounded-md bg-primary bg-opacity-5 border-2 border-dashed border-primary border-opacity-30 md:w-96">
                 @if(!$importedFromGL)
                     <div class="w-full h-full flex flex-col items-center justify-center md:w-96">
                         <p x-show="!loading">
                             <strong>General Ledger Source Details</strong>
                         </p>
 
-                        <button x-cloak x-show="(selected_interim || withQuarter) && !loading" type="button" class="underline hover:text-secondary" wire:click="importFromGL" x-on:click="loading = true;">Preview</button>
+                        <button x-cloak x-show="(selected_interim || withQuarter || withMonth) && !loading" type="button" class="underline hover:text-secondary" wire:click="importFromGL" x-on:click="loading = true;">Preview</button>
 
                         <div class="relative w-4 h-4" x-cloak x-show='loading'>
                             <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
@@ -109,12 +127,14 @@
                         <p>Credit Grand Totals &colon; {{ $source['creditGrandTotals'] }}</p>
                         @else
                             @if($interimPeriod == 'Monthly')
-                            <p>No financial information was fround from General Ledger for the month of {{ date('F', strtotime($tbDate)) }}</p>
+                            <p>No financial information were found from General Ledger for the month of {{ $months[$month] }} {{ $year }}</p>
                             @elseif($interimPeriod == 'Quarterly')
-                            <p>No financial information was fround from General Ledger for {{ $quarter }}</p>
+                            <p>No financial information were found from General Ledger for {{ $quarter }} {{ $year }}</p>
                             @else
-                            <p>No financial information was fround from General Ledger for {{ date('Y', strtotime($tbDate)) }}</p>
+                            <p>No financial information were found from General Ledger for {{ $year }}</p>
                             @endif
+
+                            <p class="text-xs mt-2"><i>Click the refresh icon to reset current Trial Balance details.</i></p>
                         @endif
                     </div>
                 @endif

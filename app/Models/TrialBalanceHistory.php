@@ -19,7 +19,7 @@ class TrialBalanceHistory extends Model
         'tb_id',
         'tb_data',
         'totals_data',
-        'date',
+        // 'date',
         'interim_period',
         'template_name',
     ];
