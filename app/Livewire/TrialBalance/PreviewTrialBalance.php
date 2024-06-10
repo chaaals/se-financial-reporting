@@ -3,6 +3,8 @@
 namespace App\Livewire\TrialBalance;
 
 use App\Exports\TrialBalanceExport;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 use App\Mail\FinancialReportEmail;
 use App\Models\TrialBalance;
 use App\Models\TrialBalanceHistory;
@@ -64,7 +66,7 @@ class PreviewTrialBalance extends Component
         // 'editedQuarter' => 'nullable|in:Q1,Q2,Q3,Q4',
         'selectedStatusOption' => 'required|in:Draft,For Approval,Approved,Change Requested',
         'subject' => 'required',
-        'receiver' => 'required|email',
+        'receiver' => 'required|string',
         'message' => 'required',
         // 'editedApproved' => 'required|boolean',
     ];
@@ -177,7 +179,25 @@ class PreviewTrialBalance extends Component
 
         $this->validate();
 
-        Mail::to($this->receiver)->send(new FinancialReportEmail($this->subject, $this->message, $this->filename, storage_path('app/' . $this->exportableFilePath)));
+        $emailsArray = explode(',', $this->receiver);
+
+        foreach ($emailsArray as $email) {
+            $email = trim($email);
+            $validator = Validator::make(
+                ['receiver' => $email],
+                ['receiver' => 'required|email']
+            );
+
+            if ($validator->fails()) {
+                $this->dispatch('mail');
+                throw ValidationException::withMessages([
+                    'receiver' => 'One or more emails are invalid.',
+                ]);
+            }
+
+        }
+
+        Mail::to($emailsArray)->send(new FinancialReportEmail($this->subject, $this->message, $this->filename, storage_path('app/' . $this->exportableFilePath)));
 
         $user = auth()->user()->first_name . " " . auth()->user()->last_name;
         $tbName = $this->trial_balance->tb_name;
@@ -186,6 +206,7 @@ class PreviewTrialBalance extends Component
         session()->now("success", "Successfully mailed $this->filename");
 
         $this->reset('subject', 'receiver', 'message');
+        $this->dispatch('mail');
     }
 
     public function export()

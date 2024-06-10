@@ -28,7 +28,7 @@ export default {
                 neutralTwo: "#222222",
                 neutralThree: "#B4BBC6",
                 neutralFour: "#71717A",
-                draft: "#D6D7D8",
+                draft: "#B3CDE0",
                 forapproval: "#AB830F",
                 approved: "#008000",
                 changerequested: "#DC3545",

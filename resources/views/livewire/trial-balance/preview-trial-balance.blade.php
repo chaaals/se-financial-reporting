@@ -212,15 +212,27 @@
             <div class="flex flex-col gap-2">
                 <form wire:submit.prevent='mailReport'>
                     <div class="flex flex-col items-start mb-4">
-                    <label class="text-md font-bold" for='trialBalanceName'>Subject</label>
-                    <input class="w-full rounded-lg focus:ring-0" id='trialBalanceName' type='text' wire:model='subject' placeholder='Enter subject' />
-                    <div>@error('subject')<span class="text-red">{{ $message }}@enderror</span></div>
+                    <label class="text-md font-bold" for='mailSubject'>Subject</label>
+                    <input class="w-full rounded-lg focus:ring-0" id='mailSubject' type='text' wire:model='subject' placeholder='Enter subject' />
+                    <div>@error('subject')<span class="text-red-500">{{ $message }}@enderror</span></div>
                     </div>
 
-                    <div class="mb-4">
-                    <label class="text-md font-bold" for='trialBalanceName'>To:</label>
-                    <input class="w-full rounded-lg focus:ring-0" id='trialBalanceName' type='email' wire:model.live='receiver' placeholder='Enter recipient' />
-                    <div>@error('receiver')<span class="text-red">{{ $message }}@enderror</span></div>
+                    <div x-data="{isToolTipVisible: false}" class="mb-4">
+                    <div class="flex items-center gap-2">
+                        <label class="text-md font-bold" for='mailReceivers'>Recipient/s</label>
+                        <div class="relative" x-on:mouseenter="isToolTipVisible = true" x-on:mouseleave="isToolTipVisible = false">
+                            <x-financial-reporting.assets.info />
+
+                            <div
+                                x-cloak
+                                x-show="isToolTipVisible"
+                                class="absolute -left-46 -top-16 rounded-t-lg rounded-bl-lg bg-black bg-opacity-75 w-48 p-2 text-sm after:content-[''] after:absolute after:top-full after:left-2/4 after:ml-22 after:border-4 after:border-solid after:border-t-black after:border-opacity-75 after:border-r-transparent after:border-b-transparent after:border-l-transparent">
+                                <p class="text-white">Separate recipient emails by using a comma.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <input class="w-full rounded-lg focus:ring-0" id='mailReceivers' type='text' wire:model.live='receiver' placeholder='email1@example.com, email2@example.com...' />
+                    <div>@error('receiver')<span class="text-red-500">{{ $message }}@enderror</span></div>
                     </div>
 
                     {{-- <div class="mb-4">
@@ -231,7 +243,7 @@
                     <div class="mb-4">
                     <label class="text-md font-bold" for='trialBalanceName'>Body</label>
                     <textarea class="w-full p-2 rounded-lg focus:ring-0" id='trialBalanceName' wire:model='message' placeholder='Write a message' ></textarea>
-                    <div>@error('message')<span class="text-red">{{ $message }}@enderror</span></div>
+                    <div>@error('message')<span class="text-red-500">{{ $message }}@enderror</span></div>
                     </div>
 
                     <div class="mb-4">
@@ -251,18 +263,31 @@
                         </div>
                         @endif
                     </div>
-                    <section class="w-full flex items-center justify-between gap-4">
+                    <section x-data="{isSending: false}" x-init="Livewire.on('mail', () => {isSending = false;})" class="w-full flex items-center justify-between gap-4">
                         <button
                             class="w-1/2 bg-accentOne px-4 py-2 rounded-lg"
                             type="button"
                             x-on:click="isMailFormOpen = false"
+                            :disabled="isSending"
                         >
                         Close
                         </button>
                         <button
-                        class="w-full bg-primary text-white px-4 py-2 rounded-lg disabled:bg-opacity-50" type="submit"
+                        class="w-full bg-primary text-white px-4 py-2 rounded-lg disabled:bg-opacity-50" x-on:click="isSending=true" type="submit"
                         @if(!$filename) disabled @endif
-                        >Send Report</button>
+                        >
+                        <p x-cloak x-show="!isSending">Send Report</p>
+                        <div x-cloak x-show="isSending" class="w-full flex items-center justify-center py-1">
+                            <div class="relative w-4 h-4">
+                                <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        </button>
                     </section>
                 </form>
             </div>
