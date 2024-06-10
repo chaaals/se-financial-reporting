@@ -118,15 +118,6 @@ class AddFinancialStatementCollection extends Component
             "template_name" => "scf",
         ]);
 
-        [$scfData, $scfTotals] = $this->getData($tbData, "scf_tb");
-        FinancialStatement::create([
-            "fs_type" => "SCF",
-            "fs_data" => $scfData,
-            "totals_data" => $scfTotals,
-            "collection_id" => $this->fscID,
-            "template_name" => "scf",
-        ]);
-
         if ($this->interimPeriod == 'Annual') {
             [$scnaeData, $scnaeTotals] = $this->getData($tbData, "scnae_tb");
             FinancialStatement::create([

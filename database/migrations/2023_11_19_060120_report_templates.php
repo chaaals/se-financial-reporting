@@ -52,7 +52,7 @@ return new class extends Migration
                 'template' => '{"sample": "content"}',
             ],
             [
-                'template_name' => 'scba',
+                'template_name' => 'scbaa',
                 'template' => '{"sample": "content"}',
             ],
             [
