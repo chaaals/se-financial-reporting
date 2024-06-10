@@ -13,7 +13,7 @@ use Livewire\Component;
 use Maatwebsite\Excel\Facades\Excel;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use Storage;
+use Illuminate\Support\Facades\Storage;
 use DateTime;
 use Illuminate\Support\Facades\DB;
 
@@ -84,14 +84,18 @@ class PreviewFinancialStatementCollection extends Component
 
         $spreadsheet = IOFactory::load(storage_path('app/' . $this->exportableFilePath));
 
-        // sfpo, sfpe, scf in order
+        // sfpo, sfpe, scf, scnae, scbaa in order
         $fsDataResults = DB::select('SELECT fs_data FROM financial_statements WHERE collection_id = ?', [$this->fsCollection->collection_id]);
         $jsonData = array_column($fsDataResults, 'fs_data');
         // key : val == rowNumber : fsData
         $combinedData = array_map('json_decode', $jsonData, array_fill(0, count($jsonData), true));
 
-        for ($i=0 ; $i<3 ; $i++) {
-            $column = ($i === 2) ? 'E' : 'F'; 
+        for ($i = 0; $i < count($combinedData); $i++) {
+            $column = match ($i) {
+                2 => 'E',
+                4 => 'I',
+                default => 'F',
+            };
             foreach ($combinedData[$i] as $row => $value) {
                 $spreadsheet->getSheet($i)->setCellValue($column . $row, $value);
             }

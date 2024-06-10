@@ -1,5 +1,5 @@
 <section
-    x-data="{ showSFPO: true, showSFPE: false, showSCF: false, isActionModalOpen: false, isMailFormOpen: false }"
+    x-data="{ showSFPO: true, showSFPE: false, showSCF: false, showSCNAE: false, showSCBAA: false, isActionModalOpen: false, isMailFormOpen: false }"
     class="relative p-4">
     <section class="w-full flex items-center justify-between flex-col bg-white rounded-lg mb-4 p-2 gap-4 md:flex-row 2xl:mb-8">
         <section clas="flex flex-col items-center justify-center md:flex-row">
@@ -12,22 +12,34 @@
             </h1>
             <div class="flex items-center justify-center gap-2 md:pl-4 md:justify-start">
                 <button
-                    x-on:click="showSFPO=true;showSFPE=false;showSCF=false;"
+                    x-on:click="showSFPO=true;showSFPE=false;showSCF=false;showSCNAE=false;showSCBAA=false;"
                     class="w-20 p-1 rounded-lg md:w-28"
                     :class="showSFPO ? 'bg-primary text-white' : 'bg-transparent text-neutralFour'">
                     SFPO
                 </button>
                 <button
-                    x-on:click="showSFPO=false;showSFPE=true;showSCF=false;"
+                    x-on:click="showSFPO=false;showSFPE=true;showSCF=false;showSCNAE=false;showSCBAA=false;"
                     class="w-20 p-1 rounded-lg md:w-28"
                     :class="showSFPE ? 'bg-primary text-white' : 'bg-transparent text-neutralFour'">
                     SFPE
                 </button>
                 <button
-                    x-on:click="showSFPO=false;showSFPE=false;showSCF=true;"
+                    x-on:click="showSFPO=false;showSFPE=false;showSCF=true;showSCNAE=false;showSCBAA=false;"
                     class="w-20 p-1 rounded-lg md:w-28"
                     :class="showSCF ? 'bg-primary text-white' : 'bg-transparent text-neutralFour'">
                     SCF
+                </button>
+                <button
+                    x-on:click="showSFPO=false;showSFPE=false;showSCF=false;showSCNAE=true;showSCBAA=false;"
+                    class="w-20 p-1 rounded-lg md:w-28"
+                    :class="showSCNAE ? 'bg-primary text-white' : 'bg-transparent text-neutralFour'">
+                    SCNAE
+                </button>
+                <button
+                    x-on:click="showSFPO=false;showSFPE=false;showSCF=false;showSCNAE=false;showSCBAA=true;"
+                    class="w-20 p-1 rounded-lg md:w-28"
+                    :class="showSCBAA ? 'bg-primary text-white' : 'bg-transparent text-neutralFour'">
+                    SCBAA
                 </button>
             </div>
         </section>
@@ -86,6 +98,16 @@
                 />
                 @elseif($fsType === "SCF")
                 <livewire:financial-reporting.cash-flow-template
+                    :data="$fs->fs_data"
+                    :totalsData="$fs->totals_data"
+                />
+                @elseif($fsType === "SCNAE")
+                <livewire:financial-reporting.scnae-template
+                    :data="$fs->fs_data"
+                    :totalsData="$fs->totals_data"
+                />
+                @elseif($fsType === "SCBAA")
+                <livewire:financial-reporting.scbaa-template
                     :data="$fs->fs_data"
                     :totalsData="$fs->totals_data"
                 />
