@@ -235,6 +235,8 @@ class AddFinancialStatementCollection extends Component
                 })
                 ->having('balance_difference', '=', 0)
                 ->get()->toArray();
+        } else if ($this->interimPeriod === 'Quarterly' && count($this->trialBalances['Trial Balance']['options']) > 0) {
+            $this->trialBalances['Trial Balance']['options'] = [];
         }
 
         if ($this->interimPeriod === "Annual") {

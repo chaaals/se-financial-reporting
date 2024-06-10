@@ -3,7 +3,7 @@
         <form wire:submit.prevent="add">
             <div class="flex flex-col items-start mb-4">
                 <label class="text-md font-bold" for='trialBalanceName'>Trial Balance Name</label>
-                <input class="w-full rounded-lg focus:ring-0 md:w-96" id='trialBalanceName' type='text' wire:model='tbName' placeholder='Add trial balance name' x-on:click="loading = false" />
+                <input class="w-full rounded-lg focus:ring-0 md:w-96" id='trialBalanceName' type='text' wire:model='tbName' placeholder='Add trial balance name' />
 
                 <div>@error('tbName')<span class="text-red-500">{{ $message }}</span>@enderror</div>
             </div>
@@ -85,7 +85,7 @@
 
             <div x-cloak x-show="monthly_active || annual_active || quarterly_active" class="flex flex-col gap-1 mb-4">
                 <label class="text-md font-bold" for="year">Year</label>
-                <input class="w-full rounded-lg focus:ring-0 md:w-96 disabled:text-slate-400 disabled:border-slate-400" id='year' type='text' wire:model="year" placeholder='Enter year of the report' @if($importedFromGL) disabled @endif />
+                <input class="w-full rounded-lg focus:ring-0 md:w-96 disabled:text-slate-400 disabled:border-slate-400" id='year' type='text' wire:model.live="year" placeholder='Enter year of the report' @if($importedFromGL) disabled @endif />
             </div>
 
             <div x-data="{ withQuarter: @entangle('quarter'), withMonth: @entangle('month') }" class="mb-4">

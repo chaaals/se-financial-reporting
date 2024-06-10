@@ -44,7 +44,7 @@
                             class="checked:bg-black checked:hover:bg-secondary focus:ring-0 disabled:checked:bg-opacity-50"
                             type="radio"
                             id="q1"
-                            wire:model="quarter"
+                            wire:model.live="quarter"
                             value="Q1" />
                         <label for="q1">Q1</label>
                     </section>
@@ -53,7 +53,7 @@
                             class="checked:bg-black checked:hover:bg-secondary focus:ring-0 disabled:checked:bg-opacity-50"
                             type="radio"
                             id="q2"
-                            wire:model="quarter"
+                            wire:model.live="quarter"
                             value="Q2" />
                         <label for="q2">Q2</label>
                     </section>
@@ -62,7 +62,7 @@
                             class="checked:bg-black checked:hover:bg-secondary focus:ring-0 disabled:checked:bg-opacity-50"
                             type="radio"
                             id="q3"
-                            wire:model="quarter"
+                            wire:model.live="quarter"
                             value="Q3" />
                         <label for="q3">Q3</label>
                     </section>
@@ -71,7 +71,7 @@
                             class="checked:bg-black checked:hover:bg-secondary focus:ring-0 disabled:checked:bg-opacity-50"
                             type="radio"
                             id="q4"
-                            wire:model="quarter"
+                            wire:model.live="quarter"
                             value="Q4" />
                         <label for="q4">Q4</label>
                     </section>
@@ -80,7 +80,7 @@
 
             <div x-cloak x-show="quarterly_active || annual_active" class="flex flex-col gap-1 mb-4">
                 <label class="text-md font-bold" for="year">Year</label>
-                <input class="w-full rounded-lg focus:ring-0 md:w-96 disabled:text-slate-400 disabled:border-slate-400" id='year' type='text' wire:model="year" placeholder='Enter year of the report' />
+                <input class="w-full rounded-lg focus:ring-0 md:w-96 disabled:text-slate-400 disabled:border-slate-400" id='year' type='text' wire:model.live="year" placeholder='Enter year of the report' />
             </div>
 
             <div x-data="{isToolTipVisible: false}">
