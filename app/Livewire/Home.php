@@ -36,7 +36,12 @@ class Home extends Component
         $this->user = $user;
 
         $this->trialBalances = TrialBalance::orderBy('created_at', 'desc')->take(6)->get();
-        $years = FinancialStatementCollection::select('fsc_year')->orderBy('fsc_year', 'desc')->get()->toArray();
+        $years = array_unique(
+            array_column(
+                FinancialStatementCollection::select('fsc_year')->orderBy('fsc_year', 'desc')->get()->toArray(),
+                'fsc_year',
+            )
+        );
 
         if (!$years) {
             $years = [date('Y')];
