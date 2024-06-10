@@ -30,13 +30,13 @@
                     SCF
                 </button>
                 <button
-                    x-on:click="showSCNAE=false;showSFPE=false;showSCF=false;showSCNAE=true;showSCBAA=false;"
+                    x-on:click="showSFPO=false;showSFPE=false;showSCF=false;showSCNAE=true;showSCBAA=false;"
                     class="w-20 p-1 rounded-lg md:w-28"
                     :class="showSCNAE ? 'bg-primary text-white' : 'bg-transparent text-neutralFour'">
                     SCNAE
                 </button>
                 <button
-                    x-on:click="showSCBAA=false;showSFPE=false;showSCF=false;showSCNAE=false;showSCBAA=true;"
+                    x-on:click="showSFPO=false;showSFPE=false;showSCF=false;showSCNAE=false;showSCBAA=true;"
                     class="w-20 p-1 rounded-lg md:w-28"
                     :class="showSCBAA ? 'bg-primary text-white' : 'bg-transparent text-neutralFour'">
                     SCBAA
@@ -89,7 +89,10 @@
                     :totalsData="$fs->totals_data"
                 />
                 @elseif($fsType === "SCNAE")
-                <livewire:financial-reporting.scnae-template />
+                <livewire:financial-reporting.scnae-template
+                    :data="$fs->fs_data"
+                    :totalsData="$fs->totals_data"
+                />
                 @elseif($fsType === "SCBAA")
                 <livewire:financial-reporting.scbaa-template />
                 @endif
