@@ -44,9 +44,9 @@ class ListFinancialStatementCollection extends Component
     public $sortBy;
     public $sortIndices = [
         0 => "collection_name",
-        1 => "fsc_year",
-        2 => "interim_period",
-        3 => "quarter",
+        1 => "interim_period",
+        2 => "quarter",
+        3 => "fsc_year",
         4 => "created_at",
         5 => "updated_at",
         6 => "collection_status",

@@ -23,9 +23,9 @@ class ListTrialBalance extends Component
     public $sortIndices = [
         0 => "tb_name",
         1 => "interim_period",
-        2 => "month",
+        2 => "tb_month",
         3 => "quarter",
-        4 => "year",
+        4 => "tb_year",
         5 => "created_at",
         6 => "updated_at",
         7 => "tb_status",
