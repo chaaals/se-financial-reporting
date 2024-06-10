@@ -36,7 +36,7 @@ class AddFinancialStatementCollection extends Component
     protected $listeners = ["setTrialBalance" => "setTrialBalance"];
 
     protected $rules = [
-        "fsName" => "required|max:255",
+        "fsName" => "nullable|max:255",
         // "date" => "required|date",
         "interimPeriod" => "required|in:Quarterly,Annual",
         "quarter" => "nullable",
@@ -70,7 +70,7 @@ class AddFinancialStatementCollection extends Component
             "collection_status" => 'Draft',
             "quarter" => $this->quarter,
             "approved" => false,
-            "year" => $this->year,
+            "fsc_year" => $this->year,
             "interim_period" => $this->interimPeriod,
             "tb_id" => $this->tbID,
         ]);
