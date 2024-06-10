@@ -5,7 +5,7 @@
             <th class="text-sm p-2 sticky top-0 text-white bg-primary">Amount</th>
         </thead>
         <tbody>
-            <tr>
+            <tr class="bg-slate-200">
                 <td class="text-left font-bold pl-4">Balance at January 1</td>
                 <td>{{ $totalsData["Balance at January 1"] }}</td>
             </tr>
@@ -32,11 +32,11 @@
                 <td>{{ $totalsData["Total Changes during the year"] }}</td>
             </tr>
             {{-- Total Changes --}}
-            <tr>
+            <tr class="bg-slate-200">
                 <td class="text-left font-bold pl-4">Total Changes during the year</td>
                 <td>{{ '-' }}</td>
             </tr>
-            <tr>
+            <tr class="bg-slate-200">
                 <td class="text-left font-bold pl-4">Balance at December 31</td>
                 <td>{{ $totalsData["Balance at December 31"] }}</td>
             </tr>

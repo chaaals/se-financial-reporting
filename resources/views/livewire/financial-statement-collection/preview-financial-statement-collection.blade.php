@@ -94,7 +94,10 @@
                     :totalsData="$fs->totals_data"
                 />
                 @elseif($fsType === "SCBAA")
-                <livewire:financial-reporting.scbaa-template />
+                <livewire:financial-reporting.scbaa-template
+                    :data="$fs->fs_data"
+                    :totalsData="$fs->totals_data"
+                />
                 @endif
             </div>
         @endforeach
