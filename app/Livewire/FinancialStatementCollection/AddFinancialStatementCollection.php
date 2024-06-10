@@ -195,12 +195,7 @@ class AddFinancialStatementCollection extends Component
 
     public function render()
     {
-        if ($this->interimPeriod === 'Quarterly') {
-            $this->rules['quarter'] = 'required|in:Q1,Q2,Q3,Q4';
-            $quarter = ceil(date('m') / 3);
-            $this->quarter = "Q$quarter";
-
-
+        if ($this->interimPeriod === 'Quarterly' && $this->quarter) {
             $this->trialBalances['Trial Balance']['options'] = TrialBalance::select(['tb_id', 'tb_name', DB::raw('debit_grand_totals - credit_grand_totals as balance_difference')])
                 ->where('interim_period', 'Quarterly')
                 ->where('quarter', $this->quarter)

@@ -1,14 +1,9 @@
 <section>
-    <section class="relative p-4" x-data="{ isActionModalOpen: false ,quarterly_active: false }">
+    <section class="relative p-4" x-data="{ isActionModalOpen: false ,quarterly_active: false, annual_active: false }">
         <form wire:submit.prevent="add">
             <div class="flex flex-col items-start mb-4">
                 <label class="text-md font-bold" for='fsName'>Financial Statement Collection</label>
                 <input class="w-full rounded-lg focus:ring-0 md:w-96" id='fsName' type='text' wire:model='fsName' placeholder='Add financial statement collection name' />
-            </div>
-
-            <div class="flex flex-col gap-1 mb-4">
-                <label class="text-md font-bold" for="year">Year</label>
-                <input class="w-full rounded-lg focus:ring-0 md:w-96 disabled:text-slate-400 disabled:border-slate-400" id='year' type='text' wire:model="year" placeholder='Enter year of the report' />
             </div>
 
             <div class="flex flex-col items-start">
@@ -22,7 +17,7 @@
                             class="checked:bg-black checked:hover:bg-secondary focus:ring-0""
                             value="Quarterly"
                             wire:model.live="interimPeriod"
-                            x-on:click="quarterly_active = true"
+                            x-on:click="quarterly_active = true; annual_active = false"
                              />
                         <label class="text-sm md:text-base" for="Quarterly">Quarterly</label>
                     </section>
@@ -33,7 +28,7 @@
                             class="checked:bg-black checked:hover:bg-secondary focus:ring-0""
                             value="Annual"
                             wire:model.live="interimPeriod"
-                            x-on:click="quarterly_active = false"
+                            x-on:click="quarterly_active = false; annual_active = true"
                              />
                         <label class="text-sm md:text-base" for="Annual">Annual</label>
                     </section>
@@ -50,8 +45,7 @@
                             type="radio"
                             id="q1"
                             wire:model="quarter"
-                            value="Q1"
-                            disabled />
+                            value="Q1" />
                         <label for="q1">Q1</label>
                     </section>
                     <section>
@@ -60,8 +54,7 @@
                             type="radio"
                             id="q2"
                             wire:model="quarter"
-                            value="Q2"
-                            disabled />
+                            value="Q2" />
                         <label for="q2">Q2</label>
                     </section>
                     <section>
@@ -70,8 +63,7 @@
                             type="radio"
                             id="q3"
                             wire:model="quarter"
-                            value="Q3"
-                            disabled />
+                            value="Q3" />
                         <label for="q3">Q3</label>
                     </section>
                     <section>
@@ -80,11 +72,15 @@
                             type="radio"
                             id="q4"
                             wire:model="quarter"
-                            value="Q4"
-                            disabled />
+                            value="Q4" />
                         <label for="q4">Q4</label>
                     </section>
                 </fieldset>
+            </div>
+
+            <div x-cloak x-show="quarterly_active || annual_active" class="flex flex-col gap-1 mb-4">
+                <label class="text-md font-bold" for="year">Year</label>
+                <input class="w-full rounded-lg focus:ring-0 md:w-96 disabled:text-slate-400 disabled:border-slate-400" id='year' type='text' wire:model="year" placeholder='Enter year of the report' />
             </div>
 
             <div x-data="{isToolTipVisible: false}">
