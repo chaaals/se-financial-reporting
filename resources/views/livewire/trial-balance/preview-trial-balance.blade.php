@@ -1,5 +1,5 @@
 <section
-    x-data="{ isActionModalOpen: false, isMailFormOpen: false }"
+    x-data="{ isActionModalOpen: false, isMailFormOpen: false, isRebalancingFormOpen: false }"
     class="w-full p-4"
     >
     <section class="w-full flex items-center justify-between flex-col bg-white rounded-lg mb-4 p-2 md:flex-row 2xl:mb-8">
@@ -136,7 +136,8 @@
                         @if(!$isBalanced && !$trial_balance->approved && auth()->user()->role === "accounting")
                         <button 
                             class="w-full text-center rounded-lg text-white p-2 bg-primary"
-                            wire:click='rebalance'
+                            {{-- wire:click='rebalance' --}}
+                            x-on:click="isRebalancingFormOpen = true"
                             @if($isBalanced || $trial_balance->deleted_at) disabled @endif
                         >
                             Rebalance
@@ -264,6 +265,85 @@
                         >Send Report</button>
                     </section>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    <div
+        x-cloak
+        x-show="isRebalancingFormOpen"
+        role="dialog"
+        class="fixed top-0 left-0 w-screen h-screen bg-neutral bg-opacity-50 flex items-center justify-center">
+        <div class="w-1/3 bg-white drop-shadow-md p-4 rounded-lg">
+            <h1 class="text-2xl font-bold font-inter mb-2">Rebalancing Details</h1>
+
+            <div class="flex flex-col gap-2">
+                <div class="flex flex-col items-start mb-2">
+                    <label class="text-md font-bold" for='trialBalanceName'>Trial Balance</label>
+                    <input class="w-full rounded-lg focus:ring-0 disabled:text-slate-400 disabled:border-slate-400" id='trialBalanceName' type='text' value="{{$trial_balance->tb_name}}" disabled />
+                </div>
+                <div class="flex flex-col items-start mb-2">
+                    <label class="text-md font-bold" for='trialBalanceName'>Date</label>
+                    <input class="w-full rounded-lg focus:ring-0 disabled:text-slate-400 disabled:border-slate-400" id='trialBalanceName' type='text' value="{{date("M d, Y", strtotime($trial_balance->tb_date))}}" disabled />
+                </div>
+                <div class="flex flex-col items-start mb-2">
+                    <label class="text-md font-bold" for='trialBalanceName'>Interim Period</label>
+                    <input class="w-full rounded-lg focus:ring-0 disabled:text-slate-400 disabled:border-slate-400" id='trialBalanceName' type='text' value="{{$trial_balance->interim_period}}" disabled />
+                </div>
+                @if($trial_balance->quarter)
+                <div class="flex flex-col items-start mb-2">
+                    <label class="text-md font-bold" for='trialBalanceName'>Quarter</label>
+                    <input class="w-full rounded-lg focus:ring-0 disabled:text-slate-400 disabled:border-slate-400" id='trialBalanceName' type='text' value="{{$trial_balance->quarter}}" disabled />
+                </div>
+                @elseif($trial_balance->interim_period == "Monthly")
+                <div class="flex flex-col items-start mb-2">
+                    <label class="text-md font-bold" for='trialBalanceName'>Month</label>
+                    <input class="w-full rounded-lg focus:ring-0 disabled:text-slate-400 disabled:border-slate-400" id='trialBalanceName' type='text' value="{{date("M", strtotime($trial_balance->tb_date))}}" disabled />
+                </div>
+                @elseif($trial_balance->interim_period == "Annual")
+                <div class="flex flex-col items-start mb-2">
+                    <label class="text-md font-bold" for='trialBalanceName'>Year</label>
+                    <input class="w-full rounded-lg focus:ring-0 disabled:text-slate-400 disabled:border-slate-400" id='trialBalanceName' type='text' value="{{date("Y", strtotime($trial_balance->tb_date))}}" disabled />
+                </div>
+                @endif
+                <section x-data="{isRebalancing: false, hasRebalanced: false, rebalancedMessage: ''}" x-init="Livewire.on('rebalanced', message => { isRebalancing = false; hasRebalanced = true; rebalancedMessage = message; })">
+                
+                    <p class="mb-2" x-cloak x-show="!hasRebalanced"><i>Note&colon; By clicking proceed, ledger entries will be refetched using the following information in attempt to rebalance the report.</i></p>
+
+                    <p class="mb-2" x-cloak x-show="hasRebalanced"><i>Result&colon; Successful rebalancing attempt. <strong><span x-text="rebalancedMessage"></span></strong></i></p>
+
+                    <section class="w-full flex items-center justify-between gap-4">
+                        <button
+                            class="w-full bg-accentOne px-4 py-2 rounded-lg disabled:bg-opacity-50"
+                            type="button"
+                            x-on:click="isRebalancingFormOpen = false; hasRebalanced = false; rebalancedMessage = '';"
+                            :disabled="isRebalancing"
+                        >Close</button>
+                        <button
+                            x-cloak
+                            x-show="!hasRebalanced"
+                            class="w-full bg-primary text-white px-4 py-2 rounded-lg disabled:bg-opacity-50 " type="button"
+                            x-on:click='isRebalancing = true'
+                            wire:click='rebalance'
+                            :disabled="isRebalancing"
+                            >
+                            <p x-cloak x-show="!isRebalancing">
+                            Proceed
+                            </p>
+                        <div class="w-full flex items-center justify-center py-1" x-cloak x-show="isRebalancing">
+                                <div class="relative w-4 h-4">
+                                    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                                        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                            </button>
+                    </section>
+
+                </section>
             </div>
         </div>
     </div>
