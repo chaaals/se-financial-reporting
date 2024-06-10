@@ -6,10 +6,9 @@
                 <input class="w-full rounded-lg focus:ring-0 md:w-96" id='fsName' type='text' wire:model='fsName' placeholder='Add financial statement collection name' />
             </div>
 
-            <div class="flex flex-col items-start">
-                <label class="text-md font-bold" for="fsDate">Date</label>
-                <input class="w-full rounded-lg focus:ring-0 md:w-96" id="fsDate" type="date" wire:model.live="date" />
-                <div class="mt-4">@error('date')<span class="text-amber-500">{{ $message }}</span>@enderror</div>
+            <div class="flex flex-col gap-1 mb-4">
+                <label class="text-md font-bold" for="year">Year</label>
+                <input class="w-full rounded-lg focus:ring-0 md:w-96 disabled:text-slate-400 disabled:border-slate-400" id='year' type='text' wire:model="year" placeholder='Enter year of the report' />
             </div>
 
             <div class="flex flex-col items-start">
@@ -42,7 +41,6 @@
                 <div class="mt-4">@error('interimPeriod')<span class="text-amber-500">{{ $message }}</span>@enderror</div>
             </div>
 
-            @if($date)
             <div x-cloak x-show="quarterly_active" class="mb-4">
                 <label class="text-md font-bold" htmlFor='fsPeriod'>Quarter</label>
                 <fieldset id="quarter" class="flex items-center gap-4 pl-4 md:pl-8">
@@ -88,7 +86,6 @@
                     </section>
                 </fieldset>
             </div>
-            @endif
 
             <div x-data="{isToolTipVisible: false}">
                 <section class="flex flex-col justify-center gap-1.5">
