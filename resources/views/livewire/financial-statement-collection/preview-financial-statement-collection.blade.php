@@ -1,5 +1,5 @@
 <section
-    x-data="{ showSFPO: true, showSFPE: false, showSCF: false, isActionModalOpen: false, isMailFormOpen: false }"
+    x-data="{ showSFPO: true, showSFPE: false, showSCF: false, showSCNAE: false, showSCBAA: false, isActionModalOpen: false, isMailFormOpen: false }"
     class="relative p-4">
     <section class="w-full flex items-center justify-between flex-col bg-white rounded-lg mb-4 p-2 gap-4 md:flex-row 2xl:mb-8">
         <section clas="flex flex-col items-center justify-center md:flex-row">
@@ -12,22 +12,34 @@
             </h1>
             <div class="flex items-center justify-center gap-2 md:pl-4 md:justify-start">
                 <button
-                    x-on:click="showSFPO=true;showSFPE=false;showSCF=false;"
+                    x-on:click="showSFPO=true;showSFPE=false;showSCF=false;showSCNAE=false;showSCBAA=false;"
                     class="w-20 p-1 rounded-lg md:w-28"
                     :class="showSFPO ? 'bg-primary text-white' : 'bg-transparent text-neutralFour'">
                     SFPO
                 </button>
                 <button
-                    x-on:click="showSFPO=false;showSFPE=true;showSCF=false;"
+                    x-on:click="showSFPO=false;showSFPE=true;showSCF=false;showSCNAE=false;showSCBAA=false;"
                     class="w-20 p-1 rounded-lg md:w-28"
                     :class="showSFPE ? 'bg-primary text-white' : 'bg-transparent text-neutralFour'">
                     SFPE
                 </button>
                 <button
-                    x-on:click="showSFPO=false;showSFPE=false;showSCF=true;"
+                    x-on:click="showSFPO=false;showSFPE=false;showSCF=true;showSCNAE=false;showSCBAA=false;"
                     class="w-20 p-1 rounded-lg md:w-28"
                     :class="showSCF ? 'bg-primary text-white' : 'bg-transparent text-neutralFour'">
                     SCF
+                </button>
+                <button
+                    x-on:click="showSFPO=false;showSFPE=false;showSCF=false;showSCNAE=true;showSCBAA=false;"
+                    class="w-20 p-1 rounded-lg md:w-28"
+                    :class="showSCNAE ? 'bg-primary text-white' : 'bg-transparent text-neutralFour'">
+                    SCNAE
+                </button>
+                <button
+                    x-on:click="showSFPO=false;showSFPE=false;showSCF=false;showSCNAE=false;showSCBAA=true;"
+                    class="w-20 p-1 rounded-lg md:w-28"
+                    :class="showSCBAA ? 'bg-primary text-white' : 'bg-transparent text-neutralFour'">
+                    SCBAA
                 </button>
             </div>
         </section>
@@ -49,9 +61,22 @@
             </section>
             @endif
             <button
-                class="bg-secondary text-white px-4 py-2 rounded-lg text-xs md:text-base"
-                wire:click="export">
-                Export Financial Statements
+                x-data="{isExporting: false}"
+                x-init="Livewire.on('exported', () => {isExporting=false;})"
+                wire:click="export"
+                class="bg-secondary text-white px-4 py-2 w-[10.75rem] h-[2.5rem] rounded-lg text-xs md:text-base disabled:bg-opacity-50" :disabled="isExporting">
+                <p x-show="!isExporting" x-on:click="isExporting=true">Export Trial Balance</p>
+
+                <div class="w-full flex items-center justify-center py-1" x-cloak x-show="isExporting">
+                    <div class="relative w-full h-full">
+                        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                            <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
             </button>
         </section>
     </section>
@@ -76,6 +101,16 @@
                     :data="$fs->fs_data"
                     :totalsData="$fs->totals_data"
                 />
+                @elseif($fsType === "SCNAE")
+                <livewire:financial-reporting.scnae-template
+                    :data="$fs->fs_data"
+                    :totalsData="$fs->totals_data"
+                />
+                @elseif($fsType === "SCBAA")
+                <livewire:financial-reporting.scbaa-template
+                    :data="$fs->fs_data"
+                    :totalsData="$fs->totals_data"
+                />
                 @endif
             </div>
         @endforeach
@@ -88,10 +123,6 @@
                     <p class="font-inter font-bold">{{ $fsCollection->collection_name }}</p>
                 </div>
                 <div class="mb-0.5">
-                    <span class="text-xs font-inter text-slate-500">Date</span>
-                    <p class="font-inter font-bold">{{ $fsCollection->date }}</p>
-                </div>
-                <div class="mb-0.5">
                     <span class="text-xs font-inter text-slate-500">Period</span>
                     <p class="font-inter font-bold">{{ $fsCollection->interim_period }}</p>
                 </div>
@@ -102,6 +133,10 @@
                     <p class="font-inter font-bold">{{ $fsCollection->quarter }}</p>
                 </div>
                 @endif
+                <div class="mb-0.5">
+                    <span class="text-xs font-inter text-slate-500">Year</span>
+                    <p class="font-inter font-bold">{{ $fsCollection->fsc_year }}</p>
+                </div>
                 <div class="mb-0.5">
                     <span class="text-xs font-inter text-slate-500">Created At</span>
                     <p class="font-inter font-bold">{{ $fsCollection->created_at }}</p>
@@ -184,7 +219,7 @@
         </div>
     </div>
 
-      <div
+    <div
         x-cloak
         x-show="isMailFormOpen"
         role="dialog"
@@ -195,15 +230,27 @@
             <div class="flex flex-col gap-2">
                 <form wire:submit.prevent='mailReport'>
                     <div class="flex flex-col items-start mb-4">
-                    <label class="text-md font-bold" for='trialBalanceName'>Subject</label>
-                    <input class="w-full rounded-lg focus:ring-0" id='trialBalanceName' type='text' wire:model='subject' placeholder='Enter subject' />
-                    <div>@error('subject')<span class="text-red">{{ $message }}@enderror</span></div>
+                    <label class="text-md font-bold" for='mailSubject'>Subject</label>
+                    <input class="w-full rounded-lg focus:ring-0" id='mailSubject' type='text' wire:model='subject' placeholder='Enter subject' />
+                    <div>@error('subject')<span class="text-red-500">{{ $message }}@enderror</span></div>
                     </div>
 
-                    <div class="mb-4">
-                    <label class="text-md font-bold" for='trialBalanceName'>To:</label>
-                    <input class="w-full rounded-lg focus:ring-0" id='trialBalanceName' type='email' wire:model.live='receiver' placeholder='Enter recipient' />
-                    <div>@error('receiver')<span class="text-red">{{ $message }}@enderror</span></div>
+                    <div x-data="{isToolTipVisible: false}" class="mb-4">
+                    <div class="flex items-center gap-2">
+                        <label class="text-md font-bold" for='mailReceivers'>Recipient/s</label>
+                        <div class="relative" x-on:mouseenter="isToolTipVisible = true" x-on:mouseleave="isToolTipVisible = false">
+                            <x-financial-reporting.assets.info />
+
+                            <div
+                                x-cloak
+                                x-show="isToolTipVisible"
+                                class="absolute -left-46 -top-16 rounded-t-lg rounded-bl-lg bg-black bg-opacity-75 w-48 p-2 text-sm after:content-[''] after:absolute after:top-full after:left-2/4 after:ml-22 after:border-4 after:border-solid after:border-t-black after:border-opacity-75 after:border-r-transparent after:border-b-transparent after:border-l-transparent">
+                                <p class="text-white">Separate recipient emails by using a comma.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <input class="w-full rounded-lg focus:ring-0" id='mailReceivers' type='text' wire:model.live='receiver' placeholder='email1@example.com, email2@example.com...' />
+                    <div>@error('receiver')<span class="text-red-500">{{ $message }}@enderror</span></div>
                     </div>
 
                     {{-- <div class="mb-4">
@@ -214,7 +261,7 @@
                     <div class="mb-4">
                     <label class="text-md font-bold" for='trialBalanceName'>Body</label>
                     <textarea class="w-full p-2 rounded-lg focus:ring-0" id='trialBalanceName' wire:model='message' placeholder='Write a message' ></textarea>
-                    <div>@error('message')<span class="text-red">{{ $message }}@enderror</span></div>
+                    <div>@error('message')<span class="text-red-500">{{ $message }}@enderror</span></div>
                     </div>
 
                     <div class="mb-4">
@@ -234,18 +281,31 @@
                         </div>
                         @endif
                     </div>
-                    <section class="w-full flex items-center justify-between gap-4">
+                    <section x-data="{isSending: false}" x-init="Livewire.on('mail', () => {isSending = false;})" class="w-full flex items-center justify-between gap-4">
                         <button
                             class="w-1/2 bg-accentOne px-4 py-2 rounded-lg"
                             type="button"
                             x-on:click="isMailFormOpen = false"
+                            :disabled="isSending"
                         >
                         Close
                         </button>
                         <button
-                        class="w-full bg-primary text-white px-4 py-2 rounded-lg disabled:bg-opacity-50" type="submit"
+                        class="w-full bg-primary text-white px-4 py-2 rounded-lg disabled:bg-opacity-50" x-on:click="isSending=true" type="submit"
                         @if(!$filename) disabled @endif
-                        >Send Report</button>
+                        >
+                        <p x-cloak x-show="!isSending">Send Report</p>
+                        <div x-cloak x-show="isSending" class="w-full flex items-center justify-center py-1">
+                            <div class="relative w-4 h-4">
+                                <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        </button>
                     </section>
                 </form>
             </div>

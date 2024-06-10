@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignUuid('collection_id')
                 ->constrained(table: 'financial_statement_collections', column: 'collection_id')
                 ->cascadeOnDelete();
-            $table->enum('fs_type', ['SFPO', 'SFPE', 'SCF']);
+            $table->enum('fs_type', ['SFPO', 'SFPE', 'SCF', 'SCNAE', 'SCBAA']);
             $table->longText('fs_data'); // json
             $table->longText('totals_data'); // json
             $table->string('template_name');

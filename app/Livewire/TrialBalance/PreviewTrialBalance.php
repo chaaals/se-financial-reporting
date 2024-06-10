@@ -3,6 +3,8 @@
 namespace App\Livewire\TrialBalance;
 
 use App\Exports\TrialBalanceExport;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 use App\Mail\FinancialReportEmail;
 use App\Models\TrialBalance;
 use App\Models\TrialBalanceHistory;
@@ -42,6 +44,20 @@ class PreviewTrialBalance extends Component
     public $subject = '';
     protected $attachment;
     public $filename;
+    public $months = [
+        "1" => "January",
+        "2" => "February",
+        "3" => "March",
+        "4" => "April",
+        "5" => "May",
+        "6" => "June",
+        "7" => "July",
+        "8" => "August",
+        "9" => "September",
+        "10" => "October",
+        "11" => "November",
+        "12" => "December"
+    ];
 
     protected $rules = [
         // 'editedReportName' => 'nullable|max:255',
@@ -50,7 +66,7 @@ class PreviewTrialBalance extends Component
         // 'editedQuarter' => 'nullable|in:Q1,Q2,Q3,Q4',
         'selectedStatusOption' => 'required|in:Draft,For Approval,Approved,Change Requested',
         'subject' => 'required',
-        'receiver' => 'required|email',
+        'receiver' => 'required|string',
         'message' => 'required',
         // 'editedApproved' => 'required|boolean',
     ];
@@ -129,7 +145,7 @@ class PreviewTrialBalance extends Component
         }
 
         // set date on excel
-        $tbYear = date('Y', strtotime($this->trial_balance->date));
+        $tbYear = $this->trial_balance->tb_year;
         $date = [
             'Q1' => "March 31, " . $tbYear,
             'Q2' => "June 31, " . $tbYear,
@@ -140,7 +156,7 @@ class PreviewTrialBalance extends Component
         if ($this->trial_balance->interim_period === 'Quarterly') {
             $newDateHeader = str_replace('<date>', $date[$this->trial_balance->quarter], $dateHeader);
         } else if ($this->trial_balance->interim_period === 'Monthly') {
-            $tb_month = date('m', strtotime($this->trial_balance->date));
+            $tb_month = $this->trial_balance->tb_month;
             $quarter = ceil($tb_month / 3);
             $quarter = "Q$quarter";
             $newDateHeader = str_replace('<date>', $date[$quarter], $dateHeader);
@@ -163,7 +179,25 @@ class PreviewTrialBalance extends Component
 
         $this->validate();
 
-        Mail::to($this->receiver)->send(new FinancialReportEmail($this->subject, $this->message, $this->filename, storage_path('app/' . $this->exportableFilePath)));
+        $emailsArray = explode(',', $this->receiver);
+
+        foreach ($emailsArray as $email) {
+            $email = trim($email);
+            $validator = Validator::make(
+                ['receiver' => $email],
+                ['receiver' => 'required|email']
+            );
+
+            if ($validator->fails()) {
+                $this->dispatch('mail');
+                throw ValidationException::withMessages([
+                    'receiver' => 'One or more emails are invalid.',
+                ]);
+            }
+
+        }
+
+        Mail::to($emailsArray)->send(new FinancialReportEmail($this->subject, $this->message, $this->filename, storage_path('app/' . $this->exportableFilePath)));
 
         $user = auth()->user()->first_name . " " . auth()->user()->last_name;
         $tbName = $this->trial_balance->tb_name;
@@ -172,6 +206,7 @@ class PreviewTrialBalance extends Component
         session()->now("success", "Successfully mailed $this->filename");
 
         $this->reset('subject', 'receiver', 'message');
+        $this->dispatch('mail');
     }
 
     public function export()
@@ -191,6 +226,7 @@ class PreviewTrialBalance extends Component
         session()->now("success", "Successfully exported file.");
 
         $this->attachment = null;
+        $this->dispatch('exported');
         return response()->download(storage_path('app/' . $this->exportableFilePath), $this->filename . '.xlsx', $headers)
             ->deleteFileAfterSend(true);
     }
@@ -308,8 +344,8 @@ class PreviewTrialBalance extends Component
         $jsonConfig = json_decode($jsonConfig, true);
 
         // query data from GL
-        $queryMonth = ltrim(date('m', strtotime($this->trial_balance->tb_date)), '0');
-        $queryYear = date('Y', strtotime($this->trial_balance->tb_date));
+        $queryMonth = $this->trial_balance->tb_month;
+        $queryYear = $this->trial_balance->tb_year;
         $this->trial_balance->interim_period = trim($this->trial_balance->interim_period);
         if ($this->trial_balance->interim_period == 'Quarterly') {
             $months = [];
@@ -398,6 +434,10 @@ class PreviewTrialBalance extends Component
         $this->creditGrandTotals = $tbDataTotals['GRAND TOTALS']['credit'];
         $this->isBalanced = ($this->debitGrandTotals - $this->creditGrandTotals) == 0;
 
+        $this->trial_balance->debit_grand_totals = $this->debitGrandTotals;
+        $this->trial_balance->credit_grand_totals = $this->creditGrandTotals;
+        $this->trial_balance->save();
+
         $rebalanced = json_encode($tbData);
         $rebalancedTotals = json_encode($tbDataTotals);
 
@@ -405,7 +445,7 @@ class PreviewTrialBalance extends Component
             "tb_id" => $this->trial_balance->tb_id,
             "tb_data" => $rebalanced,
             "totals_data" => $rebalancedTotals,
-            "date" => $this->trial_balance->tb_date
+            // "date" => date('Y-m-d', $this->trial_balance->created_at)
         ]);
 
         $user = auth()->user()->first_name . " " . auth()->user()->last_name;
@@ -414,6 +454,7 @@ class PreviewTrialBalance extends Component
 
         session()->now("success", "Trial Balance has been rebalanced");
         unlink(storage_path('app/' . $newFilePath));
+        $this->dispatch('rebalanced', $this->isBalanced ? "The report is now balanced." : "The report is still unbalanced; a notification has been sent to the General Ledger module for resolution.");
         $this->refetch();
     }
 
@@ -506,6 +547,7 @@ class PreviewTrialBalance extends Component
                 }
             }
         }
+        // dd($this->trial_balance);
 
         return view(
             'livewire.trial-balance.preview-trial-balance',

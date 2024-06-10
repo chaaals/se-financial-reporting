@@ -18,13 +18,14 @@ class AddFinancialStatementCollection extends Component
 
     public $fsName;
     public $fsData;
-    public $date;
+    // public $date;
+    public $year;
     public $interimPeriod;
     public $quarter;
     public $tbID;
     public $tbName;
     public $fscID;
-    public $fsTypes = ["SFPO", "SFPE", "SCF"];
+    public $fsTypes = ["SFPO", "SFPE", "SCF", "SCNAE", "SCBAA"];
     public $trialBalances = [
         'Trial Balance' => [
             'model' => 'tbID',
@@ -36,9 +37,10 @@ class AddFinancialStatementCollection extends Component
 
     protected $rules = [
         "fsName" => "nullable|max:255",
-        "date" => "required|date",
+        // "date" => "required|date",
         "interimPeriod" => "required|in:Quarterly,Annual",
         "quarter" => "nullable",
+        "year" => "required|integer",
         "tbID" => "required",
     ];
 
@@ -50,7 +52,7 @@ class AddFinancialStatementCollection extends Component
     public function mount()
     {
         // default values so user does not need to interact with the form and just save
-        $this->date = date('Y-m-d');
+        $this->year = date('Y');
     }
 
     public function add()
@@ -68,7 +70,7 @@ class AddFinancialStatementCollection extends Component
             "collection_status" => 'Draft',
             "quarter" => $this->quarter,
             "approved" => false,
-            "date" => $this->date,
+            "fsc_year" => $this->year,
             "interim_period" => $this->interimPeriod,
             "tb_id" => $this->tbID,
         ]);
@@ -87,6 +89,7 @@ class AddFinancialStatementCollection extends Component
 
         $tb = TrialBalance::with('latestTbData')->where('tb_id', $this->tbID)->get()[0];
         $tbData = $tb->getRelation('latestTbData');
+
         // $tbData = DB::select('SELECT tb_data from trial_balances WHERE tb_id = ?', [$this->tbID])[0];
         [$sfpoData, $sfpoTotals] = $this->getData($tbData, "sfpo_tb");
         FinancialStatement::create([
@@ -113,6 +116,26 @@ class AddFinancialStatementCollection extends Component
             "totals_data" => $scfTotals,
             "collection_id" => $this->fscID,
             "template_name" => "scf",
+        ]);
+
+        if ($this->interimPeriod == 'Annual') {
+            [$scnaeData, $scnaeTotals] = $this->getData($tbData, "scnae_tb");
+            FinancialStatement::create([
+                "fs_type" => "SCNAE",
+                "fs_data" => $scnaeData,
+                "totals_data" => $scnaeTotals,
+                "collection_id" => $this->fscID,
+                "template_name" => "scnae",
+            ]);
+        }
+
+        [$scbaaData, $scbaaTotals] = $this->getData($tbData, "scbaa_tb");
+        FinancialStatement::create([
+            "fs_type" => "SCBAA",
+            "fs_data" => $scbaaData,
+            "totals_data" => $scbaaTotals,
+            "collection_id" => $this->fscID,
+            "template_name" => "scbaa",
         ]);
 
         $this->reset();
@@ -162,10 +185,10 @@ class AddFinancialStatementCollection extends Component
         if ($totalsConfig) {
             $totalsConfig = $totalsConfig[0];
         }
-        
+
         $totalsArray = json_decode($totalsConfig->template, true);
         $totalsResults = [];
-        if(!$totalsArray){
+        if (!$totalsArray) {
             dd($totalsConfig->template);
         }
         foreach ($totalsArray as $title => $rows) {
@@ -193,34 +216,31 @@ class AddFinancialStatementCollection extends Component
 
     public function render()
     {
-        if ($this->date && $this->interimPeriod === 'Quarterly') {
-            $fr_month = date('m', strtotime($this->date));
-            $this->rules['quarter'] = 'required|in:Q1,Q2,Q3,Q4';
-            $quarter = ceil($fr_month / 3);
-            $this->quarter = "Q$quarter";
-            
-            
+        if ($this->interimPeriod === 'Quarterly' && $this->quarter) {
             $this->trialBalances['Trial Balance']['options'] = TrialBalance::select(['tb_id', 'tb_name', DB::raw('debit_grand_totals - credit_grand_totals as balance_difference')])
-            ->where('interim_period', 'Quarterly')
-            ->where('quarter', $this->quarter)
-            ->where('approved', true)
-            ->whereNotIn('trial_balances.tb_id', function($query) {
-                $query->select('tb_id')->from('financial_statement_collections');
-            })
-            ->having('balance_difference', '=', 0)
-            ->get()->toArray();
+                ->where('interim_period', 'Quarterly')
+                ->where('quarter', $this->quarter)
+                ->where('approved', true)
+                ->whereNotIn('trial_balances.tb_id', function ($query) {
+                    $query->select('tb_id')->from('financial_statement_collections');
+                })
+                ->having('balance_difference', '=', 0)
+                ->get()->toArray();
+        } else if ($this->interimPeriod === 'Quarterly' && count($this->trialBalances['Trial Balance']['options']) > 0) {
+            $this->trialBalances['Trial Balance']['options'] = [];
         }
 
         if ($this->interimPeriod === "Annual") {
             $this->quarter = null;
             $this->trialBalances['Trial Balance']['options'] = TrialBalance::select(['tb_id', 'tb_name', DB::raw('debit_grand_totals - credit_grand_totals as balance_difference')])
-            ->where('interim_period', 'Annual')
-            ->where('approved', true)
-            ->whereNotIn('trial_balances.tb_id', function($query) {
-                $query->select('tb_id')->from('financial_statement_collections');
-            })
-            ->having('balance_difference', '=', 0)
-            ->get()->toArray();
+                ->where('interim_period', 'Annual')
+                ->where('tb_year', $this->year)
+                ->where('approved', true)
+                ->whereNotIn('trial_balances.tb_id', function ($query) {
+                    $query->select('tb_id')->from('financial_statement_collections');
+                })
+                ->having('balance_difference', '=', 0)
+                ->get()->toArray();
         }
 
 
