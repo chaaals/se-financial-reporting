@@ -160,6 +160,7 @@ class PreviewFinancialStatementCollection extends Component
         activity()->withProperties(['user' => $user, 'role' => auth()->user()->role])->log("Exported $this->filename");
 
         $this->attachment = null;
+        $this->dispatch('exported');
         session()->now("success", "Successfully exported Financial Statements");
 
         return response()->download(storage_path('app/'.$this->exportableFilePath), $this->filename.'.xlsx', $headers)->deleteFileAfterSend(true);

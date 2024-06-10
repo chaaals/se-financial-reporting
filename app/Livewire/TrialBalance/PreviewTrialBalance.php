@@ -226,6 +226,7 @@ class PreviewTrialBalance extends Component
         session()->now("success", "Successfully exported file.");
 
         $this->attachment = null;
+        $this->dispatch('exported');
         return response()->download(storage_path('app/' . $this->exportableFilePath), $this->filename . '.xlsx', $headers)
             ->deleteFileAfterSend(true);
     }
