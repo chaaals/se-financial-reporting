@@ -88,10 +88,6 @@
                     <p class="font-inter font-bold">{{ $fsCollection->collection_name }}</p>
                 </div>
                 <div class="mb-0.5">
-                    <span class="text-xs font-inter text-slate-500">Date</span>
-                    <p class="font-inter font-bold">{{ $fsCollection->date }}</p>
-                </div>
-                <div class="mb-0.5">
                     <span class="text-xs font-inter text-slate-500">Period</span>
                     <p class="font-inter font-bold">{{ $fsCollection->interim_period }}</p>
                 </div>
@@ -102,6 +98,10 @@
                     <p class="font-inter font-bold">{{ $fsCollection->quarter }}</p>
                 </div>
                 @endif
+                <div class="mb-0.5">
+                    <span class="text-xs font-inter text-slate-500">Year</span>
+                    <p class="font-inter font-bold">{{ $fsCollection->fsc_year }}</p>
+                </div>
                 <div class="mb-0.5">
                     <span class="text-xs font-inter text-slate-500">Created At</span>
                     <p class="font-inter font-bold">{{ $fsCollection->created_at }}</p>

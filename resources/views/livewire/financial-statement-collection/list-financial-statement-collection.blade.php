@@ -51,12 +51,6 @@
                             <x-financial-reporting.assets.table-sort />
                         </button>
                     </th>
-                    <th class="w-36 bg-primary text-white relative text-left p-2 sticky top-0">
-                        Date
-                        <button wire:click="sort(1)" wire:target="sortBy" class="absolute top-1 right-2">
-                            <x-financial-reporting.assets.table-sort />
-                        </button>
-                    </th>
                     <th class="w-36 hidden bg-primary text-white relative text-left p-2 sticky top-0 md:table-cell">
                         Period
                         <button wire:click="sort(2)" wire:target="sortBy" class="absolute top-1 right-2">
@@ -66,6 +60,12 @@
                     <th class="w-24 hidden bg-primary text-white relative text-left p-2 sticky top-0 md:table-cell">
                         Quarter
                         <button wire:click="sort(3)" wire:target="sortBy" class="absolute top-1 right-2">
+                            <x-financial-reporting.assets.table-sort />
+                        </button>
+                    </th>
+                    <th class="w-36 bg-primary text-white relative text-left p-2 sticky top-0">
+                        Year
+                        <button wire:click="sort(1)" wire:target="sortBy" class="absolute top-1 right-2">
                             <x-financial-reporting.assets.table-sort />
                         </button>
                     </th>
@@ -104,14 +104,14 @@
                                     &lpar;Archived&rpar; {{ $fsc->collection_name }}
                                     @endif
                                 </td>
-                                <td class="h-16 p-2 text-center whitespace-nowrap">
-                                    {{ date('M d, Y', strtotime($fsc->date)) }}
-                                </td>
                                 <td class="h-16 p-2 hidden text-center whitespace-nowrap md:table-cell">
                                     {{ $fsc->interim_period }}
                                 </td>
                                 <td class="h-16 p-2 hidden text-center whitespace-nowrap md:table-cell">
                                     {{ $fsc->quarter ?? "-" }}
+                                </td>
+                                <td class="h-16 p-2 text-center whitespace-nowrap">
+                                    {{ $fsc->fsc_year }}
                                 </td>
                                 <td class="h-16 p-2 hidden text-center whitespace-wrap md:table-cell">
                                     {{ date('M d, Y H:i:s', strtotime($fsc->created_at)) }}
