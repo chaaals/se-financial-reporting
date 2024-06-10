@@ -89,6 +89,7 @@ class AddFinancialStatementCollection extends Component
 
         $tb = TrialBalance::with('latestTbData')->where('tb_id', $this->tbID)->get()[0];
         $tbData = $tb->getRelation('latestTbData');
+
         // $tbData = DB::select('SELECT tb_data from trial_balances WHERE tb_id = ?', [$this->tbID])[0];
         [$sfpoData, $sfpoTotals] = $this->getData($tbData, "sfpo_tb");
         FinancialStatement::create([
@@ -115,6 +116,35 @@ class AddFinancialStatementCollection extends Component
             "totals_data" => $scfTotals,
             "collection_id" => $this->fscID,
             "template_name" => "scf",
+        ]);
+
+        [$scfData, $scfTotals] = $this->getData($tbData, "scf_tb");
+        FinancialStatement::create([
+            "fs_type" => "SCF",
+            "fs_data" => $scfData,
+            "totals_data" => $scfTotals,
+            "collection_id" => $this->fscID,
+            "template_name" => "scf",
+        ]);
+
+        if ($this->interimPeriod == 'Annual') {
+            [$scnaeData, $scnaeTotals] = $this->getData($tbData, "scnae_tb");
+            FinancialStatement::create([
+                "fs_type" => "SCNAE",
+                "fs_data" => $scnaeData,
+                "totals_data" => $scnaeTotals,
+                "collection_id" => $this->fscID,
+                "template_name" => "scnae",
+            ]);
+        }
+
+        [$scbaaData, $scbaaTotals] = $this->getData($tbData, "scbaa_tb");
+        FinancialStatement::create([
+            "fs_type" => "SCBAA",
+            "fs_data" => $scbaaData,
+            "totals_data" => $scbaaTotals,
+            "collection_id" => $this->fscID,
+            "template_name" => "scbaa",
         ]);
 
         $this->reset();
