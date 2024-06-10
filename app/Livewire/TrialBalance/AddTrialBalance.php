@@ -85,14 +85,14 @@ class AddTrialBalance extends Component
     {
         $this->interimPeriod = trim($this->interimPeriod);
 
-        if ($this->interimPeriod === "Annual" && !$this->tbName) {
-            $this->tbName = "Annual Trial Balance " . date('Y');
-            $this->tbType = "pre";
-        } else if ($this->interimPeriod === "Quarterly" && !$this->tbName) {
-            $this->tbName = "$this->quarter Trial Balance " . date('Y');
-        } else if (!$this->tbName) {
-            $this->tbName = "Trial Balance " . date('Y-m');
-        }
+        // if ($this->interimPeriod === "Annual" && !$this->tbName) {
+        //     $this->tbName = "Annual Trial Balance " . date('Y');
+        //     $this->tbType = "pre";
+        // } else if ($this->interimPeriod === "Quarterly" && !$this->tbName) {
+        //     $this->tbName = "$this->quarter Trial Balance " . date('Y');
+        // } else if (!$this->tbName) {
+        //     $this->tbName = "Trial Balance " . date('Y-m');
+        // }
 
         $this->validate();
         if ($this->tbData) {

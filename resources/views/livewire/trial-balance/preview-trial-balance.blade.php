@@ -307,10 +307,7 @@
                     <label class="text-md font-bold" for='trialBalanceName'>Trial Balance</label>
                     <input class="w-full rounded-lg focus:ring-0 disabled:text-slate-400 disabled:border-slate-400" id='trialBalanceName' type='text' value="{{$trial_balance->tb_name}}" disabled />
                 </div>
-                <div class="flex flex-col items-start mb-2">
-                    <label class="text-md font-bold" for='trialBalanceName'>Date</label>
-                    <input class="w-full rounded-lg focus:ring-0 disabled:text-slate-400 disabled:border-slate-400" id='trialBalanceName' type='text' value="{{date("M d, Y", strtotime($trial_balance->tb_date))}}" disabled />
-                </div>
+
                 <div class="flex flex-col items-start mb-2">
                     <label class="text-md font-bold" for='trialBalanceName'>Interim Period</label>
                     <input class="w-full rounded-lg focus:ring-0 disabled:text-slate-400 disabled:border-slate-400" id='trialBalanceName' type='text' value="{{$trial_balance->interim_period}}" disabled />
@@ -323,14 +320,13 @@
                 @elseif($trial_balance->interim_period == "Monthly")
                 <div class="flex flex-col items-start mb-2">
                     <label class="text-md font-bold" for='trialBalanceName'>Month</label>
-                    <input class="w-full rounded-lg focus:ring-0 disabled:text-slate-400 disabled:border-slate-400" id='trialBalanceName' type='text' value="{{date("M", strtotime($trial_balance->tb_date))}}" disabled />
-                </div>
-                @elseif($trial_balance->interim_period == "Annual")
-                <div class="flex flex-col items-start mb-2">
-                    <label class="text-md font-bold" for='trialBalanceName'>Year</label>
-                    <input class="w-full rounded-lg focus:ring-0 disabled:text-slate-400 disabled:border-slate-400" id='trialBalanceName' type='text' value="{{date("Y", strtotime($trial_balance->tb_date))}}" disabled />
+                    <input class="w-full rounded-lg focus:ring-0 disabled:text-slate-400 disabled:border-slate-400" id='trialBalanceName' type='text' value="{{ $months[$trial_balance->tb_month] }}" disabled />
                 </div>
                 @endif
+                <div class="flex flex-col items-start mb-2">
+                    <label class="text-md font-bold" for='trialBalanceName'>Year</label>
+                    <input class="w-full rounded-lg focus:ring-0 disabled:text-slate-400 disabled:border-slate-400" id='trialBalanceName' type='text' value="{{ $trial_balance->tb_year }}" disabled />
+                </div>
                 <section x-data="{isRebalancing: false, hasRebalanced: false, rebalancedMessage: ''}" x-init="Livewire.on('rebalanced', message => { isRebalancing = false; hasRebalanced = true; rebalancedMessage = message; })">
                 
                     <p class="mb-2" x-cloak x-show="!hasRebalanced"><i>Note&colon; By clicking proceed, ledger entries will be refetched using the following information in attempt to rebalance the report.</i></p>
