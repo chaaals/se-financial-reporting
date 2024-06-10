@@ -38,22 +38,38 @@ class AddTrialBalance extends Component
 
     public $spreadsheet = [];
     public $preview = [];
+    public $month;
+    public $year;
+    public $months = [
+        "1" => "January",
+        "2" => "February",
+        "3" => "March",
+        "4" => "April",
+        "5" => "May",
+        "6" => "June",
+        "7" => "July",
+        "8" => "August",
+        "9" => "September",
+        "10" => "October",
+        "11" => "November",
+        "12" => "December"
+    ];
     protected $rules = [
-        "tbName" => "nullable|max:255",
+        "tbName" => "required|max:255",
         "tbDate" => "required|date",
-        "tbType" => "nullable|in:pre,post",
+        // "tbType" => "nullable|in:pre,post",
         // "importedSpreadsheet" => "required|file|mimes:xlsx,xls,ods",
-        'interimPeriod' => 'required|in:Monthly,Quarterly,Annual',
-        'quarter' => 'nullable',
+        "interimPeriod" => "required|in:Monthly,Quarterly,Annual",
+        "month" => "nullable",
+        "quarter" => "nullable|in:Q1,Q2,Q3,Q4",
     ];
 
     public function mount()
     {
         // default values so user does not need to interact with the form and just save
         $this->tbDate = date('Y-m-d');
+        $this->year = date('Y');
 
-        $formattedDate = date('M d, Y', strtotime($this->tbDate));
-        $this->tbName = "Trial Balance Report as of $formattedDate";
         $this->listTb();
     }
 
@@ -68,23 +84,15 @@ class AddTrialBalance extends Component
     public function add()
     {
         $this->interimPeriod = trim($this->interimPeriod);
-        $fr_month = date('m', strtotime($this->tbDate));
 
-        if ($this->interimPeriod === 'Quarterly' && !$this->quarter) {
-            $this->rules['quarter'] = 'required|in:Q1,Q2,Q3,Q4';
-            $quarter = ceil($fr_month / 3);
-            $this->quarter = "Q$quarter";
-            $this->tbName = "Q$quarter Trial Balance " . date('Y');
-        } else {
-            if ($this->interimPeriod === "Annual" && !$this->tbName) {
-                $this->tbName = "Annual Trial Balance " . date('Y');
-                $this->tbType = "pre";
-            } else if ($this->interimPeriod === "Quarterly" && !$this->tbName) {
-                $this->tbName = "$this->quarter Trial Balance " . date('Y');
-            } else if (!$this->tbName) {
-                $this->tbName = "Trial Balance " . date('Y-m');
-            }
-        }
+        // if ($this->interimPeriod === "Annual" && !$this->tbName) {
+        //     $this->tbName = "Annual Trial Balance " . date('Y');
+        //     $this->tbType = "pre";
+        // } else if ($this->interimPeriod === "Quarterly" && !$this->tbName) {
+        //     $this->tbName = "$this->quarter Trial Balance " . date('Y');
+        // } else if (!$this->tbName) {
+        //     $this->tbName = "Trial Balance " . date('Y-m');
+        // }
 
         $this->validate();
         if ($this->tbData) {
@@ -95,7 +103,9 @@ class AddTrialBalance extends Component
                 "interim_period" => $this->interimPeriod,
                 "quarter" => $this->quarter,
                 "approved" => false,
-                "tb_date" => $this->tbDate,
+                // "tb_date" => $this->tbDate,
+                "tb_month" => $this->month,
+                "tb_year" => $this->year,
                 "template_name" => 'tb_pre',
                 "debit_grand_totals" => $this->debitGrandTotals,
                 "credit_grand_totals" => $this->creditGrandTotals,
@@ -105,7 +115,7 @@ class AddTrialBalance extends Component
                 "tb_id" => $tb->tb_id,
                 "tb_data" => $this->tbData,
                 "totals_data" => $this->tbDataTotals,
-                "date" => $this->tbDate
+                // "date" => $this->tbDate
             ]);
         }
 
@@ -188,11 +198,11 @@ class AddTrialBalance extends Component
                     $months = ['10', '11', '12'];
                     break;
             }
-            $res = DB::select("SELECT ls_account_title_code,ls_total_credit,ls_total_debit FROM ledgersheet_total_debit_credit WHERE ls_summary_month IN ('" . implode("','", $months) . "') AND ls_summary_year = '$queryYear'");
+            $res = DB::select("SELECT ls_account_title_code,ls_total_credit,ls_total_debit FROM ledgersheet_total_debit_credit WHERE ls_summary_month IN ('" . implode("','", $months) . "') AND ls_summary_year = '$this->year'");
         } else if ($this->interimPeriod == 'Monthly') {
-            $res = DB::select("SELECT ls_account_title_code,ls_total_credit,ls_total_debit FROM ledgersheet_total_debit_credit WHERE ls_summary_month LIKE '$queryMonth%' AND ls_summary_year = '$queryYear'");
+            $res = DB::select("SELECT ls_account_title_code,ls_total_credit,ls_total_debit FROM ledgersheet_total_debit_credit WHERE ls_summary_month LIKE '$this->month%' AND ls_summary_year = '$this->year'");
         } else {
-            $res = DB::select("SELECT ls_account_title_code,ls_total_credit,ls_total_debit FROM ledgersheet_total_debit_credit WHERE ls_summary_year = '$queryYear'");
+            $res = DB::select("SELECT ls_account_title_code,ls_total_credit,ls_total_debit FROM ledgersheet_total_debit_credit WHERE ls_summary_year = '$this->year'");
         }
 
         // queried data
@@ -285,7 +295,9 @@ class AddTrialBalance extends Component
     public function resetImport()
     {
         if ($this->importedFromGL) {
-            $this->reset(['tbData', 'tbDataTotals', 'importedFromGL', 'source']);
+            $this->reset(['tbData', 'tbDataTotals', 'importedFromGL', 'source', 'quarter', 'month']);
+        } else {
+            $this->reset(['quarter', 'month']);
         }
     }
     public function cancel()

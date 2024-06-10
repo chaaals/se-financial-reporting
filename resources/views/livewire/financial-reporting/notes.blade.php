@@ -3,9 +3,9 @@
     x-data="{ isCommentBoxVisible: false }"
     x-on:click.outside="isCommentBoxVisible = false">
     <section class="w-full h-full flex items-center justify-center font-inter">
-        <button class="relative" x-on:click="isCommentBoxVisible = true">
-            @if($numNotes > 0)
-                <div class="text-neutralTwo bg-white w-3.5 h-3.5 text-center absolute -top-1 -right-0.5 text-xs rounded-full">{{ $numNotes }}</div>
+        <button class="relative" x-on:click="isCommentBoxVisible = true" wire:click='update'>
+            @if($numUnread > 0)
+                <div class="text-neutralTwo bg-white w-3.5 h-3.5 text-center absolute -top-1 -right-0.5 text-xs rounded-full">{{ $numUnread }}</div>
             @endif
             <x-financial-reporting.assets.comment />
         </button>

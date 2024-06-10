@@ -44,63 +44,73 @@ class ListFinancialStatementCollection extends Component
     public $sortBy;
     public $sortIndices = [
         0 => "collection_name",
-        1 => "date",
-        2 => "interim_period",
-        3 => "quarter",
+        1 => "interim_period",
+        2 => "quarter",
+        3 => "fsc_year",
         4 => "created_at",
         5 => "updated_at",
         6 => "collection_status",
     ];
     public $searchInput;
 
-    public function mount(){
+    public function mount()
+    {
         // TODO: Change to DB query builder and paginate
         // $this->filterStatus = auth()->user()->role === 'accounting' ? 'Draft' : 'For Approval';
         $this->filterStatus = auth()->user()->role_id === intval(env('ACCOUNTING_ROLE_ID', '9')) ? 'Draft' : 'For Approval';
     }
 
-    public function getFSinit($fscID) {
+    public function getFSinit($fscID)
+    {
         return FinancialStatement::where('collection_id', $fscID)->get();
     }
 
-    public function preview(string $fscId){
+    public function preview(string $fscId)
+    {
         return $this->redirect("/financial-statements/$fscId", navigate: true);
     }
 
-    public function previous(){
+    public function previous()
+    {
         $this->previousPage();
     }
 
-    public function next(){
-        if($this->hasMorePages){
+    public function next()
+    {
+        if ($this->hasMorePages) {
             $this->nextPage();
         }
     }
 
-    public function search(){
-        
+    public function search()
+    {
     }
 
-    public function sort(int $sortIndex){
+    public function sort(int $sortIndex)
+    {
         $this->sortBy = $this->sortIndices[$sortIndex];
     }
 
-    public function updatePage(){
+    public function updatePage()
+    {
         $this->setPage(1);
     }
 
-    public function refreshFilters(){
+    public function refreshFilters()
+    {
         // $this->filterStatus = auth()->user()->role === 'accounting' ? 'Draft' : 'For Approval';
         $this->filterStatus = auth()->user()->role_id === intval(env('ACCOUNTING_ROLE_ID', '9')) ? 'Draft' : 'For Approval';
         $this->reset(['filterPeriod', 'filterQuarter', 'sortBy']);
     }
 
-    public function create(){
+    public function create()
+    {
         return $this->redirect('/financial-statements/add', navigate: true);
     }
 
-    public function archive(){
-        if(count($this->fsCollections) === 0 || in_array($this->fsCollection->collection_status, ['Draft', 'For Approval', 'Change Requested'])){
+    public function archive()
+    {
+        if (count($this->fsCollections) === 0 || in_array($this->fsCollection->collection_status, ['Draft', 'For Approval', 'Change Requested'])) {
             return;
         }
 
@@ -116,8 +126,9 @@ class ListFinancialStatementCollection extends Component
         session()->now('success', "$collection_name has been archived.");
     }
 
-    public function setFSCollection($itemIndex = null){
-        if($itemIndex === null) {
+    public function setFSCollection($itemIndex = null)
+    {
+        if ($itemIndex === null) {
             $this->fsCollection = null;
             return;
         }
@@ -128,36 +139,36 @@ class ListFinancialStatementCollection extends Component
     public function render()
     {
         $query = null;
-        if(in_array($this->filterReportFlag, ['Active'])){
-            $query = FinancialStatementCollection::select('collection_id','collection_name','date', 'interim_period', 'quarter', 'created_at', 'updated_at', 'collection_status', 'deleted_at');
+        if (in_array($this->filterReportFlag, ['Active'])) {
+            $query = FinancialStatementCollection::select('collection_id', 'collection_name', 'fsc_year', 'interim_period', 'quarter', 'created_at', 'updated_at', 'collection_status', 'deleted_at');
         } else {
-            $query = FinancialStatementCollection::onlyTrashed()->select('collection_id','collection_name','date', 'interim_period', 'quarter', 'created_at', 'updated_at', 'collection_status', 'deleted_at');
+            $query = FinancialStatementCollection::onlyTrashed()->select('collection_id', 'collection_name', 'fsc_year', 'interim_period', 'quarter', 'created_at', 'updated_at', 'collection_status', 'deleted_at');
         }
 
 
         $isCorrectPeriodFilter = in_array($this->filterPeriod, ['Monthly', 'Annual', 'Quarterly']);
         $isCorrectStatusFilter = in_array($this->filterStatus, ['Draft', 'For Approval', 'Approved']);
 
-        if($isCorrectPeriodFilter || $isCorrectStatusFilter){
-            if($this->filterPeriod === 'Quarterly' && $this->filterQuarter){
+        if ($isCorrectPeriodFilter || $isCorrectStatusFilter) {
+            if ($this->filterPeriod === 'Quarterly' && $this->filterQuarter) {
                 $query->where('interim_period', '=', $this->filterPeriod)
-                      ->where('quarter', '=', $this->filterQuarter);
+                    ->where('quarter', '=', $this->filterQuarter);
             }
-            
-            if($isCorrectPeriodFilter){
+
+            if ($isCorrectPeriodFilter) {
                 $query->where('interim_period', '=', $this->filterPeriod);
             }
         }
 
-        if($this->searchInput){
+        if ($this->searchInput) {
             $searchInput = "%$this->searchInput%";
             $query->where('collection_name', 'like', $searchInput);
             $this->searchInput = null;
         }
 
-        if($this->sortBy){
+        if ($this->sortBy) {
             // refactor suggestion: modify enums to follow alphabetical order para madali sorting
-            if(in_array($this->sortBy, ['interim_period', 'quarter', 'collection_status'])){
+            if (in_array($this->sortBy, ['interim_period', 'quarter', 'collection_status'])) {
                 $query->orderBy($this->sortBy, 'desc');
             } else {
                 $query->orderBy($this->sortBy, 'asc');
@@ -165,7 +176,7 @@ class ListFinancialStatementCollection extends Component
         }
 
         $res = null;
-        if(in_array($this->filterReportFlag, ['Active'])){
+        if (in_array($this->filterReportFlag, ['Active'])) {
             $res = $query->where('collection_status', '=', $this->filterStatus)->paginate($this->rows);
         } else {
             $res = $query->paginate($this->rows);

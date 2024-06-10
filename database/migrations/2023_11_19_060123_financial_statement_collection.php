@@ -16,10 +16,11 @@ return new class extends Migration
                 ->default(DB::raw('(UUID())'))
                 ->primary();
             $table->string('collection_name');
-            $table->enum('collection_status', ['Draft','For Approval', 'Change Requested', 'Approved'])->default('Draft');
+            $table->enum('collection_status', ['Draft', 'For Approval', 'Change Requested', 'Approved'])->default('Draft');
             $table->enum('quarter', ['Q1', 'Q2', 'Q3', 'Q4'])->nullable();
             $table->boolean('approved')->default(false);
-            $table->date('date');
+            // $table->date('date');
+            $table->string('fsc_year');
             $table->enum('interim_period', ['Quarterly', 'Annual']);
             $table->foreignUuid('tb_id')
                 ->constrained(table: 'trial_balances', column: 'tb_id')

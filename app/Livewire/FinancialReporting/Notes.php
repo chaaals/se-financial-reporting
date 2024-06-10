@@ -2,6 +2,7 @@
 
 namespace App\Livewire\FinancialReporting;
 
+use App\Models\ReportNote;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
@@ -12,6 +13,7 @@ class Notes extends Component
     public $reportName;
     public $note;
     public $notes;
+    public $numUnread = 0;
 
     protected $rules = [
         "note" => "required|max:120",
@@ -22,6 +24,18 @@ class Notes extends Component
         $this->reportType = $reportType;
         $this->reportName = $reportName;
     }
+    
+    public function countUnread($notes){
+        $this->numUnread = 0;
+        $user = auth()->user()->id;
+        
+        foreach($notes as $note){
+            $participants = json_decode($note->participants, true);
+            if(!in_array($user, $participants)){
+                $this->numUnread += 1;
+            }
+        }
+    }
 
     public function add(){
         $this->validate();
@@ -29,16 +43,35 @@ class Notes extends Component
         // $firstName = auth()->user()->first_name;
         // $lastName = auth()->user()->last_name;
         $user = auth()->user()->role_id == intval(env('ACCOUNTING_ROLE_ID', '9')) ? 'Mara Calinao' : 'Andrea Malunes';
+        $participants = array(auth()->user()->id);
  
         DB::table("report_notes")->insert([
             "tb_id" => $this->reportType === "tb" ? $this->reportId : null,
             "collection_id" => $this->reportType === "fsc" ? $this->reportId : null,
+            "participants" => json_encode($participants, true),
             "content" => $this->note,
             "author" => "$user"
         ]);
 
         activity()->withProperties(['user' => $user, 'role' => auth()->user()->role_id])->log("Created a note content: $this->note");
         $this->note = null;
+    }
+
+    public function update(){
+        if($this->numUnread == 0){
+            return;
+        }
+
+        $user = auth()->user()->id;
+
+        foreach($this->notes as $note){
+            $participants = json_decode($note->participants, true);
+            if(!in_array($user, $participants)){
+                $participants[] = $user;
+                $note->participants = json_encode($participants, true);
+                $note->save();
+            }
+        }
     }
 
     public function delete(int $noteIndex){
@@ -58,12 +91,13 @@ class Notes extends Component
 
     public function render()
     {
-        $this->notes = DB::table("report_notes")
-                    ->select("note_id","content", "author", "created_at")
-                    ->where("tb_id", "=", $this->reportId)
-                    ->orwhere("collection_id", "=", $this->reportId)
-                    ->get();
+        $this->notes = ReportNote::select("note_id","content", "author", "participants", "created_at")
+                        ->where("tb_id", "=", $this->reportId)
+                        ->orwhere("collection_id", "=", $this->reportId)
+                        ->get();
+        
+        $this->countUnread($this->notes);
 
-        return view('livewire.financial-reporting.notes', ["notes" => $this->notes, "numNotes" => count($this->notes), "xColor" => "#2D349A"]);
+        return view('livewire.financial-reporting.notes', ["notes" => $this->notes, "numNotes" => count($this->notes),"numUnread" => $this->numUnread, "xColor" => "#2D349A"]);
     }
 }

@@ -33,12 +33,17 @@ class Home extends Component
 
     public function mount(){
         $this->trialBalances = TrialBalance::orderBy('created_at', 'desc')->take(6)->get();
-        $years = FinancialStatementCollection::selectRaw('YEAR(date) as year')->distinct()->orderBy('year')->pluck('year')->toArray();
+        $years = array_unique(
+            array_column(
+                FinancialStatementCollection::select('fsc_year')->orderBy('fsc_year', 'desc')->get()->toArray(),
+                'fsc_year',
+            )
+        );
 
-        if(!$years){
+        if (!$years) {
             $years = [date('Y')];
         }
-        
+
         $this->filterOptions = [
             "Year" => [
                 "model" => "filterYear",
@@ -56,37 +61,39 @@ class Home extends Component
         $this->filterYear = $years[0];
     }
 
-    public function parseStatement(FinancialStatement|null $fs, PieChartModel $chartModel){
-        if(!$fs){
+    public function parseStatement(FinancialStatement|null $fs, PieChartModel $chartModel)
+    {
+        if (!$fs) {
             return null;
         }
         $totals = json_decode($fs->totals_data, true);
         $i = 0;
-        foreach ($totals as $label=>$value){
+        foreach ($totals as $label => $value) {
             $chartModel->addSlice($label, $value, $this->colors[$i]);
             $i++;
         }
         return $chartModel->asDonut();
     }
 
-    public function fetchChart(){
-        $query = FinancialStatementCollection::whereYear('date', '=', $this->filterYear);
-        if($this->filterPeriod == 'Annual' && $this->filterQuarter){
+    public function fetchChart()
+    {
+        $query = FinancialStatementCollection::where('fsc_year', '=', $this->filterYear);
+        if ($this->filterPeriod == 'Annual' && $this->filterQuarter) {
             $this->filterQuarter = null;
         }
-        
-        if($this->filterPeriod == 'Quarterly' && !$this->filterQuarter) {
+
+        if ($this->filterPeriod == 'Quarterly' && !$this->filterQuarter) {
             $this->filterQuarter = 'Q1';
             $query->where('interim_period', '=', $this->filterPeriod)->where('quarter', '=', $this->filterQuarter);
-        } else if($this->filterPeriod == 'Quarterly' && $this->filterQuarter) {
+        } else if ($this->filterPeriod == 'Quarterly' && $this->filterQuarter) {
             $query->where('interim_period', '=', $this->filterPeriod)->where('quarter', '=', $this->filterQuarter);
         } else {
             $query->where('interim_period', '=', $this->filterPeriod);
         }
-        
+
         // dd($query->orderByDesc('created_at')->get()->toArray());
         $query = $query->get();
-        if($query->isEmpty()){
+        if ($query->isEmpty()) {
             // dd($query);
             $this->collectionName = null;
             $this->sfpo = null;
@@ -99,30 +106,32 @@ class Home extends Component
         $collection = $query->toArray()[0];
         $this->collectionName = $collection['collection_name'];
         $fsc = FinancialStatement::where('collection_id', '=', $collection['collection_id'])->get();
-        
-        foreach ($fsc as $fs){
-            if($fs->fs_type == 'SFPO'){
+
+        foreach ($fsc as $fs) {
+            if ($fs->fs_type == 'SFPO') {
                 $this->sfpo = $fs;
             };
-            if($fs->fs_type == 'SFPE'){
+            if ($fs->fs_type == 'SFPE') {
                 $this->sfpe = $fs;
             };
-            if($fs->fs_type == 'SCF'){
+            if ($fs->fs_type == 'SCF') {
                 $this->scf = $fs;
             };
         }
     }
 
-    public function previous(){
+    public function previous()
+    {
         $this->previousPage();
     }
 
-    public function next(){
-        if($this->hasMorePages){
+    public function next()
+    {
+        if ($this->hasMorePages) {
             $this->nextPage();
         }
     }
-    
+
     public function render()
     {
         $this->fetchChart();
@@ -133,18 +142,18 @@ class Home extends Component
 
         $logsQuery = null;
         
-        if(auth()->user()->role_id == intval(env('ACCOUNTING_ROLE_ID', '9'))){
+        if (auth()->user()->role_id == intval(env('ACCOUNTING_ROLE_ID', '9'))) {
             // $user = auth()->user()->first_name . " " . auth()->user()->last_name;
             $user = 'Mara Calinao';
-            $logsQuery = Activity::where('properties->role', auth()->user()->role_id)->where('properties->user', $user)->orderBy('created_at','desc')->paginate(10);
+            $logsQuery = Activity::where('properties->role', auth()->user()->role_id)->where('properties->user', $user)->orderBy('created_at', 'desc')->paginate(10);
         } else {
-            $logsQuery = Activity::select('*')->orderBy('created_at','desc')->paginate(10);
+            $logsQuery = Activity::select('*')->orderBy('created_at', 'desc')->paginate(10);
         }
 
         $this->logs = $logsQuery->items();
         $this->hasMorePages = $logsQuery->hasMorePages();
 
-        return view('livewire.home',[
+        return view('livewire.home', [
             'sfpoPieModel' => $sfpoPieModel,
             'sfpePieModel' => $sfpePieModel,
             'scfPieModel' => $scfPieModel,

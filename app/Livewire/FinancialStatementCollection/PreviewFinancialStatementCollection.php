@@ -3,6 +3,8 @@
 namespace App\Livewire\FinancialStatementCollection;
 
 use App\Mail\FinancialReportEmail;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 use App\Models\FinancialStatementCollection;
 use App\Models\FinancialStatement;
 use Illuminate\Support\Facades\Mail;
@@ -11,7 +13,7 @@ use Livewire\Component;
 use Maatwebsite\Excel\Facades\Excel;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use Storage;
+use Illuminate\Support\Facades\Storage;
 use DateTime;
 use Illuminate\Support\Facades\DB;
 
@@ -45,7 +47,7 @@ class PreviewFinancialStatementCollection extends Component
         // 'editedQuarter' => 'nullable|in:Q1,Q2,Q3,Q4',
         'selectedStatusOption' => 'required|in:Draft,For Approval,Approved,Change Requested',
         'subject' => 'required',
-        'receiver' => 'required|email',
+        'receiver' => 'required|string',
         'message' => 'required',
         // 'editedApproved' => 'required|boolean',
     ];
@@ -82,14 +84,18 @@ class PreviewFinancialStatementCollection extends Component
         
         $spreadsheet = IOFactory::load(storage_path('app/' . $this->exportableFilePath));
 
-        // sfpo, sfpe, scf in order
+        // sfpo, sfpe, scf, scnae, scbaa in order
         $fsDataResults = DB::select('SELECT fs_data FROM financial_statements WHERE collection_id = ?', [$this->fsCollection->collection_id]);
         $jsonData = array_column($fsDataResults, 'fs_data');
         // key : val == rowNumber : fsData
         $combinedData = array_map('json_decode', $jsonData, array_fill(0, count($jsonData), true));
 
-        for ($i=0 ; $i<3 ; $i++) {
-            $column = ($i === 2) ? 'E' : 'F'; 
+        for ($i = 0; $i < count($combinedData); $i++) {
+            $column = match ($i) {
+                2 => 'E',
+                4 => 'I',
+                default => 'F',
+            };
             foreach ($combinedData[$i] as $row => $value) {
                 $spreadsheet->getSheet($i)->setCellValue($column . $row, $value);
             }
@@ -120,14 +126,31 @@ class PreviewFinancialStatementCollection extends Component
 
         $this->validate();
 
-        Mail::to($this->receiver)->send(new FinancialReportEmail($this->subject, $this->message, $this->filename, storage_path('app/'.$this->exportableFilePath)));
+        $emailsArray = explode(',', $this->receiver);
+
+        foreach ($emailsArray as $email) {
+            $email = trim($email);
+            $validator = Validator::make(
+                ['receiver' => $email],
+                ['receiver' => 'required|email']
+            );
+
+            if ($validator->fails()) {
+                $this->dispatch('mail');
+                throw ValidationException::withMessages([
+                    'receiver' => 'One or more emails are invalid.',
+                ]);
+            }
+        }
+
+        Mail::to($emailsArray)->send(new FinancialReportEmail($this->subject, $this->message, $this->filename, storage_path('app/'.$this->exportableFilePath)));
 
         // $user = auth()->user()->first_name . " " . auth()->user()->last_name;
         $user = auth()->user()->role_id == intval(env('ACCOUNTING_ROLE_ID', '9')) ? 'Mara Calinao' : 'Andrea Malunes';
         activity()->withProperties(['user' => $user, 'role' => auth()->user()->role_id])->log("Mailed $this->filename to $this->receiver");
 
         session()->now("success", "Successfully mailed $this->filename");
-
+        $this->dispatch('mail');
         $this->reset('subject', 'receiver', 'message');
     }
 
@@ -143,6 +166,7 @@ class PreviewFinancialStatementCollection extends Component
         activity()->withProperties(['user' => $user, 'role' => auth()->user()->role_id])->log("Exported $this->filename");
 
         $this->attachment = null;
+        $this->dispatch('exported');
         session()->now("success", "Successfully exported Financial Statements");
 
         return response()->download(storage_path('app/'.$this->exportableFilePath), $this->filename.'.xlsx', $headers)->deleteFileAfterSend(true);
